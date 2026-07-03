@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solsureste Solar — Placas solares en Murcia y Alicante</title>
+<meta name="description" content="Instalamos placas solares para hogares y empresas, y desarrollamos huertos solares en Murcia y Alicante. Más de 25 años de experiencia, maquinaria propia, financiación al 100%.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<canvas id="sss-story" aria-hidden="true" style="position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;background:#06060c;display:block"></canvas>
+
+<div id="sss-root" style="background:transparent;color:#f4f3f0;min-height:100vh;overflow-x:hidden;position:relative;z-index:1">
+
+<div id="sss-progress" style="position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,#F5921E,#FFB43D);z-index:9999;box-shadow:0 0 12px rgba(255,180,61,.7);pointer-events:none"></div>
+
+<!-- HEADER -->
+<header id="sss-header" style="position:sticky;top:0;z-index:200;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(10,10,12,.62);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:background .3s,box-shadow .3s">
+  <div style="max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 24px">
+    <a href="#inicio" style="display:flex;align-items:center;gap:10px">
+      <span style="display:flex;height:38px;width:38px;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#E07A0C);color:#1a1205;box-shadow:0 6px 20px rgba(255,180,61,.5),0 0 34px rgba(255,180,61,.35);animation:sssFloat 4.5s ease-in-out infinite">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+      </span>
+      <span style="font-size:19px;font-weight:700;letter-spacing:-.02em">Solsureste <span style="color:#FFB43D">Solar</span></span>
+    </a>
+    <nav class="sss-hidemob" style="display:flex;align-items:center;gap:30px" aria-label="Navegación principal">
+      <a data-i18n="nav.services" href="#servicios" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">Servicios</a>
+      <a data-i18n="nav.projects" href="#proyectos" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">Proyectos</a>
+      <a data-i18n="nav.resources" href="#proceso" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">Proceso</a>
+      <a data-i18n="nav.faq" href="#faq" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">FAQ</a>
+      <a data-i18n="nav.contact" href="#contacto" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">Contacto</a>
+    </nav>
+    <div class="sss-hidemob" style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;gap:2px;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:2px;background:rgba(255,255,255,.03)">
+        <button id="sss-lang-es" type="button" class="sss-langbtn-on">ES</button>
+        <button id="sss-lang-en" type="button" class="sss-langbtn-off">EN</button>
+      </div>
+      <a data-i18n="nav.cta" data-magnetic href="#inicio" class="sss-nav-cta" style="display:inline-flex;align-items:center;justify-content:center;border-radius:10px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:14px;font-weight:600;height:38px;padding:0 18px;box-shadow:0 6px 20px rgba(255,180,61,.45),0 0 34px rgba(255,180,61,.22),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">Agendar cita</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section id="inicio" data-hero-variant="cinematic" style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.06)">
+  <div class="sss-hero-bg-cinematic" style="position:absolute;inset:0;z-index:0">
+    <div id="sss-hero-media" class="sss-placeholder" style="position:absolute;inset:0;width:100%;height:100%">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+      <span>Vídeo dron / foto aérea de instalación</span>
+    </div>
+    <div id="sss-hero-parallax" style="position:absolute;inset:0;background:radial-gradient(120% 80% at 70% 10%,rgba(255,180,61,.10),transparent 55%);will-change:transform"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,12,.72) 0%,rgba(10,10,12,.55) 35%,rgba(10,10,12,.82) 100%)"></div>
+  </div>
+  <div class="sss-hero-bg-aurora" style="position:absolute;inset:0;z-index:0;background:#08080a">
+    <div style="position:absolute;width:60vw;height:60vw;left:-10vw;top:-18vw;border-radius:50%;background:radial-gradient(circle,rgba(255,150,40,.34),transparent 62%);filter:blur(40px);animation:sssAurora 22s ease-in-out infinite"></div>
+    <div style="position:absolute;width:48vw;height:48vw;right:-8vw;top:6vw;border-radius:50%;background:radial-gradient(circle,rgba(255,200,90,.22),transparent 60%);filter:blur(44px);animation:sssAurora 28s ease-in-out infinite reverse"></div>
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:64px 64px;animation:sssGrid 8s linear infinite;-webkit-mask-image:radial-gradient(120% 90% at 50% 0%,#000 35%,transparent 80%);mask-image:radial-gradient(120% 90% at 50% 0%,#000 35%,transparent 80%)"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(10,10,12,.6) 100%)"></div>
+  </div>
+  <div aria-hidden="true" style="position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden">
+    <div style="position:absolute;left:8%;top:18%;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,200,110,.30),transparent 65%);filter:blur(30px);animation:sssBokeh 14s ease-in-out infinite"></div>
+    <div style="position:absolute;right:12%;top:8%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(255,160,60,.22),transparent 65%);filter:blur(38px);animation:sssBokeh 18s ease-in-out infinite reverse"></div>
+    <div style="position:absolute;left:38%;bottom:6%;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(255,220,150,.16),transparent 65%);filter:blur(34px);animation:sssBokeh 22s ease-in-out 2s infinite"></div>
+    <div style="position:absolute;right:30%;bottom:22%;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(120,190,255,.12),transparent 65%);filter:blur(26px);animation:sssBokeh 16s ease-in-out 1s infinite reverse"></div>
+  </div>
+  <canvas id="sss-hero-fx" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none"></canvas>
+  <div id="sss-hero-glow" aria-hidden="true" style="position:absolute;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(255,180,61,.14),transparent 68%);pointer-events:none;transform:translate(-50%,-50%);opacity:0;transition:opacity .4s;z-index:1;left:50%;top:30%"></div>
+
+  <div style="position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:84px 24px 72px">
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;border:1px solid rgba(255,180,61,.4);background:rgba(255,180,61,.10);font-size:13px;font-weight:500;color:#FFC766;margin-bottom:22px;box-shadow:0 0 30px rgba(255,180,61,.18),inset 0 1px 0 rgba(255,255,255,.08);animation:sssRise .7s both,sssBloom 4s ease-in-out 1s infinite">
+      <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#FFB43D;box-shadow:0 0 10px #FFB43D;animation:sssPulse 2s infinite"></span>
+      25 años · Murcia &amp; Alicante · maquinaria propia
+    </div>
+    <h1 data-i18n="hero.h1" class="sss-h1" style="font-size:60px;font-weight:700;line-height:1.04;letter-spacing:-.03em;max-width:900px;margin:0;animation:sssRise .8s .08s both">Instalamos placas solares en Murcia y Alicante, <span class="sss-shimmer" style="filter:drop-shadow(0 0 24px rgba(255,180,61,.55))">de principio a fin</span></h1>
+    <p data-i18n="hero.p" style="margin:22px 0 0;max-width:620px;font-size:19px;line-height:1.55;color:rgba(244,243,240,.78);animation:sssRise .8s .18s both">Placas solares para hogares y empresas, y desarrollo de huertos solares. Con maquinaria y recursos propios ejecutamos cada proyecto sin depender de terceros.</p>
+
+    <div class="sss-herogrid" style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch;animation:sssRise .9s .28s both">
+      <!-- FORM -->
+      <form id="sss-hero-form" class="sss-halo" style="position:relative;display:flex;flex-direction:column;border-radius:20px;border:1px solid rgba(255,190,80,.32);background:rgba(20,20,23,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:26px;box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 90px rgba(255,180,61,.14),inset 0 1px 0 rgba(255,255,255,.09);animation:sssCardFloat 7s ease-in-out infinite">
+        <h2 data-i18n="form.title" style="margin:0 0 18px;font-size:17px;font-weight:600">Solicita tu estudio gratuito</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Nombre *<input required placeholder="Juan" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Apellidos *<input required placeholder="García López" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Teléfono *<input required type="tel" placeholder="666 123 456" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Correo *<input required type="email" placeholder="juan@ejemplo.com" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Ciudad *<input required placeholder="Murcia" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Tipo instalación *<select required class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"><option style="background:#161618" value="">Selecciona…</option><option style="background:#161618">Residencial</option><option style="background:#161618">Industrial o nave</option><option style="background:#161618">Huerto solar</option><option style="background:#161618">Mantenimiento</option><option style="background:#161618">Asesoramiento</option></select></label>
+        </div>
+        <p style="margin:14px 0 0;font-size:11.5px;line-height:1.5;color:rgba(244,243,240,.5)">Al enviar aceptas el tratamiento de tus datos para gestionar tu solicitud — <a href="mailto:info@solsurestesolar.com" style="color:#FFB43D">info@solsurestesolar.com</a>.</p>
+        <button data-magnetic type="submit" class="sss-submit" style="margin-top:16px;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:11px;border:none;cursor:pointer;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:14.5px;font-weight:700;height:46px;font-family:inherit;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 50px rgba(255,180,61,.22),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg>
+          Solicitar estudio gratuito
+        </button>
+        <div id="sss-hero-fb" style="display:none;margin-top:12px;border-radius:10px;padding:9px 12px;font-size:13px;font-weight:600;text-align:center"></div>
+      </form>
+      <!-- CHAT -->
+      <div id="chatbot-slot" class="sss-halo" style="display:flex;flex-direction:column;border-radius:20px;border:1px solid rgba(255,190,80,.32);background:rgba(20,20,23,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 90px rgba(255,180,61,.14),inset 0 1px 0 rgba(255,255,255,.09);animation:sssCardFloat 7s ease-in-out 1.2s infinite">
+        <div style="display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,180,61,.14);padding:15px 18px;background:linear-gradient(135deg,rgba(255,180,61,.08),rgba(255,180,61,.02))">
+          <span style="display:flex;height:40px;width:40px;align-items:center;justify-content:center;border-radius:50%;background:linear-gradient(135deg,#FFB43D,#E07A0C);color:#1a1205;flex-shrink:0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+          </span>
+          <div style="flex:1">
+            <p style="margin:0;font-size:14.5px;font-weight:600">Asistente Solsureste Solar</p>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+              <span style="position:relative;display:inline-flex;width:8px;height:8px"><span style="position:absolute;inset:0;border-radius:50%;background:#3ddc84;animation:sssPing 1.8s cubic-bezier(0,0,.2,1) infinite"></span><span style="position:relative;width:8px;height:8px;border-radius:50%;background:#3ddc84"></span></span>
+              <p style="margin:0;font-size:11.5px;color:rgba(244,243,240,.55)">En línea · Atendiendo ahora</p>
+            </div>
+          </div>
+          <button id="sss-chat-reset" type="button" title="Reiniciar conversación" class="sss-iconbtn" style="background:none;border:none;cursor:pointer;color:rgba(244,243,240,.45);display:flex;transition:color .2s">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+          </button>
+        </div>
+        <div id="sss-chat-msgs" style="flex:1;min-height:248px;max-height:248px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px"></div>
+        <div style="border-top:1px solid rgba(255,180,61,.12);padding:13px 14px;background:rgba(255,255,255,.02)">
+          <form id="sss-chat-form" style="display:flex;gap:9px;align-items:center">
+            <input id="sss-chat-input" autocomplete="off" placeholder="Escribe tu mensaje…" class="sss-chatfield" style="flex:1;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:10px 16px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none">
+            <button type="submit" aria-label="Enviar" class="sss-sendbtn" style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;transition:transform .2s">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<section id="sss-stats" style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(13,13,16,.58)">
+  <canvas id="sss-grid-fx" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none"></canvas>
+  <div style="position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 120% at 50% 50%,transparent 40%,#0e0e11 92%)"></div>
+  <div class="sss-statgrid" style="position:relative;z-index:2;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:46px 24px">
+    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="25" data-prefix="+" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">+0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Años de experiencia</p></div>
+    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="500" data-prefix="+" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">+0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Instalaciones realizadas</p></div>
+    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="25" data-prefix="+" data-suffix=" MW" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">+0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Potencia instalada</p></div>
+    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="100" data-suffix="%" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">0%</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Recursos propios</p></div>
+  </div>
+</section>
+
+<!-- VALUE -->
+<section id="servicios" style="background:rgba(9,9,12,.36);padding:96px 24px">
+  <div class="sss-2col" style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center">
+    <div>
+      <h2 data-i18n="value.h2" data-reveal data-reveal="left" style="margin:0;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">No pagues más por la factura de la luz</h2>
+      <p data-reveal style="margin:20px 0 0;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Instalar placas solares no es un gasto: es recuperar el control de lo que pagas cada mes. Con Solsureste Solar, cada euro invertido empieza a trabajar para ti desde el primer día de producción, ahorrando <strong style="color:#f4f3f0">miles de euros al año</strong> para lo que de verdad importa.</p>
+      <p data-reveal style="margin:16px 0 0;font-size:16px;line-height:1.6;color:rgba(244,243,240,.7)">Solicita tu estudio gratuito y accede a:</p>
+      <ul style="list-style:none;padding:0;margin:24px 0 0;display:flex;flex-direction:column;gap:16px">
+        <li data-reveal style="display:flex;align-items:flex-start;gap:13px"><span style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:rgba(255,180,61,.16);color:#FFB43D;font-size:14px;font-weight:700">✓</span><p style="margin:0;font-size:16px;line-height:1.55;color:rgba(244,243,240,.7)"><strong style="color:#f4f3f0">Estimaciones de producción reales</strong>, basadas en datos de más de 500 instalaciones completadas en el sureste.</p></li>
+        <li data-reveal style="display:flex;align-items:flex-start;gap:13px"><span style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:rgba(255,180,61,.16);color:#FFB43D;font-size:14px;font-weight:700">✓</span><p style="margin:0;font-size:16px;line-height:1.55;color:rgba(244,243,240,.7)"><strong style="color:#f4f3f0">Maqueta visual de la instalación</strong> con la disposición real de módulos sobre tu cubierta o terreno.</p></li>
+      </ul>
+      <a data-magnetic data-reveal href="#inicio" class="sss-btn" style="margin-top:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:15px;font-weight:600;height:46px;padding:0 24px;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 44px rgba(255,180,61,.20),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">Solicitar estudio gratuito</a>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">€0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Coste del estudio inicial</p></div>
+      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">−80%</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Reducción media en factura</p></div>
+      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">5–7</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Años de amortización</p></div>
+      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">25+</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Años de vida útil</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH -->
+<section style="background:rgba(13,13,16,.4);padding:96px 24px;border-top:1px solid rgba(255,255,255,.06)">
+  <div style="max-width:1180px;margin:0 auto">
+    <div style="max-width:840px">
+      <div>
+        <span data-i18n="tech.label" data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Nuestra propuesta técnica</span>
+        <h2 data-i18n="tech.h2" data-reveal data-reveal="left" style="margin:14px 0 0;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">El diseño solar más riguroso del sureste</h2>
+        <p data-reveal style="margin:18px 0 0;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Solsureste Solar te da cifras fiables sobre tu potencial solar. Combinamos los mejores software de diseño con una visita técnica a tu propiedad, análisis real de tu consumo y datos de más de 500 proyectos completados en la región.</p>
+        <div data-reveal style="margin-top:26px;display:flex;gap:26px;flex-wrap:wrap">
+          <div><p style="margin:0;font-size:26px;font-weight:700;color:#FFB43D">1.850</p><p style="margin:2px 0 0;font-size:12.5px;color:rgba(244,243,240,.55)">kWh/m²·año irradiación</p></div>
+          <div><p style="margin:0;font-size:26px;font-weight:700;color:#FFB43D">+3.000</p><p style="margin:2px 0 0;font-size:12.5px;color:rgba(244,243,240,.55)">horas de sol al año</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="sss-3col sss-techgrid" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px"></div>
+    <a data-magnetic data-reveal href="#chatbot-slot" class="sss-btn" style="margin-top:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:15px;font-weight:600;height:46px;padding:0 24px;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 44px rgba(255,180,61,.20),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">Ver mi propuesta solar →</a>
+  </div>
+</section>
+
+<!-- CASES -->
+<section id="proyectos" style="background:rgba(9,9,12,.36);padding:96px 24px;border-top:1px solid rgba(255,255,255,.06)">
+  <div style="max-width:1180px;margin:0 auto">
+    <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Resultados reales</span>
+    <h2 data-i18n="cases.h2" data-reveal data-reveal="left" style="margin:14px 0 0;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">Ejemplos reales de instalaciones realizadas</h2>
+    <p data-reveal style="margin:18px 0 0;max-width:760px;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Solsureste Solar ofrece una garantía de trabajo de 25 años porque nos respaldamos en lo que hacemos. Estos son resultados reales de clientes del sureste con los datos de ahorro conseguidos.</p>
+    <div class="sss-3col" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px">
+      <div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:18px;transition:transform .4s,border-color .4s,box-shadow .4s">
+        <div class="sss-placeholder" style="display:flex;width:100%;height:180px;border-radius:14px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          <span>Foto · Lorca</span>
+        </div>
+        <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">Aire acondicionado todo el día con factura cero</h3>
+        <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">Este cliente en Lorca recibió en agosto una factura con <strong style="color:#f4f3f0">coste de energía €0</strong>. Respecto al año anterior ahorró €170 ese mes. Con el año completo libera cerca de <strong style="color:#f4f3f0">€1.800 anuales</strong>, pudiendo encender el aire sin preocuparse.</p>
+      </div>
+      <div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:18px;transition:transform .4s,border-color .4s,box-shadow .4s">
+        <div class="sss-placeholder" style="display:flex;width:100%;height:180px;border-radius:14px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          <span>Foto · Cartagena</span>
+        </div>
+        <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">€5.000 liberados de la factura cada año</h3>
+        <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">Esta empresa en Cartagena tenía una factura de €860 en verano. Un año después de la instalación esa factura <strong style="color:#f4f3f0">bajó a €22</strong> (incluido el cargo fijo). Libera ahora <strong style="color:#f4f3f0">más de €5.000 anuales</strong> que antes iban a la eléctrica.</p>
+      </div>
+      <div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:18px;transition:transform .4s,border-color .4s,box-shadow .4s">
+        <div class="sss-placeholder" style="display:flex;width:100%;height:180px;border-radius:14px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          <span>Foto · Orihuela</span>
+        </div>
+        <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">Amortización en 6 años en gran instalación agrícola</h3>
+        <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">Explotación en Orihuela (Alicante) con factura de bombeo de €3.100 en verano. Tras el huerto solar propio, esa factura cayó a €390 el año siguiente. La reducción de €2.700 supuso <strong style="color:#f4f3f0">amortizar en menos de 6 años</strong>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section style="background:rgba(9,9,12,.36);padding:0 24px 96px">
+  <div style="max-width:1180px;margin:0 auto">
+    <h2 data-i18n="why.h2" data-reveal data-reveal="left" style="margin:0;max-width:680px;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">Por qué elegir Solsureste Solar para tu instalación solar</h2>
+    <div class="sss-3col sss-whygrid" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px"></div>
+    <div data-reveal style="margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:16px;border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:24px 26px;text-align:center">
+      <div style="display:flex;gap:14px;align-items:center">
+        <span style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 16px;border-radius:10px;background:rgba(255,180,61,.12);color:#FFC766;font-weight:700;font-size:14px;border:1px solid rgba(255,180,61,.25)">ISO 9001</span>
+        <span style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 16px;border-radius:10px;background:rgba(255,180,61,.12);color:#FFC766;font-weight:700;font-size:14px;border:1px solid rgba(255,180,61,.25)">ISO 14001</span>
+      </div>
+      <p style="margin:0;max-width:560px;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">Instalaciones avaladas por los estándares internacionales de <strong style="color:#f4f3f0">Calidad ISO 9001</strong> y <strong style="color:#f4f3f0">Gestión Ambiental ISO 14001</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section style="background:rgba(13,13,16,.4);padding:96px 24px;border-top:1px solid rgba(255,255,255,.06)">
+  <div style="max-width:1180px;margin:0 auto">
+    <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Testimonios</span>
+    <h2 data-i18n="test.h2" data-reveal data-reveal="left" style="margin:14px 0 0;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">Qué dicen nuestros clientes</h2>
+    <div class="sss-3col" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+      <div data-reveal style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px">
+        <div style="color:#FFB43D;font-size:16px;letter-spacing:.12em;filter:drop-shadow(0 0 6px rgba(255,180,61,.4))">★★★★★</div>
+        <p style="margin:16px 0 0;font-size:16px;line-height:1.6;font-style:italic;color:rgba(244,243,240,.82)">"Desde el primer momento Paco nos explicó todo con claridad. La instalación estuvo lista en el plazo prometido y el primer mes ya notamos la diferencia en la factura. Sin sorpresas y sin problemas."</p>
+        <div style="margin-top:20px;display:flex;align-items:center;gap:12px"><div style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.3),rgba(255,180,61,.1));color:#FFC766;font-weight:700;font-size:14px">MJ</div><div><p style="margin:0;font-size:15px;font-weight:600">María José F.</p><p style="margin:0;font-size:12px;color:rgba(244,243,240,.5)">Lorca, Murcia · Instalación residencial</p></div></div>
+      </div>
+      <div data-reveal style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px">
+        <div style="color:#FFB43D;font-size:16px;letter-spacing:.12em;filter:drop-shadow(0 0 6px rgba(255,180,61,.4))">★★★★★</div>
+        <p style="margin:16px 0 0;font-size:16px;line-height:1.6;font-style:italic;color:rgba(244,243,240,.82)">"Montaron dos instalaciones en mis naves industriales. Profesionalidad y cumplimiento de plazos impecables."</p>
+        <div style="margin-top:20px;display:flex;align-items:center;gap:12px"><div style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.3),rgba(255,180,61,.1));color:#FFC766;font-weight:700;font-size:14px">AP</div><div><p style="margin:0;font-size:15px;font-weight:600">Antonio P.</p><p style="margin:0;font-size:12px;color:rgba(244,243,240,.5)">Cartagena, Murcia · Solar industrial</p></div></div>
+      </div>
+      <div data-reveal style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px">
+        <div style="color:#FFB43D;font-size:16px;letter-spacing:.12em;filter:drop-shadow(0 0 6px rgba(255,180,61,.4))">★★★★★</div>
+        <p style="margin:16px 0 0;font-size:16px;line-height:1.6;font-style:italic;color:rgba(244,243,240,.82)">"Instalaron las placas en mi casa en un solo día conforme a lo acordado. Empecé a ahorrar en la factura desde el día siguiente al montaje. Volvería a contratarlos siempre."</p>
+        <div style="margin-top:20px;display:flex;align-items:center;gap:12px"><div style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.3),rgba(255,180,61,.1));color:#FFC766;font-weight:700;font-size:14px">FM</div><div><p style="margin:0;font-size:15px;font-weight:600">Familia Martínez</p><p style="margin:0;font-size:12px;color:rgba(244,243,240,.5)">Orihuela, Alicante · Instalación residencial</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINANCING -->
+<section id="financiacion" style="position:relative;overflow:hidden;background:rgba(9,9,12,.36);padding:96px 24px;border-top:1px solid rgba(255,255,255,.06)">
+  <canvas id="sss-fin-fx" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none"></canvas>
+  <div style="position:relative;z-index:1;max-width:1180px;margin:0 auto">
+    <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Financiación</span>
+    <h2 data-i18n="fin.h2" data-reveal data-reveal="left" style="margin:14px 0 0;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">Financiamos el 100% de tu instalación, incluso el IVA</h2>
+    <p data-reveal style="margin:18px 0 0;max-width:760px;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Te pasamos algunos ejemplos de cómo puedes ahorrar todos los meses sin poner ni un céntimo de tu bolsillo. Ahorra desde el primer día.</p>
+    <div data-reveal style="margin-top:36px;overflow-x:auto;border-radius:18px;border:1px solid rgba(255,255,255,.08)">
+      <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:720px">
+        <thead><tr style="background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205">
+          <th style="padding:15px 18px;text-align:left;font-weight:700">Potencia</th>
+          <th style="padding:15px 18px;text-align:center;font-weight:700">Nº placas</th>
+          <th style="padding:15px 18px;text-align:right;font-weight:700">Inversión<br><span style="font-weight:400;opacity:.8;font-size:11px">IVA incl.</span></th>
+          <th style="padding:15px 18px;text-align:right;font-weight:700">Ahorro/mes</th>
+          <th style="padding:15px 18px;text-align:right;font-weight:700">Cuota</th>
+          <th style="padding:15px 18px;text-align:right;font-weight:700">Ahorro 10a</th>
+          <th style="padding:15px 18px;text-align:right;font-weight:700">Ahorro 25a</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-top:1px solid rgba(255,255,255,.06);background:#141417"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">5 kW</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">10</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">6.957,50 €</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">103,85 €</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">80,60 €</td><td style="padding:14px 18px;text-align:right">3.687,09 €</td><td style="padding:14px 18px;text-align:right;font-weight:700">27.283,69 €</td></tr>
+          <tr style="border-top:1px solid rgba(255,255,255,.06);background:#0e0e11"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">6 kW</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">12</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">7.986,00 €</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">124,62 €</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">92,52 €</td><td style="padding:14px 18px;text-align:right">5.148,15 €</td><td style="padding:14px 18px;text-align:right;font-weight:700">33.885,68 €</td></tr>
+          <tr style="border-top:1px solid rgba(255,255,255,.06);background:#141417"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">7 kW</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">14</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">9.317,00 €</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">145,39 €</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">107,94 €</td><td style="padding:14px 18px;text-align:right">6.188,67 €</td><td style="padding:14px 18px;text-align:right;font-weight:700">40.067,13 €</td></tr>
+          <tr style="border-top:1px solid rgba(255,255,255,.06);background:#0e0e11"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">8 kW</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">16</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">10.164,00 €</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">166,16 €</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">117,75 €</td><td style="padding:14px 18px;text-align:right">7.902,05 €</td><td style="padding:14px 18px;text-align:right;font-weight:700">46.921,45 €</td></tr>
+          <tr style="border-top:1px solid rgba(255,255,255,.06);background:#141417"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">10 kW</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">20</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">12.100,00 €</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">207,70 €</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">140,18 €</td><td style="padding:14px 18px;text-align:right">10.992,39 €</td><td style="padding:14px 18px;text-align:right;font-weight:700">60.293,64 €</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:14px;display:flex;flex-direction:column;gap:4px">
+      <p style="margin:0;font-size:12px;color:rgba(244,243,240,.45)">* Estimación de rentabilidad calculada con un precio de energía de 0,16 €/kWh + IVA.</p>
+      <p style="margin:0;font-size:12px;color:rgba(244,243,240,.45)">* Financiación: 100% de la inversión + IVA a 10 años al 6,95% de interés.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="proceso" style="background:rgba(13,13,16,.4);padding:96px 24px;border-top:1px solid rgba(255,255,255,.06)">
+  <div style="max-width:1180px;margin:0 auto">
+    <div style="max-width:660px">
+      <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">El proceso</span>
+      <h2 data-i18n="proc.h2" data-reveal data-reveal="left" style="margin:14px 0 0;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">Qué puedes esperar cuando pides un estudio a Solsureste Solar</h2>
+      <p data-reveal style="margin:18px 0 0;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Para diseñar tu sistema solar adaptado, seguimos los siguientes pasos:</p>
+    </div>
+    <div class="sss-steps" style="margin-top:44px;display:flex;flex-direction:column;gap:18px"></div>
+    <a data-magnetic data-reveal href="#inicio" class="sss-btn" style="margin-top:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:15px;font-weight:600;height:46px;padding:0 24px;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 44px rgba(255,180,61,.20),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">Solicitar estudio gratuito →</a>
+  </div>
+</section>
+
+<!-- FAQ CTA -->
+<section id="faq" style="background:rgba(9,9,12,.36);padding:80px 24px;border-top:1px solid rgba(255,255,255,.06)">
+  <div data-reveal style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:22px;border-radius:24px;border:1px solid rgba(255,180,61,.18);background:radial-gradient(120% 140% at 0% 0%,rgba(255,180,61,.08),transparent 55%),#0e0e11;padding:44px">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px">
+      <div style="max-width:560px">
+        <span style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Preguntas frecuentes</span>
+        <h2 data-i18n="faq.h2" style="margin:12px 0 0;font-size:28px;font-weight:700;letter-spacing:-.02em">¿Tienes dudas sobre la instalación solar?</h2>
+        <p style="margin:12px 0 0;font-size:16px;line-height:1.6;color:rgba(244,243,240,.66)">Hemos recopilado las preguntas más habituales de nuestros clientes: zonas, plazos, baterías, garantías y financiación.</p>
+      </div>
+      <a data-magnetic href="#inicio" class="sss-btn" style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:15px;font-weight:600;height:48px;padding:0 24px;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 44px rgba(255,180,61,.20),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">Ver todas las preguntas<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contacto" style="border-top:1px solid rgba(255,255,255,.06);background:rgba(13,13,16,.62)">
+  <div style="max-width:1180px;margin:0 auto;padding:54px 24px">
+    <div class="sss-2col" style="display:grid;grid-template-columns:2fr 1fr;gap:40px">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="display:flex;height:36px;width:36px;align-items:center;justify-content:center;border-radius:10px;background:linear-gradient(135deg,#FFB43D,#E07A0C);color:#1a1205"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span>
+          <span style="font-size:18px;font-weight:700;letter-spacing:-.02em">Solsureste <span style="color:#FFB43D">Solar</span></span>
+        </div>
+        <div style="margin-top:20px;display:flex;flex-direction:column;gap:12px;font-size:14px;color:rgba(244,243,240,.6)">
+          <a href="https://maps.google.com/?q=Calle+Aldebaran+51+Molina+de+Segura+Murcia" target="_blank" rel="noopener" class="sss-footlink" style="display:flex;align-items:flex-start;gap:9px;color:inherit;transition:color .2s"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFB43D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Calle Aldebarán, 51, P.I. La Estrella — Molina de Segura (30509) Murcia</a>
+          <a href="tel:+34968869532" class="sss-footlink" style="display:flex;align-items:center;gap:9px;color:inherit;transition:color .2s"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFB43D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.6 19.79 19.79 0 0 1 1.61 5a2 2 0 0 1 1.99-2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.59z"/></svg>968 869 532</a>
+          <a href="mailto:info@solsurestesolar.com" class="sss-footlink" style="display:flex;align-items:center;gap:9px;color:inherit;transition:color .2s"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFB43D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>info@solsurestesolar.com</a>
+        </div>
+      </div>
+      <div>
+        <p style="margin:0 0 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:rgba(244,243,240,.85)">Enlaces rápidos</p>
+        <nav style="display:flex;flex-direction:column;gap:11px;font-size:14px">
+          <a href="#inicio" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Inicio</a>
+          <a href="#proyectos" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Proyectos</a>
+          <a href="#faq" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">FAQ</a>
+          <a href="#proceso" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Proceso</a>
+          <a href="#financiacion" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Financiación</a>
+          <a href="#chatbot-slot" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Asistente IA</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <div style="border-top:1px solid rgba(255,255,255,.06)">
+    <div style="max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:18px 24px;font-size:12px;color:rgba(244,243,240,.45)">
+      <span data-i18n="footer.copy">© 2026 Solsureste Solar · Paco Alcaraz. Todos los derechos reservados.</span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:#FFB43D;box-shadow:0 0 8px #FFB43D"></span>Hecho en el sureste</span>
+    </div>
+  </div>
+</footer>
+
+</div>
+<script src="./script.js"></script>
+</body>
+</html>
