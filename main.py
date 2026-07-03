@@ -1,7 +1,7 @@
 import os
 import json
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 import database as db
@@ -175,12 +175,29 @@ async def procesar_mensaje(user_id, mensaje_usuario):
         dia_nombre = dias_semana[hoy.weekday()]
         fecha_actual_contexto = f"{hoy.strftime('%Y-%m-%d')} (hoy es {dia_nombre})"
 
+        # Tabla de los próximos 14 días ya calculada por Python: el modelo NO debe hacer
+        # aritmética de fechas de cabeza (se comprobó que gpt-4o-mini falla calculando
+        # "el día de la semana X" a partir de la fecha de hoy — solo debe copiar de esta tabla).
+        tabla_fechas = "\n".join(
+            f"        - {(hoy + timedelta(days=i)).strftime('%Y-%m-%d')} → {dias_semana[(hoy + timedelta(days=i)).weekday()]}"
+            + (" (hoy)" if i == 0 else " (mañana)" if i == 1 else "")
+            for i in range(14)
+        )
+
         prompt_especialista = PROMPT_AGENDADOR + f"""
 
         CONTEXTO TEMPORAL CRÍTICO:
         - La fecha real de HOY es: {fecha_actual_contexto}.
-        - Si el usuario te pide una cita para 'mañana', 'el martes', 'la semana que viene', etc., calcula matemáticamente el año, mes y día exacto basándote en la fecha de hoy.
-        - Una vez calculada, DEBES ejecutar obligatoriamente la herramienta 'reservar_cita'. No te limites a confirmar con texto.
+        - PROHIBIDO calcular de cabeza qué fecha corresponde a un día de la semana. Usa EXCLUSIVAMENTE
+          esta tabla ya calculada de los próximos 14 días para traducir lo que diga el usuario
+          ('mañana', 'el jueves', 'la semana que viene', etc.) a una fecha YYYY-MM-DD exacta:
+{tabla_fechas}
+        - Si el usuario dice un día de la semana sin más (ej. "el jueves") y hoy todavía no ha pasado
+          ese día en esta semana, usa la PRIMERA fecha de la tabla que coincida con ese día de la
+          semana (el más próximo). Si dice "el jueves que viene" o "la semana que viene", usa la
+          segunda ocurrencia de ese día en la tabla.
+        - Una vez identificada la fecha exacta en la tabla, DEBES ejecutar obligatoriamente la
+          herramienta 'reservar_cita' con esa fecha. No te limites a confirmar con texto.
         """
         herramientas_activas = [tool_reservar_cita]
 

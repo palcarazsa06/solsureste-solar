@@ -176,9 +176,13 @@
         document.getElementById('stat-coste').textContent = '$' + costeTotal.toFixed(4);
     }
 
+    function normalizarTexto(s) {
+        return (s || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    }
+
     function renderTabla() {
         const tbody = document.getElementById('tabla-clientes');
-        const textoBusqueda = document.getElementById('buscador').value.toLowerCase().trim();
+        const textoBusqueda = normalizarTexto(document.getElementById('buscador').value.trim());
         const filtroEstado = document.getElementById('filtroEstado').value;
 
         let leads = todosLosLeads;
@@ -191,10 +195,10 @@
 
         if (textoBusqueda) {
             leads = leads.filter(c =>
-                (c.nombre || '').toLowerCase().includes(textoBusqueda) ||
-                (c.correo || '').toLowerCase().includes(textoBusqueda) ||
-                (c.telefono || '').toLowerCase().includes(textoBusqueda) ||
-                (c.ciudad || '').toLowerCase().includes(textoBusqueda)
+                normalizarTexto(c.nombre).includes(textoBusqueda) ||
+                normalizarTexto(c.correo).includes(textoBusqueda) ||
+                normalizarTexto(c.telefono).includes(textoBusqueda) ||
+                normalizarTexto(c.ciudad).includes(textoBusqueda)
             );
         }
 
