@@ -1,7 +1,9 @@
 import sqlite3
 import json
+import os
 
-DB_NAME = "agencia.db"
+DATA_DIR = os.getenv("DATA_DIR", ".")
+DB_NAME = os.path.join(DATA_DIR, "agencia.db")
 
 def get_connection():
     conn = sqlite3.connect(DB_NAME, timeout=20.0)

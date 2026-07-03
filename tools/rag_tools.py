@@ -10,8 +10,9 @@ logger = get_logger(__name__)
 load_dotenv()
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# 1. Iniciar ChromaDB en local (creará una carpeta ./chroma_db)
-chroma_client = chromadb.PersistentClient(path="./chroma_db")
+# 1. Iniciar ChromaDB (persistido en DATA_DIR/chroma_db; DATA_DIR=. en local)
+DATA_DIR = os.getenv("DATA_DIR", ".")
+chroma_client = chromadb.PersistentClient(path=os.path.join(DATA_DIR, "chroma_db"))
 collection = chroma_client.get_or_create_collection(name="conocimiento_empresa")
 
 # Caché en memoria: clave = pregunta normalizada, valor = resultado completo

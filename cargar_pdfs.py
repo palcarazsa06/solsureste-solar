@@ -9,7 +9,8 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Configuramos la conexión a la base de datos vectorial
-CHROMA_PATH = "./chroma_db"
+DATA_DIR = os.getenv("DATA_DIR", ".")
+CHROMA_PATH = os.path.join(DATA_DIR, "chroma_db")
 DOCUMENTOS_PATH = "./documentos"
 
 def obtener_embedding(texto):

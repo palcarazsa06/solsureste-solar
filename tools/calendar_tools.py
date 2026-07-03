@@ -15,7 +15,8 @@ load_dotenv()
 # CONFIGURACIÓN CRÍTICA
 # =====================================================================
 CALENDAR_ID = os.getenv("GOOGLE_CALENDAR_ID", "palcarazsa06@gmail.com")
-CREDENTIALS_FILE = "credenciales_google.json"
+DATA_DIR = os.getenv("DATA_DIR", ".")
+CREDENTIALS_FILE = os.path.join(DATA_DIR, "credenciales_google.json")
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 def obtener_servicio_calendar():
