@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /session
+Disallow: /presupuesto
+
+Sitemap: https://solsurestesolar.com/sitemap.xml

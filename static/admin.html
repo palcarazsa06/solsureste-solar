@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Solsureste Solar CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+    <div id="login-screen" class="flex h-screen items-center justify-center bg-gray-50">
+        <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm border border-gray-100">
+            <div class="flex justify-center mb-6">
+                <span class="flex h-12 w-12 items-center justify-center rounded-full bg-orange-500 text-white shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+            </div>
+            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Acceso Admin</h2>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
+                <input type="text" id="username" placeholder="admin" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors">
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                <input type="password" id="password" placeholder="•••••" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors" onkeypress="if(event.key === 'Enter') iniciarSesion()">
+            </div>
+            <button onclick="iniciarSesion()" class="w-full bg-orange-500 text-white font-bold py-2.5 px-4 rounded-lg hover:bg-orange-600 transition-colors shadow-sm">Entrar al Panel</button>
+        </div>
+    </div>
+
+    <div id="dashboard-screen" class="hidden min-h-screen flex flex-col">
+
+        <nav class="bg-gray-900 text-white px-6 py-4 flex justify-between items-center shadow-md">
+            <div class="flex items-center gap-3">
+                <span class="flex h-8 w-8 items-center justify-center rounded bg-orange-500 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                </span>
+                <h1 class="text-xl font-bold tracking-tight">Solsureste Solar <span class="text-orange-400 font-medium">CRM</span></h1>
+            </div>
+            <button onclick="cerrarSesion()" class="text-sm font-medium text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors">Cerrar Sesión</button>
+        </nav>
+
+        <main class="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full">
+
+            <!-- Cabecera -->
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Leads Captados</h2>
+                    <p class="text-sm text-gray-500 mt-1">Contactos extraídos de forma automática por la IA.</p>
+                </div>
+                <button onclick="cargarDatosBD()" class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg font-medium shadow-sm flex items-center gap-2 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    Refrescar
+                </button>
+            </div>
+
+            <!-- Barra de estadísticas -->
+            <div id="stats-bar" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+                    <div class="text-xs text-gray-500 uppercase font-semibold mb-1">Total Leads</div>
+                    <div id="stat-total" class="text-3xl font-bold text-gray-900">—</div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+                    <div class="text-xs text-gray-500 uppercase font-semibold mb-1">En Proceso</div>
+                    <div id="stat-en-proceso" class="text-3xl font-bold text-blue-600">—</div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+                    <div class="text-xs text-gray-500 uppercase font-semibold mb-1">Gestionados</div>
+                    <div id="stat-gestionados" class="text-3xl font-bold text-green-600">—</div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+                    <div class="text-xs text-gray-500 uppercase font-semibold mb-1">Coste Total IA</div>
+                    <div id="stat-coste" class="text-2xl font-bold text-orange-500">—</div>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                <input
+                    type="text"
+                    id="buscador"
+                    placeholder="Buscar por nombre, correo, teléfono o ciudad..."
+                    oninput="renderTabla()"
+                    class="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 bg-white shadow-sm"
+                >
+                <select
+                    id="filtroEstado"
+                    onchange="renderTabla()"
+                    class="border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 bg-white shadow-sm"
+                >
+                    <option value="">Todos los estados</option>
+                    <option value="CUALIFICADOR">CUALIFICADOR</option>
+                    <option value="AGENDADOR">AGENDADOR</option>
+                    <option value="TERMINAR">TERMINAR</option>
+                    <option value="LEAD_DIRECTO">LEAD_DIRECTO</option>
+                    <option value="INICIO">INICIO</option>
+                    <option value="__GESTIONADOS__">Solo gestionados</option>
+                </select>
+            </div>
+
+            <!-- Tabla de leads -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-4 font-semibold w-1/3">Datos del Cliente</th>
+                                <th class="px-6 py-4 font-semibold w-2/3">Historial de Conversación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-clientes" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<script>
+    let radarInterval;
+    let todosLosLeads = [];
+
+    async function iniciarSesion() {
+        const usu = document.getElementById('username').value;
+        const pas = document.getElementById('password').value;
+        const credencial = 'Basic ' + btoa(usu + ':' + pas);
+
+        try {
+            const respuesta = await fetch('/api/leads', { headers: { 'Authorization': credencial } });
+            if (!respuesta.ok) { alert('❌ Usuario o contraseña incorrectos.'); return; }
+
+            sessionStorage.setItem('credencialAdmin', credencial);
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('dashboard-screen').classList.remove('hidden');
+
+            await cargarDatosBD();
+            radarInterval = setInterval(cargarDatosBD, 10000);
+        } catch (error) {
+            alert('❌ No se pudo conectar con el servidor.');
+        }
+    }
+
+    function cerrarSesion() {
+        sessionStorage.removeItem('credencialAdmin');
+        document.getElementById('dashboard-screen').classList.add('hidden');
+        document.getElementById('login-screen').classList.remove('hidden');
+        document.getElementById('password').value = '';
+        clearInterval(radarInterval);
+    }
+
+    async function cargarDatosBD() {
+        const credencial = sessionStorage.getItem('credencialAdmin');
+        try {
+            const respuesta = await fetch('/api/leads', { headers: { 'Authorization': credencial } });
+            if (respuesta.status === 401) { clearInterval(radarInterval); cerrarSesion(); return; }
+
+            const json = await respuesta.json();
+            todosLosLeads = json.data || [];
+            window._costeHistorico = json.coste_historico || 0;
+
+            actualizarStats();
+            renderTabla();
+        } catch (error) {
+            console.error("Error al cargar los datos:", error);
+        }
+    }
+
+    function actualizarStats() {
+        const total = todosLosLeads.length;
+        const enProceso = todosLosLeads.filter(c => c.estado === 'CUALIFICADOR' || c.estado === 'AGENDADOR').length;
+        const gestionados = todosLosLeads.filter(c => c.gestionado).length;
+        const costeTotal = (window._costeHistorico || 0) + todosLosLeads.reduce((sum, c) => sum + (c.coste_usd || 0), 0);
+
+        document.getElementById('stat-total').textContent = total;
+        document.getElementById('stat-en-proceso').textContent = enProceso;
+        document.getElementById('stat-gestionados').textContent = gestionados;
+        document.getElementById('stat-coste').textContent = '$' + costeTotal.toFixed(4);
+    }
+
+    function renderTabla() {
+        const tbody = document.getElementById('tabla-clientes');
+        const textoBusqueda = document.getElementById('buscador').value.toLowerCase().trim();
+        const filtroEstado = document.getElementById('filtroEstado').value;
+
+        let leads = todosLosLeads;
+
+        if (filtroEstado === '__GESTIONADOS__') {
+            leads = leads.filter(c => c.gestionado);
+        } else if (filtroEstado) {
+            leads = leads.filter(c => c.estado === filtroEstado);
+        }
+
+        if (textoBusqueda) {
+            leads = leads.filter(c =>
+                (c.nombre || '').toLowerCase().includes(textoBusqueda) ||
+                (c.correo || '').toLowerCase().includes(textoBusqueda) ||
+                (c.telefono || '').toLowerCase().includes(textoBusqueda) ||
+                (c.ciudad || '').toLowerCase().includes(textoBusqueda)
+            );
+        }
+
+        if (leads.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="2" class="px-6 py-8 text-center text-gray-500">No hay leads que coincidan con los filtros.</td></tr>';
+            return;
+        }
+
+        let html = '';
+        leads.forEach(cliente => {
+            const cNombre   = (cliente.nombre   && cliente.nombre   !== 'Desconocido' && cliente.nombre   !== '') ? cliente.nombre   : '👤 En proceso...';
+            const cTelefono = (cliente.telefono && cliente.telefono !== 'Desconocido' && cliente.telefono !== '') ? cliente.telefono : 'Sin teléfono';
+            const cCorreo   = (cliente.correo   && cliente.correo   !== 'Desconocido' && cliente.correo   !== '') ? cliente.correo   : 'Sin correo';
+            const cCiudad   = (cliente.ciudad   && cliente.ciudad   !== 'Desconocido' && cliente.ciudad   !== '') ? cliente.ciudad   : 'Sin ciudad';
+            const cEstado   = cliente.estado || 'INICIO';
+            const gestionado = cliente.gestionado;
+
+            const tokensTotal = (cliente.tokens_prompt || 0) + (cliente.tokens_completion || 0);
+            const coste = cliente.coste_usd || 0;
+            const costeStr = tokensTotal > 0 ? `${tokensTotal.toLocaleString()} tokens · $${coste.toFixed(4)}` : '';
+
+            const createdAt = cliente.created_at ? cliente.created_at.substring(0, 16).replace('T', ' ') : '';
+
+            let badgeColor = "bg-gray-100 text-gray-700 border-gray-200";
+            if (cEstado === "CUALIFICADOR")  badgeColor = "bg-blue-100 text-blue-800 border-blue-200";
+            if (cEstado === "AGENDADOR")     badgeColor = "bg-green-100 text-green-800 border-green-200";
+            if (cEstado === "TERMINAR")      badgeColor = "bg-gray-200 text-gray-700 border-gray-300";
+            if (cEstado === "LEAD_DIRECTO")  badgeColor = "bg-gray-900 text-white border-gray-800";
+
+            const gestionadoBadge = gestionado
+                ? `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border bg-purple-100 text-purple-800 border-purple-200 ml-1">✓ Gestionado</span>`
+                : '';
+
+            const gestionadoBtnLabel = gestionado ? '↩ Desmarcar' : '✓ Gestionado';
+            const gestionadoBtnColor = gestionado
+                ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-200'
+                : 'bg-green-50 text-green-700 hover:bg-green-100 border-green-200';
+
+            const uid = cliente.user_id.replace(/'/g, "\\'");
+
+            html += `
+            <tr class="hover:bg-gray-50 transition-colors border-b border-gray-100 ${gestionado ? 'opacity-70' : ''}">
+                <td class="px-6 py-4 align-top border-r border-gray-100">
+                    <div class="mb-3">
+                        <div class="font-bold text-gray-900 text-lg">${cNombre}</div>
+                        <div class="text-xs text-gray-400 font-mono mt-0.5" title="ID de Sesión">${cliente.user_id}</div>
+                        ${createdAt ? `<div class="text-xs text-gray-400 mt-0.5">🕐 ${createdAt}</div>` : ''}
+                    </div>
+
+                    <div class="space-y-1.5 mb-4 text-sm text-gray-600">
+                        <div class="flex items-center gap-2"><span>📞</span><span class="font-medium">${cTelefono}</span></div>
+                        <div class="flex items-center gap-2"><span>📧</span><span>${cCorreo}</span></div>
+                        <div class="flex items-center gap-2"><span>📍</span><span>${cCiudad}</span></div>
+                        ${costeStr ? `<div class="flex items-center gap-2 text-xs text-gray-400"><span>💰</span><span>${costeStr}</span></div>` : ''}
+                    </div>
+
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${badgeColor}">
+                            ${cEstado}
+                        </span>
+                        ${gestionadoBadge}
+                    </div>
+
+                    <div class="flex gap-2 pt-2 border-t border-gray-100">
+                        <button
+                            onclick="toggleGestionado('${uid}')"
+                            class="text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors ${gestionadoBtnColor}">
+                            ${gestionadoBtnLabel}
+                        </button>
+                        <button
+                            onclick="eliminarLead('${uid}')"
+                            class="text-xs font-medium px-3 py-1.5 rounded-lg border bg-red-50 text-red-600 hover:bg-red-100 border-red-200 transition-colors">
+                            🗑 Eliminar
+                        </button>
+                    </div>
+                </td>
+                <td class="px-6 py-4 align-top">
+                    <div class="flex flex-col gap-3 p-4 max-h-[350px] overflow-y-auto bg-gray-100 rounded-xl border border-gray-200 shadow-inner">`;
+
+            if (cliente.historial && Array.isArray(cliente.historial)) {
+                let mensajesUtiles = 0;
+                cliente.historial.forEach(msg => {
+                    if (!msg.content || msg.role === 'system' || msg.role === 'tool') return;
+                    mensajesUtiles++;
+                    const contenido = String(msg.content).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+                    if (msg.role === 'user') {
+                        html += `<div class="bg-blue-100 text-blue-900 p-3 rounded-lg max-w-[85%] self-start text-sm shadow-sm border border-blue-200">
+                            <span class="font-bold block mb-1 text-blue-700">👤 Cliente:</span>${contenido}</div>`;
+                    } else if (msg.role === 'assistant') {
+                        html += `<div class="bg-white text-gray-800 p-3 rounded-lg max-w-[85%] self-end text-sm shadow-sm border border-gray-200">
+                            <span class="font-bold block mb-1 text-orange-500">🤖 IA:</span>${contenido}</div>`;
+                    }
+                });
+                if (mensajesUtiles === 0) html += '<p class="text-sm text-gray-500 italic">Conversación en blanco.</p>';
+            } else {
+                html += '<p class="text-sm text-gray-500 italic">No hay historial legible.</p>';
+            }
+
+            html += `</div></td></tr>`;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    async function toggleGestionado(userId) {
+        const credencial = sessionStorage.getItem('credencialAdmin');
+        try {
+            const res = await fetch(`/api/leads/${encodeURIComponent(userId)}/gestionado`, {
+                method: 'PATCH',
+                headers: { 'Authorization': credencial }
+            });
+            if (!res.ok) throw new Error('Error ' + res.status);
+            await cargarDatosBD();
+        } catch (e) {
+            alert('No se pudo actualizar el estado. Intenta de nuevo.');
+        }
+    }
+
+    async function eliminarLead(userId) {
+        if (!confirm(`¿Eliminar este lead permanentemente?\n\nEsta acción no se puede deshacer.`)) return;
+        const credencial = sessionStorage.getItem('credencialAdmin');
+        try {
+            const res = await fetch(`/api/leads/${encodeURIComponent(userId)}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': credencial }
+            });
+            if (!res.ok) throw new Error('Error ' + res.status);
+            await cargarDatosBD();
+        } catch (e) {
+            alert('No se pudo eliminar el lead. Intenta de nuevo.');
+        }
+    }
+</script>
+</body>
+</html>

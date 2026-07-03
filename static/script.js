@@ -9,6 +9,23 @@
 
   const S = {
     reduce: false,
+    userId: null,
+    sessionReady: null,
+
+    initSession() {
+      const saved = (() => { try { return localStorage.getItem('sss_user_id'); } catch (_) { return null; } })();
+      if (saved) {
+        this.userId = saved;
+        this.sessionReady = Promise.resolve();
+        return;
+      }
+      this.sessionReady = fetch('/session', { method: 'POST' })
+        .then((r) => r.json())
+        .then((data) => {
+          this.userId = data.session_id;
+          try { localStorage.setItem('sss_user_id', this.userId); } catch (_) {}
+        });
+    },
 
     init() {
       const root = document.getElementById('sss-root');
@@ -32,6 +49,7 @@
       this.setupGrid();
       this.setupStepLine();
       this.setupFinance();
+      this.initSession();
       this.initChat();
       this.setupBindings();
     },
@@ -715,17 +733,59 @@ void main(){
     },
 
     // ---------- form ----------
-    handleHeroSubmit(e) {
-      e.preventDefault();
+    heroFeedback(ok, msg) {
       const fb = document.getElementById('sss-hero-fb');
-      if (fb) {
-        fb.style.display = 'block';
+      if (!fb) return;
+      fb.style.display = 'block';
+      if (ok) {
         fb.style.background = 'rgba(61,220,132,.12)';
         fb.style.color = '#7ee2a8';
         fb.style.border = '1px solid rgba(61,220,132,.3)';
-        fb.textContent = '✅ ¡Solicitud enviada! Te llamamos en breve.';
+      } else {
+        fb.style.background = 'rgba(220,61,61,.12)';
+        fb.style.color = '#e28080';
+        fb.style.border = '1px solid rgba(220,61,61,.3)';
       }
-      e.target.reset();
+      fb.textContent = msg;
+    },
+
+    async handleHeroSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const btn = document.getElementById('sss-hero-submit');
+      const label = document.getElementById('sss-hero-submit-label');
+      const prevLabel = label ? label.textContent : '';
+      if (btn) btn.disabled = true;
+      if (label) label.textContent = 'Enviando…';
+
+      const data = {
+        nombre: document.getElementById('sss-hf-nombre').value.trim(),
+        apellido: document.getElementById('sss-hf-apellidos').value.trim(),
+        telefono: document.getElementById('sss-hf-telefono').value.trim(),
+        correo: document.getElementById('sss-hf-correo').value.trim(),
+        ciudad: document.getElementById('sss-hf-ciudad').value.trim(),
+        tipo_instalacion: document.getElementById('sss-hf-tipo').value,
+        mensaje: '',
+      };
+
+      try {
+        const res = await fetch('/presupuesto', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        if (res.ok) {
+          this.heroFeedback(true, '✅ ¡Solicitud enviada! Te llamamos en breve.');
+          form.reset();
+        } else {
+          this.heroFeedback(false, 'Hubo un problema. Inténtalo de nuevo o llámanos al 968 869 532.');
+        }
+      } catch (_) {
+        this.heroFeedback(false, 'Sin conexión. Llámanos al 968 869 532.');
+      } finally {
+        if (btn) btn.disabled = false;
+        if (label) label.textContent = prevLabel;
+      }
     },
 
     // ---------- chat ----------
@@ -765,37 +825,56 @@ void main(){
       this.scrollChat();
     },
 
-    reply(msg) {
-      const m = msg.toLowerCase();
-      if (/(precio|cuesta|cuánto|cuanto|coste|presupuesto)/.test(m)) return 'El presupuesto exacto lo da tu comercial asignado tras una breve llamada y, si procede, una visita técnica. El estudio inicial es <strong>siempre gratuito</strong> y sin compromiso. ¿Te agendo esa llamada?';
-      if (/(zona|murcia|alicante|lorca|cartagena|dónde|donde)/.test(m)) return '¡Perfecto! Trabajamos en toda la Región de Murcia y la provincia de Alicante con equipo y maquinaria propios. ¿Es una vivienda, una nave o un huerto solar?';
-      if (/(batería|bateria|acumula)/.test(m)) return 'Podemos incluir baterías para maximizar tu autoconsumo nocturno. Lo dimensionamos en el estudio según tu curva de consumo real. ¿Quieres que un técnico lo valore?';
-      if (/(financ|pagar|cuota|iva)/.test(m)) return 'Financiamos el 100% de la instalación, IVA incluido, a 10 años. En muchos casos la cuota es menor que el ahorro mensual, así ahorras desde el primer mes. ¿Te paso un ejemplo según tu factura?';
-      if (/(garantía|garantia|años|mantenimiento)/.test(m)) return 'Ofrecemos garantía de 25 años en rendimiento de módulos y de mano de obra, además de soporte post-venta y monitorización. ¿Quieres agendar tu estudio?';
-      if (/(cita|llamada|agend|contact|estudio|gratis|gratuito)/.test(m)) return '¡Genial! Déjanos tu nombre y teléfono en el formulario de la izquierda o dime tu ciudad y un técnico te llamará hoy mismo. ☀️';
-      return 'Gracias por tu mensaje. Para darte cifras fiables, lo ideal es un estudio gratuito a partir de tu factura. ¿En qué ciudad estás y qué tipo de instalación te interesa (vivienda, nave o huerto solar)?';
+    formatBotText(text) {
+      let t = String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      t = t.replace(/\n/g, '<br>');
+      t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      t = t.replace(/(?:^|<br>)\s*\*\s+(.*)/g, '<br>• $1');
+      return t;
     },
 
-    handleChatSubmit(e) {
+    async handleChatSubmit(e) {
       e.preventDefault();
       const input = document.getElementById('sss-chat-input');
       const msg = (input.value || '').trim();
       if (!msg) return;
       this.bubble(msg.replace(/</g, '&lt;'), 'user');
       input.value = '';
+      input.disabled = true;
       this.typing();
-      const delay = 700 + Math.random() * 700;
-      setTimeout(() => {
+      try {
+        await this.sessionReady;
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: this.userId, mensaje: msg }),
+        });
+        if (!res.ok) throw new Error('respuesta no válida');
+        const data = await res.json();
         const t = document.getElementById('sss-typing');
         if (t) t.remove();
-        this.bubble(this.reply(msg), 'bot');
-      }, delay);
+        this.bubble(this.formatBotText(data.respuesta), 'bot');
+      } catch (_) {
+        const t = document.getElementById('sss-typing');
+        if (t) t.remove();
+        this.bubble('Disculpa, ha habido un problema momentáneo. ¿Puedes repetir tu mensaje, por favor?', 'bot');
+      } finally {
+        input.disabled = false;
+        input.focus();
+      }
     },
 
     resetChat() {
       try { localStorage.removeItem('sss_chat_v2'); } catch (_) {}
+      try { localStorage.removeItem('sss_user_id'); } catch (_) {}
       if (this.box) this.box.innerHTML = '';
       this.bubble('¡Hola de nuevo! ¿En qué ciudad te gustaría instalar las placas y qué tipo de instalación necesitas?', 'bot');
+      this.sessionReady = fetch('/session', { method: 'POST' })
+        .then((r) => r.json())
+        .then((data) => {
+          this.userId = data.session_id;
+          try { localStorage.setItem('sss_user_id', this.userId); } catch (_) {}
+        });
     },
 
     // ---------- i18n ----------

@@ -3,3 +3,13 @@ node_modules/
 Thumbs.db
 *.log
 .vscode/
+
+# Backend Python
+venv/
+.env
+logs/
+__pycache__/
+*.pyc
+credenciales_google.json
+agencia.db
+chroma_db/
