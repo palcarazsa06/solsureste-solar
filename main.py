@@ -142,20 +142,24 @@ async def procesar_mensaje(user_id, mensaje_usuario):
                     try:
                         await enviar_lead_crm(nombre=nombre_limpio, telefono=telefono_limpio, ubicacion=ciudad_limpia, necesidad="Instalación Solar")
                         db.marcar_crm_enviado(user_id)
-
-                        # Alerta email al propietario (fire-and-forget)
-                        try:
-                            from tools.email_tools import enviar_alerta_lead_email
-                            asyncio.create_task(enviar_alerta_lead_email(
-                                nombre=nombre_limpio, telefono=telefono_limpio,
-                                correo=correo_limpio, ciudad=ciudad_limpia, fuente="chat"
-                            ))
-                        except Exception as e_email:
-                            logger.warning(f"No se pudo lanzar la alerta email: {e_email}")
                     except Exception as error_crm:
                         logger.warning(f"Se guardó en la DB pero falló el envío al CRM externo: {error_crm}")
                 else:
                     logger.info("CRM ya enviado previamente para este usuario, se omite el duplicado.")
+
+                # Alerta email al propietario (fire-and-forget). Independiente del envío al CRM:
+                # el CUALIFICADOR puede haber enviado ya el lead al CRM en un turno anterior
+                # (vía su propia herramienta 'enviar_lead_crm'), pero eso no debe impedir que
+                # llegue el aviso por email cuando la cita se agenda de verdad. El bloque exterior
+                # 'if estado_actual != "AGENDADOR"' ya garantiza que esto solo se ejecute una vez.
+                try:
+                    from tools.email_tools import enviar_alerta_lead_email
+                    asyncio.create_task(enviar_alerta_lead_email(
+                        nombre=nombre_limpio, telefono=telefono_limpio,
+                        correo=correo_limpio, ciudad=ciudad_limpia, fuente="chat"
+                    ))
+                except Exception as e_email:
+                    logger.warning(f"No se pudo lanzar la alerta email: {e_email}")
 
             except Exception as e:
                 logger.error(f"Error al extraer JSON para la Base de Datos: {e}", exc_info=True)
