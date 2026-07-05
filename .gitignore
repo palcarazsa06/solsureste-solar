@@ -6,10 +6,18 @@ Thumbs.db
 
 # Backend Python
 venv/
-.env
+.env*
+!.env.example
 logs/
 __pycache__/
 *.pyc
 credenciales_google.json
-agencia.db
+agencia.db*
 chroma_db/
+
+# Claude Code (local-only overrides, no compartir)
+.claude/settings.local.json
+
+# Assets sin usar (vídeo del hero retirado, ya no referenciado)
+static/videos/dron.mp4
+static/images/dron-poster.jpg
