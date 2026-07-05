@@ -49,6 +49,25 @@
       this.initSession();
       this.initChat();
       this.setupBindings();
+      this.setupVisibilityPause();
+    },
+
+    // Pausa los bucles requestAnimationFrame de los 4 canvas cuando la pestaña está oculta
+    // (document.hidden) y los reanuda al volver, para no gastar CPU/GPU en segundo plano.
+    setupVisibilityPause() {
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          cancelAnimationFrame(this._storyRaf);
+          cancelAnimationFrame(this._heroRaf);
+          cancelAnimationFrame(this._gridRaf);
+          cancelAnimationFrame(this._finRaf);
+        } else if (!this.reduce) {
+          if (this._storyFrameFn) this._storyRaf = requestAnimationFrame(this._storyFrameFn);
+          if (this._heroStepFn) this._heroRaf = requestAnimationFrame(this._heroStepFn);
+          if (this._gridStepFn) this._gridRaf = requestAnimationFrame(this._gridStepFn);
+          if (this._finDrawFn) this._finRaf = requestAnimationFrame(this._finDrawFn);
+        }
+      });
     },
 
     setupBindings() {
@@ -127,6 +146,7 @@
         ctx.globalCompositeOperation = 'source-over';
         if (!this.reduce) this._finRaf = requestAnimationFrame(draw);
       };
+      this._finDrawFn = draw;
       draw();
     },
 
@@ -257,6 +277,7 @@
         ctx.globalCompositeOperation = 'source-over';
         this._heroRaf = requestAnimationFrame(step);
       };
+      this._heroStepFn = step;
       step();
     },
 
@@ -576,9 +597,10 @@ void main(){
         gl.uniform1f(uProg, st.p);
         gl.uniform1f(uReduce, this.reduce ? 1.0 : 0.0);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
-        requestAnimationFrame(frame);
+        if (!this.reduce) this._storyRaf = requestAnimationFrame(frame);
       };
-      requestAnimationFrame(frame);
+      this._storyFrameFn = frame;
+      this._storyRaf = requestAnimationFrame(frame);
     },
 
     // ---------- red eléctrica con pulsos (stats) ----------
@@ -666,6 +688,7 @@ void main(){
         ctx.globalCompositeOperation = 'source-over';
         this._gridRaf = requestAnimationFrame(step);
       };
+      this._gridStepFn = step;
       step();
     },
 
@@ -726,17 +749,58 @@ void main(){
     },
 
     // ---------- chat ----------
+    // Saludo inicial según el idioma de la página (document.documentElement.lang) — el motor
+    // conversacional ya responde en el idioma del usuario (ver agentes/*.py), pero este saludo
+    // fijo se generaba siempre en español antes de que el usuario escribiera nada.
+    greetingText(isReset) {
+      const en = document.documentElement.lang === 'en';
+      if (isReset) {
+        return en
+          ? 'Hi again! Which city would you like to install panels in, and what type of installation do you need?'
+          : '¡Hola de nuevo! ¿En qué ciudad te gustaría instalar las placas y qué tipo de instalación necesitas?';
+      }
+      return en
+        ? "Hi! I'm the virtual assistant for the Solsureste Solar sales team. I can answer your technical questions and schedule an appointment. Which city would you like to install panels in?"
+        : '¡Hola! Soy el asistente virtual del equipo comercial de Solsureste Solar. Puedo responder tus dudas técnicas y agendar una cita. ¿En qué ciudad te gustaría instalar las placas?';
+    },
+
     initChat() {
       this.box = document.getElementById('sss-chat-msgs');
       if (!this.box) return;
+      this.history = [];
+      // Clave anterior (sss_chat_v2) guardaba innerHTML crudo sin escape completo — nunca
+      // volver a leerla ni interpretarla como HTML, solo limpiarla.
+      try { localStorage.removeItem('sss_chat_v2'); } catch (_) {}
       let saved = null;
-      try { saved = localStorage.getItem('sss_chat_v2'); } catch (_) {}
-      if (saved) this.box.innerHTML = saved;
-      else this.bubble('¡Hola! Soy el asistente virtual del equipo comercial de Solsureste Solar. Puedo responder tus dudas técnicas y agendar una cita. ¿En qué ciudad te gustaría instalar las placas?', 'bot');
+      try { saved = JSON.parse(localStorage.getItem('sss_chat_v3') || 'null'); } catch (_) { saved = null; }
+      if (Array.isArray(saved) && saved.length) {
+        saved.forEach(({ who, text }) => {
+          this.history.push({ who, text });
+          this._renderBubble(who === 'bot' ? this.formatBotText(text) : this.escapeHtml(text), who);
+        });
+      } else {
+        this.bubble(this.greetingText(), 'bot');
+      }
       this.scrollChat();
     },
 
+    escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    },
+
     bubble(text, who) {
+      const html = who === 'bot' ? this.formatBotText(text) : this.escapeHtml(text);
+      this._renderBubble(html, who);
+      this.history.push({ who, text });
+      this.saveChat();
+    },
+
+    _renderBubble(html, who) {
       if (!this.box) return;
       const d = document.createElement('div');
       if (who === 'user') {
@@ -744,14 +808,13 @@ void main(){
       } else {
         d.style.cssText = 'align-self:flex-start;max-width:82%;background:rgba(255,255,255,.06);color:#f4f3f0;padding:9px 14px;border-radius:16px 16px 16px 4px;font-size:14px;line-height:1.45;border:1px solid rgba(255,255,255,.06)';
       }
-      d.innerHTML = text;
+      d.innerHTML = html;
       this.box.appendChild(d);
       this.scrollChat();
-      this.saveChat();
     },
 
     scrollChat() { if (this.box) this.box.scrollTo({ top: this.box.scrollHeight, behavior: 'smooth' }); },
-    saveChat() { try { localStorage.setItem('sss_chat_v2', this.box.innerHTML); } catch (_) {} },
+    saveChat() { try { localStorage.setItem('sss_chat_v3', JSON.stringify(this.history)); } catch (_) {} },
 
     typing() {
       const t = document.createElement('div');
@@ -763,7 +826,7 @@ void main(){
     },
 
     formatBotText(text) {
-      let t = String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      let t = this.escapeHtml(text);
       t = t.replace(/\n/g, '<br>');
       t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       t = t.replace(/(?:^|<br>)\s*\*\s+(.*)/g, '<br>• $1');
@@ -775,7 +838,7 @@ void main(){
       const input = document.getElementById('sss-chat-input');
       const msg = (input.value || '').trim();
       if (!msg) return;
-      this.bubble(msg.replace(/</g, '&lt;'), 'user');
+      this.bubble(msg, 'user');
       input.value = '';
       input.disabled = true;
       this.typing();
@@ -802,10 +865,11 @@ void main(){
     },
 
     resetChat() {
-      try { localStorage.removeItem('sss_chat_v2'); } catch (_) {}
+      try { localStorage.removeItem('sss_chat_v3'); } catch (_) {}
       try { localStorage.removeItem('sss_user_id'); } catch (_) {}
+      this.history = [];
       if (this.box) this.box.innerHTML = '';
-      this.bubble('¡Hola de nuevo! ¿En qué ciudad te gustaría instalar las placas y qué tipo de instalación necesitas?', 'bot');
+      this.bubble(this.greetingText(true), 'bot');
       this.sessionReady = fetch('/session', { method: 'POST' })
         .then((r) => r.json())
         .then((data) => {

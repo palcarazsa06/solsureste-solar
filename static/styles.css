@@ -60,6 +60,47 @@ input::placeholder,textarea::placeholder{color:rgba(244,243,240,.34)}
 .sss-langbtn-on{background:#FFB43D;color:#1a1205;border:none;cursor:pointer;padding:4px 9px;border-radius:7px;font-size:12px;font-weight:700;font-family:inherit}
 .sss-langbtn-off{background:none;color:rgba(244,243,240,.6);border:none;cursor:pointer;padding:4px 9px;border-radius:7px;font-size:12px;font-weight:700;font-family:inherit}
 
+/* ---------- accesibilidad: skip-link (oculto hasta recibir foco) ---------- */
+.sss-skip-link{position:absolute;left:-9999px;top:0;z-index:10000;padding:12px 20px;background:#FFB43D;color:#1a1205;font-weight:600;border-radius:0 0 8px 0;text-decoration:none}
+.sss-skip-link:focus{left:0}
+
+/* ---------- teléfono en el header (visible siempre, no solo desktop) ---------- */
+.sss-header-tel{display:flex;align-items:center;gap:7px;color:#FFB43D;font-size:14px;font-weight:600;white-space:nowrap;flex-shrink:0;transition:color .2s}
+.sss-header-tel:hover{color:#FFC766}
+
+/* ---------- CTA de texto inline (llamar / WhatsApp) tras bloques de valor ---------- */
+.sss-inline-cta{margin-top:16px;font-size:14px;color:rgba(244,243,240,.55)}
+.sss-inline-cta a{color:#FFB43D;font-weight:600}
+.sss-inline-cta a:hover{color:#FFC766}
+
+/* ---------- barra sticky de llamada/WhatsApp en móvil (oculta en desktop) ---------- */
+.sss-sticky-cta{display:none}
+.sss-sticky-cta a{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:52px;font-size:14.5px;font-weight:600}
+.sss-sticky-call{background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205}
+.sss-sticky-wa{background:#25D366;color:#fff}
+
+/* ---------- H2 de sección (patrón repetido, extraído de inline styles) ---------- */
+.sss-h2{margin:14px 0 0;font-size:clamp(28px,5vw,38px);font-weight:700;letter-spacing:-.02em;line-height:1.1}
+
+/* ---------- tarjetas de sección (patrón repetido 14x, extraído de inline styles) ---------- */
+.sss-card{border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px}
+.sss-card-hover{transition:transform .4s,border-color .4s,box-shadow .4s}
+.sss-card-row{display:flex;align-items:flex-start;gap:15px}
+
+/* ---------- padding de sección (patrón repetido, extraído de inline styles) ---------- */
+.sss-section{padding:clamp(48px,8vw,96px) 24px}
+.sss-section-a{background:rgba(9,9,12,.36)}
+.sss-section-b{background:rgba(13,13,16,.4)}
+.sss-section-border{border-top:1px solid rgba(255,255,255,.06)}
+
+/* ---------- botón flotante de WhatsApp ---------- */
+.sss-wa-float{position:fixed;right:24px;bottom:24px;z-index:500;width:56px;height:56px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.35);transition:transform .2s,box-shadow .2s}
+.sss-wa-float:hover{transform:scale(1.08);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+
+/* ---------- banner de cookies: mismo peso visual en Aceptar y Rechazar ---------- */
+.sss-cookie-btn{height:38px;padding:0 18px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:#f4f3f0;font-weight:600;font-family:inherit;font-size:14px;cursor:pointer;transition:background .2s,border-color .2s}
+.sss-cookie-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3)}
+
 /* ---------- image placeholders (no real photos supplied yet) ---------- */
 .sss-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.16);color:rgba(244,243,240,.32);font-size:12.5px;line-height:1.4;padding:16px}
 .sss-placeholder svg{opacity:.55;flex-shrink:0}
@@ -81,4 +122,13 @@ input::placeholder,textarea::placeholder{color:rgba(244,243,240,.34)}
   .sss-formgrid{grid-template-columns:1fr!important}
   .sss-statgrid{grid-template-columns:repeat(2,1fr)!important}
   .sss-h1{font-size:42px!important}
+  body{padding-bottom:52px}
+  .sss-sticky-cta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:600}
+  .sss-wa-float{display:none!important}
+}
+/* breakpoint intermedio: por debajo de ~370px, "+15 MW" no cabe en una columna de
+   .sss-statgrid a 2 columnas y el número se parte en dos líneas (verificado con
+   pruebas reales de viewport) — pasa a 1 columna solo en pantallas muy estrechas */
+@media (max-width:400px){
+  .sss-statgrid{grid-template-columns:1fr!important}
 }

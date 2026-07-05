@@ -7,6 +7,7 @@
 <meta name="description" content="Instalamos placas solares en Murcia y Alicante: hogares, empresas y huertos solares. +25 años de experiencia, maquinaria propia, financiación 100%.">
 <link rel="canonical" href="https://solsurestesolar.com/">
 <link rel="alternate" hreflang="es" href="https://solsurestesolar.com/">
+<link rel="alternate" hreflang="en" href="https://solsurestesolar.com/en">
 <link rel="alternate" hreflang="x-default" href="https://solsurestesolar.com/">
 
 <meta name="geo.region" content="ES-MC">
@@ -33,9 +34,8 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0a0a0c">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/space-grotesk-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts.css">
 <link rel="stylesheet" href="./styles.css">
 <script type="application/ld+json">
 {
@@ -61,16 +61,11 @@
       "foundingDate": "1999",
       "geo": { "@type": "GeoCoordinates", "latitude": 38.0880, "longitude": -1.2193 },
       "priceRange": "€€-€€€",
+      "sameAs": ["https://share.google/y92ODPPpFX7JV0CSn"],
       "openingHoursSpecification": [
         { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday"], "opens": "08:30", "closes": "14:00" },
         { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday"], "opens": "16:00", "closes": "19:30" },
         { "@type": "OpeningHoursSpecification", "dayOfWeek": "Friday", "opens": "08:30", "closes": "15:00" }
-      ],
-      "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "reviewCount": "3", "bestRating": "5", "worstRating": "1" },
-      "review": [
-        { "@type": "Review", "author": {"@type":"Person","name":"María José F."}, "reviewRating": {"@type":"Rating","ratingValue":"5","bestRating":"5"}, "reviewBody": "Desde el primer momento Paco nos explicó todo con claridad. La instalación estuvo lista en el plazo prometido y el primer mes ya notamos la diferencia en la factura. Sin sorpresas y sin problemas." },
-        { "@type": "Review", "author": {"@type":"Person","name":"Antonio P."}, "reviewRating": {"@type":"Rating","ratingValue":"5","bestRating":"5"}, "reviewBody": "Montaron dos instalaciones en mis naves industriales. Profesionalidad y cumplimiento de plazos impecables." },
-        { "@type": "Review", "author": {"@type":"Person","name":"Familia Martínez"}, "reviewRating": {"@type":"Rating","ratingValue":"5","bestRating":"5"}, "reviewBody": "Instalaron las placas en mi casa en un solo día conforme a lo acordado. Empecé a ahorrar en la factura desde el día siguiente al montaje. Volvería a contratarlos siempre." }
       ]
     },
     {
@@ -100,6 +95,8 @@
 </head>
 <body>
 
+<a href="#inicio" class="sss-skip-link">Saltar al contenido principal</a>
+
 <canvas id="sss-story" aria-hidden="true" style="position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;background:#06060c;display:block"></canvas>
 
 <div id="sss-root" style="background:transparent;color:#f4f3f0;min-height:100vh;overflow-x:hidden;position:relative;z-index:1">
@@ -109,12 +106,18 @@
 <!-- HEADER -->
 <header id="sss-header" style="position:sticky;top:0;z-index:200;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(10,10,12,.62);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:background .3s,box-shadow .3s">
   <div style="max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 24px">
-    <a href="#inicio" style="display:flex;align-items:center;gap:10px">
-      <span style="display:flex;height:38px;width:38px;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#E07A0C);color:#1a1205;box-shadow:0 6px 20px rgba(255,180,61,.5),0 0 34px rgba(255,180,61,.35);animation:sssFloat 4.5s ease-in-out infinite">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-      </span>
-      <span style="font-size:19px;font-weight:700;letter-spacing:-.02em">Solsureste <span style="color:#FFB43D">Solar</span></span>
-    </a>
+    <div style="display:flex;align-items:center;gap:24px;min-width:0">
+      <a href="#inicio" style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <span style="display:flex;height:38px;width:38px;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#E07A0C);color:#1a1205;box-shadow:0 6px 20px rgba(255,180,61,.5),0 0 34px rgba(255,180,61,.35);animation:sssFloat 4.5s ease-in-out infinite">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        </span>
+        <span style="font-size:19px;font-weight:700;letter-spacing:-.02em">Solsureste <span style="color:#FFB43D">Solar</span></span>
+      </a>
+      <a href="tel:+34968869532" class="sss-header-tel" aria-label="Llamar al 968 869 532">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.6 19.79 19.79 0 0 1 1.61 5a2 2 0 0 1 1.99-2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.59z"/></svg>
+        968 869 532
+      </a>
+    </div>
     <nav class="sss-hidemob" style="display:flex;align-items:center;gap:30px" aria-label="Navegación principal">
       <a data-i18n="nav.services" href="#servicios" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">Servicios</a>
       <a data-i18n="nav.projects" href="#proyectos" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">Proyectos</a>
@@ -193,14 +196,14 @@
               <p style="margin:0;font-size:11.5px;color:rgba(244,243,240,.55)">En línea · Atendiendo ahora</p>
             </div>
           </div>
-          <button id="sss-chat-reset" type="button" title="Reiniciar conversación" class="sss-iconbtn" style="background:none;border:none;cursor:pointer;color:rgba(244,243,240,.45);display:flex;transition:color .2s">
+          <button id="sss-chat-reset" type="button" title="Reiniciar conversación" aria-label="Reiniciar conversación" class="sss-iconbtn" style="background:none;border:none;cursor:pointer;color:rgba(244,243,240,.45);display:flex;transition:color .2s">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
           </button>
         </div>
-        <div id="sss-chat-msgs" style="flex:1;min-height:248px;max-height:248px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px"></div>
+        <div id="sss-chat-msgs" role="log" aria-live="polite" aria-relevant="additions" style="flex:1;min-height:248px;max-height:248px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px"></div>
         <div style="border-top:1px solid rgba(255,180,61,.12);padding:13px 14px;background:rgba(255,255,255,.02)">
           <form id="sss-chat-form" style="display:flex;gap:9px;align-items:center">
-            <input id="sss-chat-input" autocomplete="off" placeholder="Escribe tu mensaje…" class="sss-chatfield" style="flex:1;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:10px 16px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none">
+            <input id="sss-chat-input" autocomplete="off" placeholder="Escribe tu mensaje…" aria-label="Escribe tu mensaje" class="sss-chatfield" style="flex:1;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:10px 16px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none">
             <button type="submit" aria-label="Enviar" class="sss-sendbtn" style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;transition:transform .2s">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
             </button>
@@ -224,10 +227,10 @@
 </section>
 
 <!-- VALUE -->
-<section id="servicios" style="background:rgba(9,9,12,.36);padding:96px 24px">
+<section id="servicios" class="sss-section sss-section-a">
   <div class="sss-2col" style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center">
     <div>
-      <h2 data-i18n="value.h2" data-reveal data-reveal="left" style="margin:0;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">No pagues más por la factura de la luz</h2>
+      <h2 data-i18n="value.h2" data-reveal data-reveal="left" class="sss-h2" style="margin:0">No pagues más por la factura de la luz</h2>
       <p data-reveal style="margin:20px 0 0;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Instalar placas solares no es un gasto: es recuperar el control de lo que pagas cada mes. Con Solsureste Solar, cada euro invertido empieza a trabajar para ti desde el primer día de producción, ahorrando <strong style="color:#f4f3f0">miles de euros al año</strong> para lo que de verdad importa.</p>
       <p data-reveal style="margin:16px 0 0;font-size:16px;line-height:1.6;color:rgba(244,243,240,.7)">Solicita tu estudio gratuito y accede a:</p>
       <ul style="list-style:none;padding:0;margin:24px 0 0;display:flex;flex-direction:column;gap:16px">
@@ -246,12 +249,12 @@
 </section>
 
 <!-- TECH -->
-<section style="background:rgba(13,13,16,.4);padding:96px 24px;border-top:1px solid rgba(255,255,255,.06)">
+<section class="sss-section sss-section-b sss-section-border">
   <div style="max-width:1180px;margin:0 auto">
     <div style="max-width:840px">
       <div>
         <span data-i18n="tech.label" data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Nuestra propuesta técnica</span>
-        <h2 data-i18n="tech.h2" data-reveal data-reveal="left" style="margin:14px 0 0;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">El diseño solar más riguroso del sureste</h2>
+        <h2 data-i18n="tech.h2" data-reveal data-reveal="left" class="sss-h2">El diseño solar más riguroso del sureste</h2>
         <p data-reveal style="margin:18px 0 0;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Solsureste Solar te da cifras fiables sobre tu potencial solar. Combinamos los mejores software de diseño con una visita técnica a tu propiedad, análisis real de tu consumo y datos de más de 500 proyectos completados en la región.</p>
         <div data-reveal style="margin-top:26px;display:flex;gap:26px;flex-wrap:wrap">
           <div><p style="margin:0;font-size:26px;font-weight:700;color:#FFB43D">1.850</p><p style="margin:2px 0 0;font-size:12.5px;color:rgba(244,243,240,.55)">kWh/m²·año irradiación</p></div>
@@ -260,61 +263,62 @@
       </div>
     </div>
     <div class="sss-3col sss-techgrid" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
-      <div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover">
         <span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span>
         <h3 style="margin:18px 0 0;font-size:17px;font-weight:600">Análisis de consumo real</h3>
         <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">Estudiamos tus facturas de los últimos 12 meses para dimensionar exactamente el sistema que necesitas, sin sobredimensionar ni quedarte corto.</p>
       </div>
-      <div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover">
         <span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></span>
         <h3 style="margin:18px 0 0;font-size:17px;font-weight:600">Modelado 3D de tu cubierta</h3>
         <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">Diseño de la distribución óptima de paneles con simulación de sombras en tiempo real, orientación e inclinación específica de tu tejado.</p>
       </div>
-      <div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover">
         <span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
         <h3 style="margin:18px 0 0;font-size:17px;font-weight:600">Previsión de generación mes a mes</h3>
         <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">Estimación de producción con datos de irradiación específicos de tu municipio y calibrados con nuestras instalaciones reales en la zona.</p>
       </div>
-      <div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover">
         <span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
         <h3 style="margin:18px 0 0;font-size:17px;font-weight:600">ROI, amortización y VAN</h3>
         <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">Cuánto ahorras, cuándo recuperas la inversión y qué rentabilidad anual obtienes durante toda la vida útil de la instalación.</p>
       </div>
-      <div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover">
         <span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
         <h3 style="margin:18px 0 0;font-size:17px;font-weight:600">Tramitación incluida</h3>
         <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">Nos ocupamos de toda la burocracia: licencias municipales, legalización ante la distribuidora y acceso a bonificaciones autonómicas.</p>
       </div>
-      <div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover">
         <span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
         <h3 style="margin:18px 0 0;font-size:17px;font-weight:600">Garantía de 25 años</h3>
         <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">Garantía de mano de obra y rendimiento mínimo garantizado en módulos. Si no produce lo que prometemos, lo resolvemos nosotros.</p>
       </div>
     </div>
     <a data-magnetic data-reveal href="#chatbot-slot" class="sss-btn" style="margin-top:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:15px;font-weight:600;height:46px;padding:0 24px;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 44px rgba(255,180,61,.20),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">Ver mi propuesta solar →</a>
+    <p data-reveal class="sss-inline-cta">¿Prefieres hablar? <a href="tel:+34968869532">Llama al 968 869 532</a> o <a href="https://wa.me/34629345572?text=Hola%2C%20quiero%20presupuesto%20de%20placas%20solares" target="_blank" rel="noopener">escríbenos por WhatsApp</a>.</p>
   </div>
 </section>
 
 <!-- CASES -->
-<section id="proyectos" style="background:rgba(9,9,12,.36);padding:96px 24px;border-top:1px solid rgba(255,255,255,.06)">
+<section id="proyectos" class="sss-section sss-section-a sss-section-border">
   <div style="max-width:1180px;margin:0 auto">
     <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Resultados reales</span>
-    <h2 data-i18n="cases.h2" data-reveal data-reveal="left" style="margin:14px 0 0;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">Ejemplos reales de instalaciones realizadas</h2>
+    <h2 data-i18n="cases.h2" data-reveal data-reveal="left" class="sss-h2">Ejemplos reales de instalaciones realizadas</h2>
     <p data-reveal style="margin:18px 0 0;max-width:760px;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Solsureste Solar ofrece una garantía de trabajo de 25 años porque nos respaldamos en lo que hacemos. Estos son resultados reales de clientes del sureste con los datos de ahorro conseguidos.</p>
     <div class="sss-3col" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px">
-      <div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:18px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
         <img src="/images/foto1-card.webp" alt="Instalación residencial de placas solares en Lorca, Murcia" width="900" height="506" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
         <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">Aire acondicionado todo el día con factura cero</h3>
         <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">Este cliente en Lorca recibió en agosto una factura con <strong style="color:#f4f3f0">coste de energía €0</strong>. Respecto al año anterior ahorró €170 ese mes. Con el año completo libera cerca de <strong style="color:#f4f3f0">€1.800 anuales</strong>, pudiendo encender el aire sin preocuparse.</p>
         <a href="/placas-solares-lorca" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Leer caso completo en Lorca →</a>
       </div>
-      <div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:18px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
         <img src="/images/foto2.webp" alt="Instalación solar en nave industrial en Cartagena, Murcia" width="900" height="506" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
         <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">€5.000 liberados de la factura cada año</h3>
         <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">Esta empresa en Cartagena tenía una factura de €860 en verano. Un año después de la instalación esa factura <strong style="color:#f4f3f0">bajó a €22</strong> (incluido el cargo fijo). Libera ahora <strong style="color:#f4f3f0">más de €5.000 anuales</strong> que antes iban a la eléctrica.</p>
         <a href="/placas-solares-cartagena" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Leer caso completo en Cartagena →</a>
       </div>
-      <div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:18px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
         <img src="/images/foto3.webp" alt="Huerto solar agrícola en Orihuela, Alicante" width="900" height="506" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
         <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">Amortización en 6 años en gran instalación agrícola</h3>
         <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">Explotación en Orihuela (Alicante) con factura de bombeo de €3.100 en verano. Tras el huerto solar propio, esa factura cayó a €390 el año siguiente. La reducción de €2.700 supuso <strong style="color:#f4f3f0">amortizar en menos de 6 años</strong>.</p>
@@ -327,29 +331,29 @@
 <!-- WHY -->
 <section style="background:rgba(9,9,12,.36);padding:0 24px 96px">
   <div style="max-width:1180px;margin:0 auto">
-    <h2 data-i18n="why.h2" data-reveal data-reveal="left" style="margin:0;max-width:680px;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">Por qué elegir Solsureste Solar para tu instalación solar</h2>
+    <h2 data-i18n="why.h2" data-reveal data-reveal="left" class="sss-h2" style="margin:0;max-width:680px">Por qué elegir Solsureste Solar para tu instalación solar</h2>
     <div class="sss-3col sss-whygrid" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
-      <div data-reveal data-spotlight style="display:flex;align-items:flex-start;gap:15px;border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover sss-card-row">
         <span style="flex-shrink:0;display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
         <div><h3 style="margin:0;font-size:16px;font-weight:600">Instalador de referencia en el sureste</h3>
         <p style="margin:8px 0 0;font-size:15px;line-height:1.55;color:rgba(244,243,240,.64)">Más de 25 años en el sector diseñando, instalando y manteniendo instalaciones solares en Murcia y Alicante.</p></div>
       </div>
-      <div data-reveal data-spotlight style="display:flex;align-items:flex-start;gap:15px;border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover sss-card-row">
         <span style="flex-shrink:0;display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
         <div><h3 style="margin:0;font-size:16px;font-weight:600">Sin intermediarios ni comerciales</h3>
         <p style="margin:8px 0 0;font-size:15px;line-height:1.55;color:rgba(244,243,240,.64)">Nuestros ingenieros personalizan tu oferta sin intermediarios que encarezcan la instalación.</p></div>
       </div>
-      <div data-reveal data-spotlight style="display:flex;align-items:flex-start;gap:15px;border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover sss-card-row">
         <span style="flex-shrink:0;display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12V6h16v6"/><path d="m4 12 4 2h8l4-2"/><path d="M2 19h20"/></svg></span>
         <div><h3 style="margin:0;font-size:16px;font-weight:600">Equipo y maquinaria propios</h3>
         <p style="margin:8px 0 0;font-size:15px;line-height:1.55;color:rgba(244,243,240,.64)">No subcontratamos nada. Eso nos da control total sobre los plazos, la calidad de ejecución y el coste final.</p></div>
       </div>
-      <div data-reveal data-spotlight style="display:flex;align-items:flex-start;gap:15px;border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover sss-card-row">
         <span style="flex-shrink:0;display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
         <div><h3 style="margin:0;font-size:16px;font-weight:600">Tramitación burocrática incluida</h3>
         <p style="margin:8px 0 0;font-size:15px;line-height:1.55;color:rgba(244,243,240,.64)">Tramitamos la licencia de obra y el registro en la Dirección General de Industria de tu Comunidad.</p></div>
       </div>
-      <div data-reveal data-spotlight style="display:flex;align-items:flex-start;gap:15px;border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">
+      <div data-reveal data-spotlight class="sss-card sss-card-hover sss-card-row">
         <span style="flex-shrink:0;display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.1-3.1c.3-.3.9-.2 1 .2a6 6 0 0 1-8.3 7.1l-7.9 7.9a1 1 0 0 1-3-3l7.9-7.9a6 6 0 0 1 7.1-8.3c.4.1.5.7.2 1z"/></svg></span>
         <div><h3 style="margin:0;font-size:16px;font-weight:600">Soporte post venta real</h3>
         <p style="margin:8px 0 0;font-size:15px;line-height:1.55;color:rgba(244,243,240,.64)">Control de la monitorización, revisiones periódicas según normativa, reparaciones, limpieza...</p></div>
@@ -366,22 +370,22 @@
 </section>
 
 <!-- TESTIMONIALS -->
-<section style="background:rgba(13,13,16,.4);padding:96px 24px;border-top:1px solid rgba(255,255,255,.06)">
+<section class="sss-section sss-section-b sss-section-border">
   <div style="max-width:1180px;margin:0 auto">
     <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Testimonios</span>
-    <h2 data-i18n="test.h2" data-reveal data-reveal="left" style="margin:14px 0 0;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">Qué dicen nuestros clientes</h2>
+    <h2 data-i18n="test.h2" data-reveal data-reveal="left" class="sss-h2">Qué dicen nuestros clientes</h2>
     <div class="sss-3col" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
-      <div data-reveal style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px">
+      <div data-reveal class="sss-card">
         <div style="color:#FFB43D;font-size:16px;letter-spacing:.12em;filter:drop-shadow(0 0 6px rgba(255,180,61,.4))">★★★★★</div>
         <p style="margin:16px 0 0;font-size:16px;line-height:1.6;font-style:italic;color:rgba(244,243,240,.82)">"Desde el primer momento Paco nos explicó todo con claridad. La instalación estuvo lista en el plazo prometido y el primer mes ya notamos la diferencia en la factura. Sin sorpresas y sin problemas."</p>
         <div style="margin-top:20px;display:flex;align-items:center;gap:12px"><div style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.3),rgba(255,180,61,.1));color:#FFC766;font-weight:700;font-size:14px">MJ</div><div><p style="margin:0;font-size:15px;font-weight:600">María José F.</p><p style="margin:0;font-size:12px;color:rgba(244,243,240,.5)">Lorca, Murcia · Instalación residencial</p></div></div>
       </div>
-      <div data-reveal style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px">
+      <div data-reveal class="sss-card">
         <div style="color:#FFB43D;font-size:16px;letter-spacing:.12em;filter:drop-shadow(0 0 6px rgba(255,180,61,.4))">★★★★★</div>
         <p style="margin:16px 0 0;font-size:16px;line-height:1.6;font-style:italic;color:rgba(244,243,240,.82)">"Montaron dos instalaciones en mis naves industriales. Profesionalidad y cumplimiento de plazos impecables."</p>
         <div style="margin-top:20px;display:flex;align-items:center;gap:12px"><div style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.3),rgba(255,180,61,.1));color:#FFC766;font-weight:700;font-size:14px">AP</div><div><p style="margin:0;font-size:15px;font-weight:600">Antonio P.</p><p style="margin:0;font-size:12px;color:rgba(244,243,240,.5)">Cartagena, Murcia · Solar industrial</p></div></div>
       </div>
-      <div data-reveal style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px">
+      <div data-reveal class="sss-card">
         <div style="color:#FFB43D;font-size:16px;letter-spacing:.12em;filter:drop-shadow(0 0 6px rgba(255,180,61,.4))">★★★★★</div>
         <p style="margin:16px 0 0;font-size:16px;line-height:1.6;font-style:italic;color:rgba(244,243,240,.82)">"Instalaron las placas en mi casa en un solo día conforme a lo acordado. Empecé a ahorrar en la factura desde el día siguiente al montaje. Volvería a contratarlos siempre."</p>
         <div style="margin-top:20px;display:flex;align-items:center;gap:12px"><div style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.3),rgba(255,180,61,.1));color:#FFC766;font-weight:700;font-size:14px">FM</div><div><p style="margin:0;font-size:15px;font-weight:600">Familia Martínez</p><p style="margin:0;font-size:12px;color:rgba(244,243,240,.5)">Orihuela, Alicante · Instalación residencial</p></div></div>
@@ -391,11 +395,11 @@
 </section>
 
 <!-- FINANCING -->
-<section id="financiacion" style="position:relative;overflow:hidden;background:rgba(9,9,12,.36);padding:96px 24px;border-top:1px solid rgba(255,255,255,.06)">
+<section id="financiacion" class="sss-section sss-section-a sss-section-border" style="position:relative;overflow:hidden">
   <canvas id="sss-fin-fx" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none"></canvas>
   <div style="position:relative;z-index:1;max-width:1180px;margin:0 auto">
     <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Financiación</span>
-    <h2 data-i18n="fin.h2" data-reveal data-reveal="left" style="margin:14px 0 0;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">Financiamos el 100% de tu instalación, incluso el IVA</h2>
+    <h2 data-i18n="fin.h2" data-reveal data-reveal="left" class="sss-h2">Financiamos el 100% de tu instalación, incluso el IVA</h2>
     <p data-reveal style="margin:18px 0 0;max-width:760px;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Te pasamos algunos ejemplos de cómo puedes ahorrar todos los meses sin poner ni un céntimo de tu bolsillo. Ahorra desde el primer día.</p>
     <div data-reveal style="margin-top:36px;overflow-x:auto;border-radius:18px;border:1px solid rgba(255,255,255,.08)">
       <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:720px">
@@ -425,11 +429,11 @@
 </section>
 
 <!-- PROCESS -->
-<section id="proceso" style="background:rgba(13,13,16,.4);padding:96px 24px;border-top:1px solid rgba(255,255,255,.06)">
+<section id="proceso" class="sss-section sss-section-b sss-section-border">
   <div style="max-width:1180px;margin:0 auto">
     <div style="max-width:660px">
       <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">El proceso</span>
-      <h2 data-i18n="proc.h2" data-reveal data-reveal="left" style="margin:14px 0 0;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">Qué puedes esperar cuando pides un estudio a Solsureste Solar</h2>
+      <h2 data-i18n="proc.h2" data-reveal data-reveal="left" class="sss-h2">Qué puedes esperar cuando pides un estudio a Solsureste Solar</h2>
       <p data-reveal style="margin:18px 0 0;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Para diseñar tu sistema solar adaptado, seguimos los siguientes pasos:</p>
     </div>
     <div class="sss-steps" style="position:relative;margin-top:44px;display:flex;flex-direction:column;gap:18px">
@@ -500,6 +504,10 @@
           <a href="#chatbot-slot" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Asistente IA</a>
           <a href="/placas-solares-murcia" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Placas solares en Murcia</a>
           <a href="/placas-solares-alicante" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Placas solares en Alicante</a>
+          <a href="/placas-solares-molina-de-segura" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Placas solares en Molina de Segura</a>
+          <a href="/placas-solares-torrevieja" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Placas solares en Torrevieja</a>
+          <a href="/placas-solares-orihuela-costa" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Placas solares en Orihuela Costa</a>
+          <a href="/placas-solares-pilar-de-la-horadada" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Placas solares en Pilar de la Horadada</a>
           <a href="/faq" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Preguntas frecuentes</a>
           <a href="/aviso-legal" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Aviso legal</a>
           <a href="/privacidad" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Privacidad</a>
@@ -517,6 +525,22 @@
 </footer>
 
 </div>
+
+<a href="https://wa.me/34629345572?text=Hola%2C%20quiero%20presupuesto%20de%20placas%20solares" target="_blank" rel="noopener" class="sss-wa-float" aria-label="Contactar por WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.12-2.9-6.99A9.82 9.82 0 0 0 12.04 2Zm5.8 14.14c-.24.68-1.4 1.32-1.93 1.4-.5.08-1.11.11-1.79-.11-.41-.13-.94-.3-1.62-.6-2.85-1.23-4.71-4.1-4.85-4.29-.14-.19-1.16-1.54-1.16-2.94 0-1.4.73-2.09.99-2.37.26-.28.57-.35.76-.35.19 0 .38 0 .54.01.17.01.4-.07.63.48.24.57.81 1.97.88 2.11.07.14.11.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.57.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.19.68-.79.86-1.06.18-.27.36-.22.6-.13.24.09 1.53.72 1.79.85.26.13.43.19.5.3.07.11.07.63-.17 1.31Z"/></svg>
+</a>
+
+<div class="sss-sticky-cta">
+  <a href="tel:+34968869532" class="sss-sticky-call">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.6 19.79 19.79 0 0 1 1.61 5a2 2 0 0 1 1.99-2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.59z"/></svg>
+    Llamar
+  </a>
+  <a href="https://wa.me/34629345572?text=Hola%2C%20quiero%20presupuesto%20de%20placas%20solares" target="_blank" rel="noopener" class="sss-sticky-wa">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.12-2.9-6.99A9.82 9.82 0 0 0 12.04 2Zm5.8 14.14c-.24.68-1.4 1.32-1.93 1.4-.5.08-1.11.11-1.79-.11-.41-.13-.94-.3-1.62-.6-2.85-1.23-4.71-4.1-4.85-4.29-.14-.19-1.16-1.54-1.16-2.94 0-1.4.73-2.09.99-2.37.26-.28.57-.35.76-.35.19 0 .38 0 .54.01.17.01.4-.07.63.48.24.57.81 1.97.88 2.11.07.14.11.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.57.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.19.68-.79.86-1.06.18-.27.36-.22.6-.13.24.09 1.53.72 1.79.85.26.13.43.19.5.3.07.11.07.63-.17 1.31Z"/></svg>
+    WhatsApp
+  </a>
+</div>
+
 <script src="./script.js"></script>
 <script src="/consent.js" defer></script>
 </body>
