@@ -11,11 +11,14 @@ from starlette.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from pydantic import BaseModel, Field, EmailStr
+import re
+from pydantic import BaseModel, Field, EmailStr, field_validator
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 import uvicorn
 
 from main import procesar_mensaje
-from database import get_all_conversaciones, guardar_lead_directo, toggle_gestionado, eliminar_conversacion, get_coste_historico
+from database import get_all_conversaciones, guardar_lead_directo, toggle_gestionado, eliminar_conversacion, get_coste_historico, get_coste_sesion, purgar_conversaciones_antiguas
 from tools.crm_tools import enviar_lead_crm
 from logging_config import get_logger
 
@@ -44,13 +47,28 @@ def _validar_session(token: str) -> str | None:
     return sid if hmac_lib.compare_digest(sig, expected) else None
 
 # --- SECURITY HEADERS ---
+# style-src necesita 'unsafe-inline': las páginas autocontenidas (ciudades/legales/faq/404)
+# usan bloques <style> internos y no hay build step para generar nonces — es una decisión
+# permanente, no un paso temporal a quitar cuando se termine de limpiar index.html.
+_CSP = (
+    "default-src 'self'; "
+    "script-src 'self' https://www.googletagmanager.com; "
+    "style-src 'self' 'unsafe-inline'; "
+    "font-src 'self'; "
+    "img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com; "
+    "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; "
+    "frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+)
+
 @app.middleware("http")
 async def security_headers(request: Request, call_next):
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
-    response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["Permissions-Policy"] = "geolocation=(), camera=(), microphone=()"
+    response.headers["Content-Security-Policy"] = _CSP
     return response
 
 # --- CACHE-CONTROL PARA ESTÁTICOS ---
@@ -58,6 +76,7 @@ _CACHE_RULES = (
     ("/images/", "public, max-age=604800, immutable"),
     ("/videos/", "public, max-age=604800, immutable"),
     ("/icon-", "public, max-age=604800, immutable"),
+    ("/fonts/", "public, max-age=604800, immutable"),
     ("/styles.css", "public, max-age=3600"),
     ("/script.js", "public, max-age=3600"),
     ("/consent.js", "public, max-age=3600"),
@@ -71,6 +90,19 @@ async def cache_headers(request: Request, call_next):
             response.headers["Cache-Control"] = value
             break
     return response
+
+# --- IP REAL DEL CLIENTE ---
+# En Render (y otros hosts detrás de proxy), request.client.host es la IP del proxy, no la del
+# visitante. TRUST_PROXY=true habilita leer X-Forwarded-For — solo activar si el proxy delante
+# realmente lo rellena (si no, es spoofable por cualquier cliente).
+TRUST_PROXY = os.getenv("TRUST_PROXY", "false").lower() == "true"
+
+def _client_ip(request: Request) -> str:
+    if TRUST_PROXY:
+        xff = request.headers.get("x-forwarded-for", "")
+        if xff:
+            return xff.split(",")[0].strip()
+    return request.client.host if request.client else "desconocida"
 
 # --- RATE LIMIT ---
 RATE_LIMIT_MAX_PETICIONES = 20
@@ -88,7 +120,7 @@ def verificar_rate_limit(ip: str) -> bool:
     return True
 
 def rate_limit_dep(request: Request):
-    ip = request.client.host if request.client else "desconocida"
+    ip = _client_ip(request)
     if not verificar_rate_limit(ip):
         logger.warning(f"Rate limit excedido para IP {ip}")
         raise HTTPException(status_code=429, detail="Demasiadas peticiones, espera un momento.")
@@ -101,7 +133,7 @@ def verificar_admin(request: Request, credentials: HTTPBasicCredentials = Depend
     usuario_correcto = secrets.compare_digest(credentials.username, os.getenv("ADMIN_USER", ""))
     password_correcta = secrets.compare_digest(credentials.password, os.getenv("ADMIN_PASSWORD", ""))
     if not (usuario_correcto and password_correcta):
-        ip = request.client.host if request.client else "desconocida"
+        ip = _client_ip(request)
         logger.warning(f"Intento de acceso admin fallido desde {ip} — usuario: '{credentials.username}'")
         raise HTTPException(
             status_code=401,
@@ -114,7 +146,7 @@ _origins = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "*").split(",")]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -122,7 +154,7 @@ app.add_middleware(GZipMiddleware, minimum_size=500)
 
 # --- 0. ENDPOINT DE SESIÓN ---
 @app.post("/session")
-def crear_session():
+def crear_session(_rl=Depends(rate_limit_dep)):
     """Genera un token de sesión firmado por el servidor."""
     return {"session_id": _generar_session()}
 
@@ -131,11 +163,21 @@ class MensajeEntrante(BaseModel):
     user_id: str = Field(max_length=200)
     mensaje: str = Field(min_length=1, max_length=2000)
 
+CHAT_MAX_COSTE_USD = float(os.getenv("CHAT_MAX_COSTE_USD", "0.50"))
+RETENCION_DIAS = int(os.getenv("RETENCION_DIAS", "730"))
+MENSAJE_LIMITE_COSTE = (
+    "Hemos llegado al límite de esta conversación automática. "
+    "Llámanos al 968 869 532 y seguimos encantados por teléfono."
+)
+
 @app.post("/chat")
 async def chat_endpoint(req: MensajeEntrante, request: Request, _rl=Depends(rate_limit_dep)):
     user_id = _validar_session(req.user_id)
     if user_id is None:
         raise HTTPException(status_code=401, detail="Sesión inválida. Recarga la página.")
+
+    if get_coste_sesion(user_id) >= CHAT_MAX_COSTE_USD:
+        return {"status": "success", "user_id": req.user_id, "respuesta": MENSAJE_LIMITE_COSTE}
 
     try:
         respuesta_ia = await procesar_mensaje(user_id, req.mensaje)
@@ -145,6 +187,8 @@ async def chat_endpoint(req: MensajeEntrante, request: Request, _rl=Depends(rate
         raise HTTPException(status_code=500, detail="No se pudo procesar el mensaje, inténtalo de nuevo.")
 
 # --- 2. ENDPOINT DEL FORMULARIO DIRECTO ---
+TELEFONO_ES_RE = re.compile(r"^(?:\+34|0034)?[\s.-]?[6789]\d{2}[\s.-]?\d{3}[\s.-]?\d{3}$")
+
 class FormularioPresupuesto(BaseModel):
     nombre: str = Field(max_length=100)
     apellido: str = Field(max_length=100)
@@ -153,6 +197,13 @@ class FormularioPresupuesto(BaseModel):
     ciudad: str = Field(max_length=100)
     tipo_instalacion: str = Field(max_length=200)
     mensaje: str = Field(default="", max_length=2000)
+
+    @field_validator("telefono")
+    @classmethod
+    def validar_telefono(cls, v: str) -> str:
+        if not TELEFONO_ES_RE.match(v.strip()):
+            raise ValueError("Teléfono no válido. Usa un móvil o fijo español (ej: 666 123 456).")
+        return v
 
 @app.post("/presupuesto")
 async def presupuesto_endpoint(req: FormularioPresupuesto, _rl=Depends(rate_limit_dep)):
@@ -209,9 +260,19 @@ def api_eliminar_lead(user_id: str, _auth=Depends(verificar_admin), _rl=Depends(
     eliminar_conversacion(user_id)
     return {"status": "ok"}
 
+@app.post("/api/admin/purgar-antiguos")
+def api_purgar_antiguos(_auth=Depends(verificar_admin), _rl=Depends(rate_limit_dep)):
+    """Dispara manualmente la purga RGPD (la misma que corre a diario vía scheduler)."""
+    filas = purgar_conversaciones_antiguas(RETENCION_DIAS)
+    return {"status": "ok", "filas_borradas": filas}
+
 @app.get("/admin")
-def read_admin(_auth=Depends(verificar_admin)):
+def read_admin(_auth=Depends(verificar_admin), _rl=Depends(rate_limit_dep)):
     return FileResponse("static/admin.html")
+
+@app.get("/en")
+def home_en_page():
+    return FileResponse("static/en/index.html")
 
 @app.get("/faq")
 def faq_page():
@@ -264,6 +325,17 @@ def placas_solares_orihuela_costa_page():
 @app.get("/placas-solares-pilar-de-la-horadada")
 def placas_solares_pilar_de_la_horadada_page():
     return FileResponse("static/placas-solares-pilar-de-la-horadada.html")
+
+@app.on_event("startup")
+def _iniciar_scheduler_purga():
+    """Purga diaria de conversaciones más antiguas que RETENCION_DIAS (RGPD).
+    Un solo worker (ver CLAUDE.md) => sin riesgo de ejecuciones duplicadas."""
+    scheduler = BackgroundScheduler(timezone="Europe/Madrid")
+    scheduler.add_job(
+        lambda: purgar_conversaciones_antiguas(RETENCION_DIAS),
+        CronTrigger(hour=4, minute=0),
+    )
+    scheduler.start()
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 

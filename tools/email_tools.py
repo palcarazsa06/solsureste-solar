@@ -13,6 +13,7 @@ load_dotenv()
 EMAIL_SENDER = os.getenv("EMAIL_SENDER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 EMAIL_DESTINATARIO = os.getenv("EMAIL_DESTINATARIO")
+PANEL_URL = os.getenv("PANEL_URL", "http://localhost:8000/admin")
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
 
@@ -30,7 +31,7 @@ def _enviar_email_sync(nombre: str, telefono: str, correo: str, ciudad: str, fue
         f"  Email:     {correo}\n"
         f"  Ciudad:    {ciudad}\n"
         f"  Fuente:    {fuente}\n\n"
-        f"Ver panel: http://localhost:8000/admin\n"
+        f"Ver panel: {PANEL_URL}\n"
     )
     msg.attach(MIMEText(cuerpo, "plain", "utf-8"))
 

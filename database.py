@@ -1,6 +1,7 @@
 import sqlite3
 import json
 import os
+from datetime import datetime, timedelta
 
 DATA_DIR = os.getenv("DATA_DIR", ".")
 DB_NAME = os.path.join(DATA_DIR, "agencia.db")
@@ -175,6 +176,13 @@ def get_coste_historico() -> float:
     conn.close()
     return float(row[0]) if row else 0.0
 
+def get_coste_sesion(user_id) -> float:
+    """Coste acumulado (USD) de la conversación de un user_id. 0.0 si aún no existe."""
+    conn = get_connection()
+    row = conn.execute("SELECT coste_usd FROM conversaciones WHERE user_id = ?", (user_id,)).fetchone()
+    conn.close()
+    return float(row[0]) if row else 0.0
+
 def eliminar_conversacion(user_id):
     """Elimina permanentemente una conversación/lead, rescatando su coste al histórico."""
     conn = get_connection()
@@ -187,6 +195,25 @@ def eliminar_conversacion(user_id):
     conn.execute("DELETE FROM conversaciones WHERE user_id = ?", (user_id,))
     conn.commit()
     conn.close()
+
+def purgar_conversaciones_antiguas(dias: int = 730) -> int:
+    """Borra conversaciones más antiguas que `dias`, rescatando su coste al histórico
+    (mismo patrón que eliminar_conversacion). Devuelve el número de filas borradas."""
+    conn = get_connection()
+    corte = (datetime.utcnow() - timedelta(days=dias)).strftime("%Y-%m-%d %H:%M:%S")
+    coste_rescatado = conn.execute(
+        "SELECT COALESCE(SUM(coste_usd), 0) FROM conversaciones WHERE created_at < ?", (corte,)
+    ).fetchone()[0]
+    if coste_rescatado:
+        conn.execute(
+            "UPDATE stats SET valor = valor + ? WHERE clave = 'coste_historico'",
+            (coste_rescatado,)
+        )
+    cursor = conn.execute("DELETE FROM conversaciones WHERE created_at < ?", (corte,))
+    filas_borradas = cursor.rowcount
+    conn.commit()
+    conn.close()
+    return filas_borradas
 
 def reset_conversacion(user_id):
     """Reinicia completamente la sesión de un usuario (estado, historial y datos)."""

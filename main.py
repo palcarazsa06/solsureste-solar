@@ -57,6 +57,137 @@ def recortar_historial(historial, max_mensajes=12):
 
     return historial[indice_corte:]
 
+def _construir_contexto_agente(siguiente_agente):
+    """Devuelve (prompt_especialista, herramientas_activas) según el agente elegido por el
+    Supervisor. Aislamiento de herramientas por agente: CUALIFICADOR solo buscar_informacion
+    + enviar_lead_crm, AGENDADOR solo reservar_cita — no mezclar."""
+    if siguiente_agente == "CUALIFICADOR":
+        return PROMPT_CUALIFICADOR, [tool_consultar_dudas, tool_enviar_lead]
+
+    # AGENDADOR
+    hoy = datetime.now()
+    dias_semana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
+    dia_nombre = dias_semana[hoy.weekday()]
+    fecha_actual_contexto = f"{hoy.strftime('%Y-%m-%d')} (hoy es {dia_nombre})"
+
+    # Tabla de los próximos 14 días ya calculada por Python: el modelo NO debe hacer
+    # aritmética de fechas de cabeza (se comprobó que gpt-4o-mini falla calculando
+    # "el día de la semana X" a partir de la fecha de hoy — solo debe copiar de esta tabla).
+    tabla_fechas = "\n".join(
+        f"        - {(hoy + timedelta(days=i)).strftime('%Y-%m-%d')} → {dias_semana[(hoy + timedelta(days=i)).weekday()]}"
+        + (" (hoy)" if i == 0 else " (mañana)" if i == 1 else "")
+        for i in range(14)
+    )
+
+    prompt_especialista = PROMPT_AGENDADOR + f"""
+
+        CONTEXTO TEMPORAL CRÍTICO:
+        - La fecha real de HOY es: {fecha_actual_contexto}.
+        - PROHIBIDO calcular de cabeza qué fecha corresponde a un día de la semana. Usa EXCLUSIVAMENTE
+          esta tabla ya calculada de los próximos 14 días para traducir lo que diga el usuario
+          ('mañana', 'el jueves', 'la semana que viene', etc.) a una fecha YYYY-MM-DD exacta:
+{tabla_fechas}
+        - Si el usuario dice un día de la semana sin más (ej. "el jueves") y hoy todavía no ha pasado
+          ese día en esta semana, usa la PRIMERA fecha de la tabla que coincida con ese día de la
+          semana (el más próximo). Si dice "el jueves que viene" o "la semana que viene", usa la
+          segunda ocurrencia de ese día en la tabla.
+        - Una vez identificada la fecha exacta en la tabla, DEBES ejecutar obligatoriamente la
+          herramienta 'reservar_cita' con esa fecha. No te limites a confirmar con texto.
+        """
+    return prompt_especialista, [tool_reservar_cita]
+
+async def _extraer_y_guardar_lead(user_id, historial_para_ia) -> tuple[int, int]:
+    """Extrae los datos de contacto del historial vía LLM, los guarda en SQLite, envía el
+    lead al CRM (con guard anti-duplicado) y dispara la alerta por email. Devuelve
+    (tok_prompt, tok_completion) de las llamadas hechas aquí."""
+    tok_prompt = 0
+    tok_completion = 0
+    logger.info("Extrayendo datos del historial para la Base de Datos...")
+
+    prompt_extraccion = """Analiza el siguiente historial de conversación y extrae los datos del cliente.
+    Devuelve ÚNICAMENTE un objeto JSON válido con estas claves exactas:
+    {"nombre": "...", "correo": "...", "telefono": "...", "ciudad": "..."}
+    Si algún dato falta, pon "Desconocido". No devuelvas ningún otro texto, solo el JSON puro.
+    """
+
+    mensajes_extraccion = [{"role": "system", "content": prompt_extraccion}] + historial_para_ia
+
+    try:
+        respuesta_extraccion = await client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=mensajes_extraccion,
+            response_format={"type": "json_object"}
+        )
+        tok_prompt += respuesta_extraccion.usage.prompt_tokens
+        tok_completion += respuesta_extraccion.usage.completion_tokens
+
+        datos_extraidos = json.loads(respuesta_extraccion.choices[0].message.content)
+
+        nombre_limpio = datos_extraidos.get("nombre", "Desconocido")
+        correo_limpio = datos_extraidos.get("correo", "Desconocido")
+        telefono_limpio = datos_extraidos.get("telefono", "Desconocido")
+        ciudad_limpia = datos_extraidos.get("ciudad", "Desconocido")
+
+        db.update_datos_cliente(user_id, nombre_limpio, correo_limpio, telefono_limpio, ciudad_limpia)
+        logger.info(f"Datos guardados en SQLite: {nombre_limpio} | {telefono_limpio} | {correo_limpio}")
+
+        if not db.crm_ya_enviado(user_id):
+            try:
+                await enviar_lead_crm(nombre=nombre_limpio, telefono=telefono_limpio, ubicacion=ciudad_limpia, necesidad="Instalación Solar")
+                db.marcar_crm_enviado(user_id)
+            except Exception as error_crm:
+                logger.warning(f"Se guardó en la DB pero falló el envío al CRM externo: {error_crm}")
+        else:
+            logger.info("CRM ya enviado previamente para este usuario, se omite el duplicado.")
+
+        # Alerta email al propietario (fire-and-forget). Independiente del envío al CRM:
+        # el CUALIFICADOR puede haber enviado ya el lead al CRM en un turno anterior
+        # (vía su propia herramienta 'enviar_lead_crm'), pero eso no debe impedir que
+        # llegue el aviso por email cuando la cita se agenda de verdad. El guard del llamador
+        # (estado_actual != "AGENDADOR") ya garantiza que esto solo se ejecute una vez.
+        try:
+            from tools.email_tools import enviar_alerta_lead_email
+            asyncio.create_task(enviar_alerta_lead_email(
+                nombre=nombre_limpio, telefono=telefono_limpio,
+                correo=correo_limpio, ciudad=ciudad_limpia, fuente="chat"
+            ))
+        except Exception as e_email:
+            logger.warning(f"No se pudo lanzar la alerta email: {e_email}")
+
+    except Exception as e:
+        logger.error(f"Error al extraer JSON para la Base de Datos: {e}", exc_info=True)
+
+    return tok_prompt, tok_completion
+
+async def _handler_reservar_cita(args, user_id):
+    return await reservar_cita(
+        fecha=args.get("fecha"),
+        hora=args.get("hora"),
+        nombre=args.get("nombre", "Cliente"),
+        telefono=args.get("telefono", "Sin teléfono"),
+        ciudad=args.get("ciudad", "Desconocida")
+    )
+
+async def _handler_buscar_informacion(args, user_id):
+    return await buscar_informacion(args["pregunta"])
+
+async def _handler_enviar_lead_crm(args, user_id):
+    if not db.crm_ya_enviado(user_id):
+        resultado = await enviar_lead_crm(args["nombre"], args["telefono"], args["ubicacion"], args["necesidad"])
+        db.marcar_crm_enviado(user_id)
+        return resultado
+    logger.info("CRM ya enviado previamente para este usuario, se omite el duplicado.")
+    return json.dumps({"status": "skipped", "mensaje": "Lead ya enviado al CRM anteriormente."})
+
+# Aislamiento de herramientas por agente ya garantizado por _construir_contexto_agente
+# (qué tools se ofrecen al LLM); este registry solo despacha la ejecución cuando el LLM
+# decide llamarlas.
+MANEJADORES_HERRAMIENTAS = {
+    "reservar_cita": _handler_reservar_cita,
+    "buscar_informacion": _handler_buscar_informacion,
+    "enviar_lead_crm": _handler_enviar_lead_crm,
+}
+
 async def procesar_mensaje(user_id, mensaje_usuario):
     """El cerebro del sistema: enruta el mensaje y devuelve la respuesta del especialista usando sus propias herramientas."""
 
@@ -109,60 +240,9 @@ async def procesar_mensaje(user_id, mensaje_usuario):
     if siguiente_agente == "AGENDADOR":
         estado_actual, _ = db.get_conversacion(user_id)
         if estado_actual != "AGENDADOR":
-            logger.info("Extrayendo datos del historial para la Base de Datos...")
-
-            prompt_extraccion = """Analiza el siguiente historial de conversación y extrae los datos del cliente.
-            Devuelve ÚNICAMENTE un objeto JSON válido con estas claves exactas:
-            {"nombre": "...", "correo": "...", "telefono": "...", "ciudad": "..."}
-            Si algún dato falta, pon "Desconocido". No devuelvas ningún otro texto, solo el JSON puro.
-            """
-
-            mensajes_extraccion = [{"role": "system", "content": prompt_extraccion}] + historial_para_ia
-
-            try:
-                respuesta_extraccion = await client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=mensajes_extraccion,
-                    response_format={"type": "json_object"}
-                )
-                tok_prompt += respuesta_extraccion.usage.prompt_tokens
-                tok_completion += respuesta_extraccion.usage.completion_tokens
-
-                datos_extraidos = json.loads(respuesta_extraccion.choices[0].message.content)
-
-                nombre_limpio = datos_extraidos.get("nombre", "Desconocido")
-                correo_limpio = datos_extraidos.get("correo", "Desconocido")
-                telefono_limpio = datos_extraidos.get("telefono", "Desconocido")
-                ciudad_limpia = datos_extraidos.get("ciudad", "Desconocido")
-
-                db.update_datos_cliente(user_id, nombre_limpio, correo_limpio, telefono_limpio, ciudad_limpia)
-                logger.info(f"Datos guardados en SQLite: {nombre_limpio} | {telefono_limpio} | {correo_limpio}")
-
-                if not db.crm_ya_enviado(user_id):
-                    try:
-                        await enviar_lead_crm(nombre=nombre_limpio, telefono=telefono_limpio, ubicacion=ciudad_limpia, necesidad="Instalación Solar")
-                        db.marcar_crm_enviado(user_id)
-                    except Exception as error_crm:
-                        logger.warning(f"Se guardó en la DB pero falló el envío al CRM externo: {error_crm}")
-                else:
-                    logger.info("CRM ya enviado previamente para este usuario, se omite el duplicado.")
-
-                # Alerta email al propietario (fire-and-forget). Independiente del envío al CRM:
-                # el CUALIFICADOR puede haber enviado ya el lead al CRM en un turno anterior
-                # (vía su propia herramienta 'enviar_lead_crm'), pero eso no debe impedir que
-                # llegue el aviso por email cuando la cita se agenda de verdad. El bloque exterior
-                # 'if estado_actual != "AGENDADOR"' ya garantiza que esto solo se ejecute una vez.
-                try:
-                    from tools.email_tools import enviar_alerta_lead_email
-                    asyncio.create_task(enviar_alerta_lead_email(
-                        nombre=nombre_limpio, telefono=telefono_limpio,
-                        correo=correo_limpio, ciudad=ciudad_limpia, fuente="chat"
-                    ))
-                except Exception as e_email:
-                    logger.warning(f"No se pudo lanzar la alerta email: {e_email}")
-
-            except Exception as e:
-                logger.error(f"Error al extraer JSON para la Base de Datos: {e}", exc_info=True)
+            p, c = await _extraer_y_guardar_lead(user_id, historial_para_ia)
+            tok_prompt += p
+            tok_completion += c
 
     if siguiente_agente == "TERMINAR":
         db.update_estado(user_id, "TERMINAR")
@@ -170,40 +250,7 @@ async def procesar_mensaje(user_id, mensaje_usuario):
         return "¡Gracias por contactar con nosotros! Que tengas un buen día."
 
     # 5. PREPARAMOS AL ESPECIALISTA Y SUS HERRAMIENTAS DINÁMICAMENTE
-    if siguiente_agente == "CUALIFICADOR":
-        prompt_especialista = PROMPT_CUALIFICADOR
-        herramientas_activas = [tool_consultar_dudas, tool_enviar_lead]
-    else:  # AGENDADOR
-        hoy = datetime.now()
-        dias_semana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
-        dia_nombre = dias_semana[hoy.weekday()]
-        fecha_actual_contexto = f"{hoy.strftime('%Y-%m-%d')} (hoy es {dia_nombre})"
-
-        # Tabla de los próximos 14 días ya calculada por Python: el modelo NO debe hacer
-        # aritmética de fechas de cabeza (se comprobó que gpt-4o-mini falla calculando
-        # "el día de la semana X" a partir de la fecha de hoy — solo debe copiar de esta tabla).
-        tabla_fechas = "\n".join(
-            f"        - {(hoy + timedelta(days=i)).strftime('%Y-%m-%d')} → {dias_semana[(hoy + timedelta(days=i)).weekday()]}"
-            + (" (hoy)" if i == 0 else " (mañana)" if i == 1 else "")
-            for i in range(14)
-        )
-
-        prompt_especialista = PROMPT_AGENDADOR + f"""
-
-        CONTEXTO TEMPORAL CRÍTICO:
-        - La fecha real de HOY es: {fecha_actual_contexto}.
-        - PROHIBIDO calcular de cabeza qué fecha corresponde a un día de la semana. Usa EXCLUSIVAMENTE
-          esta tabla ya calculada de los próximos 14 días para traducir lo que diga el usuario
-          ('mañana', 'el jueves', 'la semana que viene', etc.) a una fecha YYYY-MM-DD exacta:
-{tabla_fechas}
-        - Si el usuario dice un día de la semana sin más (ej. "el jueves") y hoy todavía no ha pasado
-          ese día en esta semana, usa la PRIMERA fecha de la tabla que coincida con ese día de la
-          semana (el más próximo). Si dice "el jueves que viene" o "la semana que viene", usa la
-          segunda ocurrencia de ese día en la tabla.
-        - Una vez identificada la fecha exacta en la tabla, DEBES ejecutar obligatoriamente la
-          herramienta 'reservar_cita' con esa fecha. No te limites a confirmar con texto.
-        """
-        herramientas_activas = [tool_reservar_cita]
+    prompt_especialista, herramientas_activas = _construir_contexto_agente(siguiente_agente)
 
     mensajes_agente = [{"role": "system", "content": prompt_especialista}] + historial_para_ia
 
@@ -226,26 +273,11 @@ async def procesar_mensaje(user_id, mensaje_usuario):
         # B) Ejecutamos la función de Python correspondiente
         for tool_call in mensaje_ia.tool_calls:
             args = json.loads(tool_call.function.arguments)
-
-            if tool_call.function.name == "reservar_cita":
-                resultado_python = await reservar_cita(
-                    fecha=args.get("fecha"),
-                    hora=args.get("hora"),
-                    nombre=args.get("nombre", "Cliente"),
-                    telefono=args.get("telefono", "Sin teléfono"),
-                    ciudad=args.get("ciudad", "Desconocida")
-                )
-            elif tool_call.function.name == "buscar_informacion":
-                resultado_python = await buscar_informacion(args["pregunta"])
-            elif tool_call.function.name == "enviar_lead_crm":
-                if not db.crm_ya_enviado(user_id):
-                    resultado_python = await enviar_lead_crm(args["nombre"], args["telefono"], args["ubicacion"], args["necesidad"])
-                    db.marcar_crm_enviado(user_id)
-                else:
-                    logger.info("CRM ya enviado previamente para este usuario, se omite el duplicado.")
-                    resultado_python = json.dumps({"status": "skipped", "mensaje": "Lead ya enviado al CRM anteriormente."})
-            else:
-                resultado_python = json.dumps({"error": "Herramienta desconocida"})
+            handler = MANEJADORES_HERRAMIENTAS.get(tool_call.function.name)
+            resultado_python = (
+                await handler(args, user_id) if handler
+                else json.dumps({"error": "Herramienta desconocida"})
+            )
 
             # C) Guardamos el resultado en la DB con rol "tool"
             mensaje_resultado = {

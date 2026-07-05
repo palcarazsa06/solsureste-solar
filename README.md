@@ -1,33 +1,33 @@
 # Solsureste Solar
 
-Sitio web público de Solsureste Solar — instalación de placas solares en Murcia y Alicante.
+Landing page + motor de ventas conversacional para Solsureste Solar (instalación de placas solares y
+huertos solares en Murcia y Alicante). Backend FastAPI con arquitectura multi-agente (router
+supervisor → Cualificador/Agendador), RAG sobre ChromaDB, integración con Google Calendar y webhook
+CRM. Desplegado en Render, dominio de producción `solsurestesolar.com`.
 
-Static site, sin build step: HTML + CSS + JS puro.
+El frontend (HTML/CSS/JS estático, sin build step) vive en `static/` y se sirve desde el propio
+FastAPI junto con la API.
 
-## Estructura
+Para arquitectura completa, comandos, variables de entorno y detalles de implementación, ver
+[`CLAUDE.md`](CLAUDE.md) — es la fuente de verdad de este repo y se mantiene actualizado con cada
+cambio relevante.
 
-- `index.html` — toda la maquetación de la página.
-- `styles.css` — estilos base, keyframes de animación y estados hover/focus.
-- `script.js` — comportamiento: fondo WebGL de scroll-story, partículas del hero,
-  red eléctrica animada de la barra de stats, contadores, reveals al hacer scroll,
-  tarjetas con efecto spotlight, chat de demo y formulario de contacto.
-
-## Desarrollo local
-
-No requiere build ni dependencias. Sirve la carpeta con cualquier servidor estático:
+## Arranque rápido
 
 ```bash
-python3 -m http.server 8000
-# abre http://localhost:8000
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env   # rellenar OPENAI_API_KEY, ADMIN_USER/PASSWORD, CRM_WEBHOOK_URL, etc.
+python api.py          # servidor dev en localhost:8000
 ```
 
-## Despliegue
+## Tests
 
-Cada push a `main` publica el sitio en GitHub Pages automáticamente
-(ver `.github/workflows/pages.yml`).
+```bash
+pip install pytest pytest-asyncio pytest-socket   # una vez, no están en requirements.txt
+pytest -q                                          # tests unitarios (recorte de historial, sesiones HMAC, guardrails)
+./test_conversacion.sh                             # regresión end-to-end vía curl+jq contra un servidor ya corriendo
+```
 
-## Pendiente
-
-- Sustituir los recuadros de imagen placeholder (hero + 3 casos de éxito) por fotos reales.
-- El formulario del hero y el chat del hero son actualmente demos visuales
-  (respuestas predefinidas, sin backend conectado).
+Los tests de `pytest` corren también en cada push/PR vía GitHub Actions
+(`.github/workflows/tests.yml`), sin necesidad de configurar ningún secret.
