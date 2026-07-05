@@ -78,6 +78,7 @@ input::placeholder,textarea::placeholder{color:rgba(244,243,240,.34)}
   .sss-herogrid{grid-template-columns:1fr!important}
   .sss-2col{grid-template-columns:1fr!important}
   .sss-3col{grid-template-columns:1fr!important}
+  .sss-formgrid{grid-template-columns:1fr!important}
   .sss-statgrid{grid-template-columns:repeat(2,1fr)!important}
   .sss-h1{font-size:42px!important}
 }
