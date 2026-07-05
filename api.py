@@ -229,6 +229,42 @@ def privacidad_page():
 def cookies_page():
     return FileResponse("static/cookies.html")
 
+@app.get("/placas-solares-murcia")
+def placas_solares_murcia_page():
+    return FileResponse("static/placas-solares-murcia.html")
+
+@app.get("/placas-solares-alicante")
+def placas_solares_alicante_page():
+    return FileResponse("static/placas-solares-alicante.html")
+
+@app.get("/placas-solares-lorca")
+def placas_solares_lorca_page():
+    return FileResponse("static/placas-solares-lorca.html")
+
+@app.get("/placas-solares-cartagena")
+def placas_solares_cartagena_page():
+    return FileResponse("static/placas-solares-cartagena.html")
+
+@app.get("/placas-solares-molina-de-segura")
+def placas_solares_molina_de_segura_page():
+    return FileResponse("static/placas-solares-molina-de-segura.html")
+
+@app.get("/placas-solares-orihuela")
+def placas_solares_orihuela_page():
+    return FileResponse("static/placas-solares-orihuela.html")
+
+@app.get("/placas-solares-torrevieja")
+def placas_solares_torrevieja_page():
+    return FileResponse("static/placas-solares-torrevieja.html")
+
+@app.get("/placas-solares-orihuela-costa")
+def placas_solares_orihuela_costa_page():
+    return FileResponse("static/placas-solares-orihuela-costa.html")
+
+@app.get("/placas-solares-pilar-de-la-horadada")
+def placas_solares_pilar_de_la_horadada_page():
+    return FileResponse("static/placas-solares-pilar-de-la-horadada.html")
+
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 if __name__ == "__main__":

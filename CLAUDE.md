@@ -123,6 +123,12 @@ enum — no está forzado a nivel de esquema, solo por prompt.
 - `static/admin.html` — panel de administración (login propio + Basic Auth a nivel de servidor en
   `/admin`, doble capa). Tabla de leads con filtros por texto (insensible a tildes) y por estado,
   marcar gestionado, eliminar, coste total acumulado.
+- `static/script.js` — además de la UI (chat, formulario, contadores, reveals, tarjetas spotlight),
+  `setupStory()` monta un canvas WebGL fijo a pantalla completa (`#sss-story`, detrás de todo el
+  contenido) que dibuja un shader de 7 actos (`ACTO I` sol → `ACTO VII` amanecer) controlado por el
+  progreso de scroll de **toda la página** (`scrollTop / (scrollHeight - clientHeight)`, suavizado con
+  lerp). El "sol" que se ve en el hero no es un asset del hero — es este canvas de fondo asomando a
+  través de los overlays semitransparentes de `#inicio` (ver gotcha en "Detalles importantes").
 - `documentos/solsureste_base_conocimiento.txt` — fuente de verdad del RAG. Tras editarlo, ejecutar
   `python cargar_pdfs.py` y **reiniciar el proceso del servidor** (ver gotcha de ChromaDB abajo).
 - `test_conversacion.sh` — regresión end-to-end vía curl+jq contra un servidor ya corriendo.
@@ -140,9 +146,20 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   Incluido en todas las páginas públicas (`index.html`, `faq.html`, y las 3 legales).
 - `static/manifest.json` — manifest PWA mínimo (iconos `icon-192.png`/`icon-512.png` generados desde
   `static/images/logo.jpg`).
-- `documentos/plantilla-pagina-seo.html` — plantilla comentada para crear futuras páginas de
-  ciudad/servicio (fase 2 de SEO, no implementada aún). Vive fuera de `static/` a propósito para que
-  `StaticFiles` nunca la sirva por accidente.
+- `documentos/plantilla-pagina-seo.html` — plantilla comentada usada como base para las páginas de
+  ciudad/provincia de abajo. Vive fuera de `static/` a propósito para que `StaticFiles` nunca la sirva
+  por accidente. Sigue sirviendo de base para futuras páginas de servicio (residencial/industrial/
+  huertos solares/mantenimiento), aún no implementadas.
+- `static/placas-solares-{murcia,alicante}.html` — páginas **pilar** de SEO local (rutas
+  `/placas-solares-murcia` y `/placas-solares-alicante`), cobertura a nivel provincia/región. Enlazan
+  a sus páginas de ciudad correspondientes vía `.cluster-links`. Schema `Service` (no `LocalBusiness`
+  duplicado) con `areaServed` de tipo `AdministrativeArea`.
+- `static/placas-solares-{lorca,cartagena,molina-de-segura,orihuela,torrevieja,orihuela-costa,
+  pilar-de-la-horadada}.html` — páginas **clúster** de ciudad/comarca (modelo pilar→clúster, ver
+  "Detalles importantes"). Cada una enlaza de vuelta a su pilar vía breadcrumb + enlace inline.
+  Lorca/Cartagena/Orihuela expanden los casos reales que también aparecen (de forma resumida, con
+  teaser "Leer caso completo →") en la sección "Resultados reales" de `static/index.html`. Schema
+  `Service` con `areaServed` de tipo `City`.
 
 ## DATA_DIR — persistencia en producción (Render)
 
@@ -196,6 +213,12 @@ base de conocimiento.
   ahí manualmente.
 - **`robots.txt`** bloquea `/admin`, `/api/`, `/session` y `/presupuesto` de los crawlers. `/faq`,
   `/aviso-legal`, `/privacidad` y `/cookies` sí son crawleables (están en `sitemap.xml`).
+- **El hero debe quedarse semitransparente, nunca opaco**: dentro de `#inicio`, las capas
+  `.sss-hero-bg-cinematic`/`.sss-hero-bg-aurora` solo deben llevar overlays semitransparentes
+  (degradados, blur) — cualquier capa opaca ahí (un `<video>` de fondo, un `background` sólido) tapa
+  por completo el canvas `#sss-story` que pinta el sol/rayos/partículas del Acto I, aunque el canvas
+  siga renderizando con normalidad por debajo. Ya pasó una vez: un `<video>` de dron sin commitear
+  ocultó el sol durante una sesión entera hasta rastrear la causa real.
 - **NAP (nombre/dirección/teléfono) unificado**: la dirección real es **Calle Aldebarán, 51, P.I. La
   Estrella, Molina de Segura (30509), Murcia** — tel. 968 869 532, info@solsurestesolar.com. Este dato
   ya coincidía en el HTML pero `documentos/solsureste_base_conocimiento.txt` tenía una dirección
@@ -204,3 +227,19 @@ base de conocimiento.
   editar el NAP, actualizar a la vez: `documentos/solsureste_base_conocimiento.txt` (tras editar,
   `cargar_pdfs.py` + reiniciar servidor), el JSON-LD `HomeAndConstructionBusiness` en
   `static/index.html`, y las 3 páginas legales.
+- **Modelo pilar→clúster para SEO local**: las 9 páginas `static/placas-solares-*.html` siguen un
+  esquema de 2 niveles — `/placas-solares-murcia` y `/placas-solares-alicante` son páginas **pilar**
+  (cobertura a nivel región/provincia) que enlazan a sus páginas de ciudad; cada página de ciudad
+  enlaza de vuelta a su pilar (breadcrumb + enlace inline). Al añadir una ciudad nueva: crear la
+  página, enlazarla desde su pilar (`.cluster-links`), añadirla a `static/sitemap.xml` y registrarla
+  en `api.py` con el mismo patrón `@app.get("/placas-solares-<slug>")`.
+- **Orihuela vs. Orihuela Costa no es contenido duplicado**: son la misma entidad municipal pero dos
+  ángulos de negocio deliberadamente distintos — `/placas-solares-orihuela` cubre la vega
+  agrícola/interior (huertos solares, bombeo de riego), `/placas-solares-orihuela-costa` cubre las
+  urbanizaciones de la franja litoral (Campoamor, Cabo Roig, La Zenia, Playa Flamenca, Villamartín,
+  Dehesa de Campoamor), con perfil de cliente y consumo completamente distinto. Cada página enlaza
+  explícitamente a la otra en un aviso al inicio del contenido para evitar confusión al usuario y a
+  Google. Por el mismo motivo de evitar "doorway pages", **no** se creó una URL propia para Torre de
+  la Horadada (es una sección dentro de `/placas-solares-pilar-de-la-horadada`) ni para las
+  urbanizaciones individuales de Orihuela Costa — son secciones dentro de esa misma página, no rutas
+  independientes.
