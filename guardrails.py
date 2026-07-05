@@ -36,6 +36,39 @@ client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"), timeout=15.0)
 
 # --- ESQUEMAS ESTRICTOS ---
 
+MENSAJE_RECHAZO_ES = (
+    "Soy el asistente virtual de la empresa. Solo puedo ayudarte con consultas sobre nuestros "
+    "servicios, presupuestos o agendar citas. ¿En qué te puedo ayudar respecto a esto?"
+)
+
+class _TraduccionFija(BaseModel):
+    idioma_usuario: str = Field(description="Código de idioma (es, en, fr, de, etc.) detectado en el mensaje del cliente.")
+    mensaje_traducido: str = Field(description=(
+        f"Traducción natural (no literal palabra por palabra), en ese idioma, de esta frase: '{MENSAJE_RECHAZO_ES}'."
+    ))
+
+async def _traducir_mensaje_rechazo(mensaje_usuario: str) -> tuple[str, int, int]:
+    """Llamada aparte y minimalista, dedicada solo a traducir el mensaje de rechazo fijo. No se le pide
+    a verificar_input que clasifique Y traduzca a la vez: se comprobó que, mezclado con el resto de
+    reglas de bloqueo, el modelo ignoraba el idioma del usuario y respondía en español con frecuencia
+    (hasta 1 de cada 3 veces) incluso con instrucciones explícitas de idioma en el mismo prompt."""
+    prompt = f"""Detecta el idioma en el que está escrito este mensaje de un cliente en una conversación
+    comercial de chat: "{mensaje_usuario}"
+    Luego traduce de forma natural (no literal) a ESE MISMO idioma la siguiente frase:
+    "{MENSAJE_RECHAZO_ES}\""""
+    try:
+        respuesta = await client.beta.chat.completions.parse(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            response_format=_TraduccionFija,
+        )
+        parsed = respuesta.choices[0].message.parsed
+        usage = respuesta.usage
+        return parsed.mensaje_traducido, usage.prompt_tokens, usage.completion_tokens
+    except Exception as e:
+        logger.warning(f"No se pudo traducir el mensaje de rechazo, se usa el fallback en español: {e}")
+        return MENSAJE_RECHAZO_ES, 0, 0
+
 class EvaluacionInput(BaseModel):
     es_valido: bool = Field(description="True si el mensaje es sobre servicios, dudas de negocio o un saludo normal. False si es spam, insultos, pedir código, hablar de política o temas ajenos.")
     motivo: str = Field(description="Breve motivo de la decisión.")
@@ -70,8 +103,8 @@ class EvaluacionOutput(BaseModel):
 
 # --- FUNCIONES DE GUARDA ---
 
-async def verificar_input(mensaje_usuario: str, historial: list) -> tuple[bool, int, int]:
-    """Verifica si el mensaje del usuario es seguro. Devuelve (es_valido, prompt_tokens, completion_tokens)."""
+async def verificar_input(mensaje_usuario: str, historial: list) -> tuple[bool, str, int, int]:
+    """Verifica si el mensaje del usuario es seguro. Devuelve (es_valido, mensaje_rechazo, prompt_tokens, completion_tokens)."""
 
     contexto = "Inicio de conversación"
     if len(historial) > 0:
@@ -122,7 +155,16 @@ async def verificar_input(mensaje_usuario: str, historial: list) -> tuple[bool, 
     evaluacion = respuesta.choices[0].message.parsed
     usage = respuesta.usage
     logger.info(f"[INPUT GUARD] Válido: {evaluacion.es_valido} | Motivo: {evaluacion.motivo}")
-    return evaluacion.es_valido, usage.prompt_tokens, usage.completion_tokens
+
+    tok_prompt = usage.prompt_tokens
+    tok_completion = usage.completion_tokens
+    mensaje_rechazo = ""
+    if not evaluacion.es_valido:
+        mensaje_rechazo, p, c = await _traducir_mensaje_rechazo(mensaje_usuario)
+        tok_prompt += p
+        tok_completion += c
+
+    return evaluacion.es_valido, mensaje_rechazo, tok_prompt, tok_completion
 
 async def verificar_output(respuesta_ia: str) -> tuple[str, int, int]:
     """Verifica la respuesta de nuestra IA antes de enviarla. Devuelve (respuesta_final, prompt_tokens, completion_tokens)."""

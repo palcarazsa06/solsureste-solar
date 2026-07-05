@@ -4,6 +4,7 @@ import asyncio
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
+from pydantic import BaseModel, Field
 import database as db
 
 # Importamos nuestros prompts y esquemas
@@ -16,7 +17,7 @@ from tools.calendar_tools import tool_reservar_cita, reservar_cita
 from tools.rag_tools import tool_consultar_dudas, buscar_informacion
 
 # Importamos las guardas de seguridad
-from guardrails import verificar_input, verificar_output
+from guardrails import verificar_input, verificar_output, MENSAJE_RECHAZO_ES
 
 # para la crm
 from tools.crm_tools import tool_enviar_lead, enviar_lead_crm
@@ -35,6 +36,40 @@ client = AsyncOpenAI(
 
 # Inicializamos la base de datos local
 db.init_db()
+
+MENSAJE_DESPEDIDA_ES = "¡Gracias por contactar con nosotros! Que tengas un buen día."
+
+class _DespedidaTraducida(BaseModel):
+    idioma_usuario: str = Field(description="Código de idioma (es, en, fr, de, etc.) detectado en el mensaje del cliente.")
+    mensaje_traducido: str = Field(description=(
+        f"Traducción natural (no literal palabra por palabra), en ese idioma, de esta frase de "
+        f"despedida: '{MENSAJE_DESPEDIDA_ES}'."
+    ))
+
+async def _generar_despedida(historial) -> tuple[str, int, int]:
+    """Traduce el mensaje fijo de despedida al idioma del último mensaje del cliente. Llamada aparte
+    y minimalista (no la hace el Supervisor): con el prompt de enrutamiento completo de por medio,
+    el modelo no seguía de forma fiable la instrucción de idioma para este campo."""
+    ultimo_mensaje_usuario = next(
+        (m["content"] for m in reversed(historial) if m.get("role") == "user"), ""
+    )
+    prompt = f"""Detecta el idioma en el que está escrito este mensaje de un cliente en una conversación
+    comercial de chat: "{ultimo_mensaje_usuario}"
+    Luego traduce de forma natural (no literal) a ESE MISMO idioma la siguiente frase de despedida:
+    "{MENSAJE_DESPEDIDA_ES}\""""
+
+    try:
+        respuesta = await client.beta.chat.completions.parse(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            response_format=_DespedidaTraducida,
+        )
+        parsed = respuesta.choices[0].message.parsed
+        usage = respuesta.usage
+        return parsed.mensaje_traducido, usage.prompt_tokens, usage.completion_tokens
+    except Exception as e:
+        logger.warning(f"No se pudo traducir el mensaje de despedida, se usa el fallback en español: {e}")
+        return MENSAJE_DESPEDIDA_ES, 0, 0
 
 def recortar_historial(historial, max_mensajes=12):
     """
@@ -205,13 +240,13 @@ async def procesar_mensaje(user_id, mensaje_usuario):
     historial_reciente = recortar_historial(historial_completo, max_mensajes=12)
 
     # --- 🛡️ 2. INPUT GUARDRAIL ---
-    es_valido, p, c = await verificar_input(mensaje_usuario, historial_reciente)
+    es_valido, mensaje_rechazo, p, c = await verificar_input(mensaje_usuario, historial_reciente)
     tok_prompt += p
     tok_completion += c
 
     if not es_valido:
         db.acumular_tokens(user_id, tok_prompt, tok_completion)
-        return "Soy el asistente virtual de la empresa. Solo puedo ayudarte con consultas sobre nuestros servicios, presupuestos o agendar citas. ¿En qué te puedo ayudar respecto a esto?"
+        return mensaje_rechazo or MENSAJE_RECHAZO_ES
 
     # 3. Si pasa el filtro, guardamos el mensaje nuevo en la BD
     db.append_mensaje(user_id, "user", mensaje_usuario)
@@ -245,9 +280,12 @@ async def procesar_mensaje(user_id, mensaje_usuario):
             tok_completion += c
 
     if siguiente_agente == "TERMINAR":
+        mensaje_despedida, p, c = await _generar_despedida(historial_para_ia)
+        tok_prompt += p
+        tok_completion += c
         db.update_estado(user_id, "TERMINAR")
         db.acumular_tokens(user_id, tok_prompt, tok_completion)
-        return "¡Gracias por contactar con nosotros! Que tengas un buen día."
+        return mensaje_despedida
 
     # 5. PREPARAMOS AL ESPECIALISTA Y SUS HERRAMIENTAS DINÁMICAMENTE
     prompt_especialista, herramientas_activas = _construir_contexto_agente(siguiente_agente)
