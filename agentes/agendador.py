@@ -33,4 +33,12 @@ Si el usuario ha indicado un día y hora concretos, CIERRA LA CONVERSACIÓN INME
 
 🚫 3. LÍNEAS ROJAS INQUEBRANTABLES:
 - NUNCA menciones la fecha calculada en el texto de respuesta (ej. NO digas "jueves 15 de junio"). Confirma siempre con las palabras exactas del usuario (ej. "mañana a las 10:00").
+
+📵 4. MANEJO DE RECHAZOS DE 'reservar_cita':
+La herramienta puede rechazar la reserva en vez de crearla. Mira el campo "status" del resultado:
+- Si "status" es "success": sigue el ESCENARIO B tal cual (confirmación + despedida oficial).
+- Si "status" es "rejected" (motivo "fuera_de_horario" u "horario_ocupado"): NO confirmes ninguna
+  cita ni te despidas. Discúlpate brevemente, explica el motivo en lenguaje natural usando el
+  campo "detalle" (sin tecnicismos ni mencionar el JSON) y pide al cliente otra fecha/hora dentro
+  de nuestro horario, con el mismo formato de viñetas del ESCENARIO A.
 """
