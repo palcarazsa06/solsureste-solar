@@ -160,6 +160,16 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   Lorca/Cartagena/Orihuela expanden los casos reales que también aparecen (de forma resumida, con
   teaser "Leer caso completo →") en la sección "Resultados reales" de `static/index.html`. Schema
   `Service` con `areaServed` de tipo `City`.
+- `static/en/index.html` — traducción manual completa de la home al inglés, servida en la ruta
+  `/en` (registrada explícitamente en `api.py`, fuera del patrón de las demás páginas). `hreflang`
+  recíproco con `static/index.html` (`es`↔`en`, `x-default` apunta siempre a `/`). No usa el
+  mecanismo `data-i18n`/`setLang()` de `script.js` (ese es solo un toggle de texto post-carga, no
+  apto para contenido inicial indexable) — es un HTML separado y autónomo. **Coste de
+  mantenimiento**: al editar texto visible en `static/index.html`, revisar si aplica el mismo
+  cambio en `static/en/index.html` (estructura, clases e IDs deben mantenerse idénticos entre
+  ambos; solo cambia el texto). El saludo inicial del chat (`greetingText()` en `script.js`) sí es
+  compartido y ya es sensible al idioma vía `document.documentElement.lang` — no duplicar esa
+  lógica al traducir.
 
 ## DATA_DIR — persistencia en producción (Render)
 
