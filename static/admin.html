@@ -180,6 +180,10 @@
         return (s || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     }
 
+    function escapeHtml(str) {
+        return (str || '').toString().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
     function renderTabla() {
         const tbody = document.getElementById('tabla-clientes');
         const textoBusqueda = normalizarTexto(document.getElementById('buscador').value.trim());
@@ -209,10 +213,10 @@
 
         let html = '';
         leads.forEach(cliente => {
-            const cNombre   = (cliente.nombre   && cliente.nombre   !== 'Desconocido' && cliente.nombre   !== '') ? cliente.nombre   : '👤 En proceso...';
-            const cTelefono = (cliente.telefono && cliente.telefono !== 'Desconocido' && cliente.telefono !== '') ? cliente.telefono : 'Sin teléfono';
-            const cCorreo   = (cliente.correo   && cliente.correo   !== 'Desconocido' && cliente.correo   !== '') ? cliente.correo   : 'Sin correo';
-            const cCiudad   = (cliente.ciudad   && cliente.ciudad   !== 'Desconocido' && cliente.ciudad   !== '') ? cliente.ciudad   : 'Sin ciudad';
+            const cNombre   = escapeHtml((cliente.nombre   && cliente.nombre   !== 'Desconocido' && cliente.nombre   !== '') ? cliente.nombre   : '👤 En proceso...');
+            const cTelefono = escapeHtml((cliente.telefono && cliente.telefono !== 'Desconocido' && cliente.telefono !== '') ? cliente.telefono : 'Sin teléfono');
+            const cCorreo   = escapeHtml((cliente.correo   && cliente.correo   !== 'Desconocido' && cliente.correo   !== '') ? cliente.correo   : 'Sin correo');
+            const cCiudad   = escapeHtml((cliente.ciudad   && cliente.ciudad   !== 'Desconocido' && cliente.ciudad   !== '') ? cliente.ciudad   : 'Sin ciudad');
             const cEstado   = cliente.estado || 'INICIO';
             const gestionado = cliente.gestionado;
 

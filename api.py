@@ -91,6 +91,20 @@ async def cache_headers(request: Request, call_next):
             break
     return response
 
+# --- BLOQUEO DE ESTÁTICOS SENSIBLES ---
+# static/ se sirve entero como archivos estáticos (ver mount al final del archivo). Si algún
+# archivo sensible (base de datos, credenciales, .env) termina ahí por error humano — ya
+# pasó una vez con un static/agencia.db residual —, esto evita que quede servido sin auth
+# a cualquiera que adivine la URL, sin depender de que nadie se acuerde de borrarlo.
+_PATRONES_ESTATICO_BLOQUEADO = (".db", ".sqlite", ".sqlite3", ".env", "credenciales_google")
+
+@app.middleware("http")
+async def bloquear_estaticos_sensibles(request: Request, call_next):
+    path_lower = request.url.path.lower()
+    if any(patron in path_lower for patron in _PATRONES_ESTATICO_BLOQUEADO):
+        return Response(status_code=404)
+    return await call_next(request)
+
 # --- IP REAL DEL CLIENTE ---
 # En Render (y otros hosts detrás de proxy), request.client.host es la IP del proxy, no la del
 # visitante. TRUST_PROXY=true habilita leer X-Forwarded-For — solo activar si el proxy delante
