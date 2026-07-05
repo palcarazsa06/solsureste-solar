@@ -853,7 +853,7 @@ void main(){
         const data = await res.json();
         const t = document.getElementById('sss-typing');
         if (t) t.remove();
-        this.bubble(this.formatBotText(data.respuesta), 'bot');
+        this.bubble(data.respuesta, 'bot');
       } catch (_) {
         const t = document.getElementById('sss-typing');
         if (t) t.remove();

@@ -22,6 +22,15 @@ Solsureste trabaja en Murcia y Alicante. Estas son las únicas provincias donde 
 - Toda la Región de Murcia (Murcia capital, Cartagena, Lorca, Águilas, Mazarrón, Totana, Caravaca, Molina de Segura, Torre-Pacheco, y todos los municipios de la región)
 - Toda la provincia de Alicante (Alicante capital, Benidorm, Elche, Orihuela, Torrevieja, Villena, Alcoy, Dénia, y todos los municipios de la provincia)
 
+### NÚCLEOS Y URBANIZACIONES ESPECÍFICAS QUE SÍ CUBRIMOS
+Estas localidades forman parte de municipios ya cubiertos arriba. Si un cliente pregunta por
+cualquiera de ellas, es zona 100% cubierta — NUNCA respondas que no llegamos ahí:
+- Orihuela Costa (dentro del término municipal de Orihuela): Campoamor, Dehesa de Campoamor, Cabo
+  Roig, La Zenia, Playa Flamenca, Villamartín.
+- Pilar de la Horadada: también cubre su núcleo costero, Torre de la Horadada.
+- Cartagena y su comarca: incluye los polígonos industriales de Los Camachos, El Bohío, Cabezo
+  Beaza y Valle de Escombreras.
+
 Si un cliente pregunta por Murcia o Alicante, responde: "¡Perfecto! Trabajamos continuamente en esa zona y podemos ofrecerte un servicio rápido con equipo propio."
 
 ### ZONAS DONDE NO OPERAMOS:
