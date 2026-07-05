@@ -7,6 +7,7 @@ import uuid as uuid_module
 from collections import defaultdict, deque
 from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -50,6 +51,25 @@ async def security_headers(request: Request, call_next):
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
+
+# --- CACHE-CONTROL PARA ESTÁTICOS ---
+_CACHE_RULES = (
+    ("/images/", "public, max-age=604800, immutable"),
+    ("/videos/", "public, max-age=604800, immutable"),
+    ("/icon-", "public, max-age=604800, immutable"),
+    ("/styles.css", "public, max-age=3600"),
+    ("/script.js", "public, max-age=3600"),
+    ("/consent.js", "public, max-age=3600"),
+)
+
+@app.middleware("http")
+async def cache_headers(request: Request, call_next):
+    response = await call_next(request)
+    for prefix, value in _CACHE_RULES:
+        if request.url.path.startswith(prefix):
+            response.headers["Cache-Control"] = value
+            break
     return response
 
 # --- RATE LIMIT ---
@@ -98,6 +118,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 # --- 0. ENDPOINT DE SESIÓN ---
 @app.post("/session")
@@ -191,6 +212,22 @@ def api_eliminar_lead(user_id: str, _auth=Depends(verificar_admin), _rl=Depends(
 @app.get("/admin")
 def read_admin(_auth=Depends(verificar_admin)):
     return FileResponse("static/admin.html")
+
+@app.get("/faq")
+def faq_page():
+    return FileResponse("static/faq.html")
+
+@app.get("/aviso-legal")
+def aviso_legal_page():
+    return FileResponse("static/aviso-legal.html")
+
+@app.get("/privacidad")
+def privacidad_page():
+    return FileResponse("static/privacidad.html")
+
+@app.get("/cookies")
+def cookies_page():
+    return FileResponse("static/cookies.html")
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 

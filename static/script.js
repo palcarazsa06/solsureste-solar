@@ -31,9 +31,6 @@
       const root = document.getElementById('sss-root');
       if (!root) return;
       this.reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      this.buildTechCards();
-      this.buildWhyCards();
-      this.buildSteps();
       requestAnimationFrame(() => {
         root.classList.add('js-ready');
         this.setupReveals();
@@ -65,66 +62,6 @@
       if (chatForm) chatForm.addEventListener('submit', (e) => this.handleChatSubmit(e));
       const chatReset = document.getElementById('sss-chat-reset');
       if (chatReset) chatReset.addEventListener('click', () => this.resetChat());
-    },
-
-    // ---------- dynamic card builders ----------
-    icon(p) { return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>'; },
-
-    buildTechCards() {
-      const grid = document.querySelector('.sss-techgrid');
-      if (!grid) return;
-      const cards = [
-        ['<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>', 'Análisis de consumo real', 'Estudiamos tus facturas de los últimos 12 meses para dimensionar exactamente el sistema que necesitas, sin sobredimensionar ni quedarte corto.'],
-        ['<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>', 'Modelado 3D de tu cubierta', 'Diseño de la distribución óptima de paneles con simulación de sombras en tiempo real, orientación e inclinación específica de tu tejado.'],
-        ['<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>', 'Previsión de generación mes a mes', 'Estimación de producción con datos de irradiación específicos de tu municipio y calibrados con nuestras instalaciones reales en la zona.'],
-        ['<path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', 'ROI, amortización y VAN', 'Cuánto ahorras, cuándo recuperas la inversión y qué rentabilidad anual obtienes durante toda la vida útil de la instalación.'],
-        ['<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>', 'Tramitación incluida', 'Nos ocupamos de toda la burocracia: licencias municipales, legalización ante la distribuidora y acceso a bonificaciones autonómicas.'],
-        ['<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', 'Garantía de 25 años', 'Garantía de mano de obra y rendimiento mínimo garantizado en módulos. Si no produce lo que prometemos, lo resolvemos nosotros.'],
-      ];
-      grid.innerHTML = cards.map(c =>
-        '<div data-reveal data-spotlight style="border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">'
-        + '<span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D">' + this.icon(c[0]) + '</span>'
-        + '<h3 style="margin:18px 0 0;font-size:17px;font-weight:600">' + c[1] + '</h3>'
-        + '<p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">' + c[2] + '</p></div>'
-      ).join('');
-    },
-
-    buildWhyCards() {
-      const grid = document.querySelector('.sss-whygrid');
-      if (!grid) return;
-      const cards = [
-        ['<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', 'Instalador de referencia en el sureste', 'Más de 25 años en el sector diseñando, instalando y manteniendo instalaciones solares en Murcia y Alicante.'],
-        ['<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>', 'Sin intermediarios ni comerciales', 'Nuestros ingenieros personalizan tu oferta sin intermediarios que encarezcan la instalación.'],
-        ['<path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12V6h16v6"/><path d="m4 12 4 2h8l4-2"/><path d="M2 19h20"/>', 'Equipo y maquinaria propios', 'No subcontratamos nada. Eso nos da control total sobre los plazos, la calidad de ejecución y el coste final.'],
-        ['<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>', 'Tramitación burocrática incluida', 'Tramitamos la licencia de obra y el registro en la Dirección General de Industria de tu Comunidad.'],
-        ['<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.1-3.1c.3-.3.9-.2 1 .2a6 6 0 0 1-8.3 7.1l-7.9 7.9a1 1 0 0 1-3-3l7.9-7.9a6 6 0 0 1 7.1-8.3c.4.1.5.7.2 1z"/>', 'Soporte post venta real', 'Control de la monitorización, revisiones periódicas según normativa, reparaciones, limpieza...'],
-      ];
-      grid.innerHTML = cards.map(c =>
-        '<div data-reveal data-spotlight style="display:flex;align-items:flex-start;gap:15px;border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:26px;transition:transform .4s,border-color .4s,box-shadow .4s">'
-        + '<span style="flex-shrink:0;display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D">' + this.icon(c[0]) + '</span>'
-        + '<div><h3 style="margin:0;font-size:16px;font-weight:600">' + c[1] + '</h3>'
-        + '<p style="margin:8px 0 0;font-size:15px;line-height:1.55;color:rgba(244,243,240,.64)">' + c[2] + '</p></div></div>'
-      ).join('');
-    },
-
-    buildSteps() {
-      const wrap = document.querySelector('.sss-steps');
-      if (!wrap) return;
-      const steps = [
-        'Agenda una visita con nuestro asistente o rellena nuestro formulario y contactamos contigo.',
-        'Hacemos una visita a tu domicilio para determinar las particularidades de tu instalación y ver la idoneidad de tus cubiertas.',
-        'En base a tus consumos de energía y a las características de tu vivienda, elaboramos una propuesta específica personalizada.',
-        'Te presentamos la oferta y te ofrecemos nuestras formas de pago flexibles.',
-        'Si te parece aceptable nuestra propuesta, <strong style="color:#f4f3f0">en dos semanas podrías tener tu instalación.</strong>',
-      ];
-      wrap.style.position = 'relative';
-      const line = '<div style="position:absolute;left:23px;top:26px;bottom:26px;width:2px;background:rgba(255,180,61,.14);border-radius:2px;z-index:0"></div>'
-        + '<div id="sss-stepfill" style="position:absolute;left:23px;top:26px;width:2px;height:0;background:linear-gradient(180deg,#FFD89A,#F5921E);border-radius:2px;z-index:0;box-shadow:0 0 14px rgba(255,180,61,.75)"></div>';
-      wrap.innerHTML = line + steps.map((s, i) =>
-        '<div data-reveal style="position:relative;z-index:1;display:flex;align-items:flex-start;gap:18px">'
-        + '<div data-stepcircle style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.26),rgba(224,122,12,.2));color:#FFD89A;font-weight:700;font-size:18px;border:1px solid rgba(255,180,61,.3);transition:background .4s,box-shadow .4s,color .4s,border-color .4s">' + (i + 1) + '</div>'
-        + '<p style="margin:0;padding-top:11px;font-size:16.5px;line-height:1.55;color:rgba(244,243,240,.82)">' + s + '</p></div>'
-      ).join('');
     },
 
     setupStepLine() {
