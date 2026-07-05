@@ -1,0 +1,10 @@
+/* Space Grotesk self-hosteada (fuente variable, eje wght 300-700) — sustituye a
+   Google Fonts remoto. Un solo archivo cubre los pesos 400/500/600/700 usados
+   en el sitio. */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/space-grotesk-variable.woff2') format('woff2');
+}
