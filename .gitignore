@@ -14,6 +14,7 @@ __pycache__/
 credenciales_google.json
 agencia.db*
 chroma_db/
+google_reviews_cache.json*
 
 # Claude Code (local-only overrides, no compartir)
 .claude/settings.local.json

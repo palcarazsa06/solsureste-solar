@@ -46,6 +46,7 @@
       this.setupGrid();
       this.setupStepLine();
       this.setupFinance();
+      this.setupReviews();
       this.initSession();
       this.initChat();
       this.setupBindings();
@@ -166,6 +167,117 @@
       };
       this._finDrawFn = draw;
       draw();
+    },
+
+    // ---------- reseñas reales de Google (Places API, vía /api/reviews) ----------
+    setupReviews() {
+      const grid = document.getElementById('sss-reviews-grid');
+      if (!grid) return;
+      const slots = Array.from(grid.querySelectorAll('[data-review-slot]'));
+      const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
+      fetch('/api/reviews?lang=' + lang)
+        .then((r) => r.json())
+        .then((data) => {
+          if (!data || data.status !== 'ok' || !data.reviews || !data.reviews.length) {
+            this.hideReviewsSection();
+            return;
+          }
+          data.reviews.forEach((rv, i) => {
+            const slot = slots[i];
+            if (!slot) return;
+            slot.style.display = '';
+            slot.textContent = '';
+            slot.appendChild(this.buildReviewCard(rv));
+          });
+          slots.slice(data.reviews.length).forEach((s) => s.remove());
+          this.renderReviewsMeta(data, lang);
+        })
+        .catch(() => this.hideReviewsSection());
+    },
+
+    // Nunca vuelve a mostrar reseñas inventadas: si no hay datos reales, se oculta la sección entera.
+    hideReviewsSection() {
+      const grid = document.getElementById('sss-reviews-grid');
+      const sec = grid && grid.closest('section');
+      if (sec) sec.style.display = 'none';
+    },
+
+    // rv.text / rv.author_name son contenido de terceros (UGC de Google) — siempre por
+    // textContent, nunca interpolados en innerHTML.
+    buildReviewCard(rv) {
+      const card = document.createDocumentFragment();
+
+      const stars = document.createElement('div');
+      stars.style.cssText = 'color:#FFB43D;font-size:16px;letter-spacing:.12em;filter:drop-shadow(0 0 6px rgba(255,180,61,.4))';
+      const full = Math.max(0, Math.min(5, Math.round(rv.rating || 5)));
+      stars.textContent = '★'.repeat(full) + '☆'.repeat(5 - full);
+      card.appendChild(stars);
+
+      if (rv.text) {
+        const p = document.createElement('p');
+        p.style.cssText = 'margin:16px 0 0;font-size:16px;line-height:1.6;font-style:italic;color:rgba(244,243,240,.82)';
+        p.textContent = '"' + rv.text + '"';
+        card.appendChild(p);
+      }
+
+      const row = document.createElement('div');
+      row.style.cssText = 'margin-top:20px;display:flex;align-items:center;gap:12px';
+
+      const avatar = document.createElement('div');
+      if (rv.author_photo_url) {
+        const img = document.createElement('img');
+        img.src = rv.author_photo_url;
+        img.alt = '';
+        img.loading = 'lazy';
+        img.referrerPolicy = 'no-referrer';
+        img.style.cssText = 'width:42px;height:42px;border-radius:50%;object-fit:cover;flex-shrink:0';
+        avatar.appendChild(img);
+      } else {
+        avatar.style.cssText = 'display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.3),rgba(255,180,61,.1));color:#FFC766;font-weight:700;font-size:14px;flex-shrink:0';
+        const initials = (rv.author_name || 'Cliente').trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+        avatar.textContent = initials;
+      }
+      row.appendChild(avatar);
+
+      const info = document.createElement('div');
+      const nameP = document.createElement('p');
+      nameP.style.cssText = 'margin:0;font-size:15px;font-weight:600';
+      nameP.textContent = rv.author_name || 'Cliente de Google';
+      const timeP = document.createElement('p');
+      timeP.style.cssText = 'margin:0;font-size:12px;color:rgba(244,243,240,.5)';
+      timeP.textContent = rv.relative_time || 'Reseña de Google';
+      info.appendChild(nameP);
+      info.appendChild(timeP);
+      row.appendChild(info);
+
+      card.appendChild(row);
+      return card;
+    },
+
+    renderReviewsMeta(data, lang) {
+      const el = document.getElementById('sss-reviews-meta');
+      if (!el || !data.rating) return;
+      el.textContent = '';
+      el.style.display = 'flex';
+
+      const stars = document.createElement('span');
+      stars.style.cssText = 'color:#FFB43D;font-weight:700';
+      stars.textContent = '★ ' + data.rating;
+      el.appendChild(stars);
+
+      const count = document.createElement('span');
+      count.textContent = '(' + data.user_rating_count + (lang === 'en' ? ' reviews' : ' opiniones') + ')';
+      el.appendChild(count);
+
+      if (data.maps_uri) {
+        const link = document.createElement('a');
+        link.href = data.maps_uri;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.style.cssText = 'color:#FFB43D;font-weight:600;text-decoration:underline';
+        link.textContent = lang === 'en' ? 'See all reviews on Google' : 'Ver todas las reseñas en Google';
+        el.appendChild(link);
+      }
     },
 
     // ---------- motion ----------

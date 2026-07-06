@@ -61,6 +61,7 @@
       "foundingDate": "1999",
       "geo": { "@type": "GeoCoordinates", "latitude": 38.0880, "longitude": -1.2193 },
       "priceRange": "€€-€€€",
+      "aggregateRating": {"@type":"AggregateRating","ratingValue":"5","reviewCount":"5"},
       "sameAs": ["https://share.google/y92ODPPpFX7JV0CSn"],
       "openingHoursSpecification": [
         { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday"], "opens": "08:30", "closes": "14:00" },
@@ -369,27 +370,18 @@
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
+<!-- TESTIMONIALS (reseñas reales de Google Business Profile, ver /api/reviews) -->
 <section class="sss-section sss-section-b sss-section-border">
   <div style="max-width:1180px;margin:0 auto">
     <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Testimonios</span>
     <h2 data-i18n="test.h2" data-reveal data-reveal="left" class="sss-h2">Qué dicen nuestros clientes</h2>
-    <div class="sss-3col" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
-      <div data-reveal class="sss-card">
-        <div style="color:#FFB43D;font-size:16px;letter-spacing:.12em;filter:drop-shadow(0 0 6px rgba(255,180,61,.4))">★★★★★</div>
-        <p style="margin:16px 0 0;font-size:16px;line-height:1.6;font-style:italic;color:rgba(244,243,240,.82)">"Desde el primer momento Paco nos explicó todo con claridad. La instalación estuvo lista en el plazo prometido y el primer mes ya notamos la diferencia en la factura. Sin sorpresas y sin problemas."</p>
-        <div style="margin-top:20px;display:flex;align-items:center;gap:12px"><div style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.3),rgba(255,180,61,.1));color:#FFC766;font-weight:700;font-size:14px">MJ</div><div><p style="margin:0;font-size:15px;font-weight:600">María José F.</p><p style="margin:0;font-size:12px;color:rgba(244,243,240,.5)">Lorca, Murcia · Instalación residencial</p></div></div>
-      </div>
-      <div data-reveal class="sss-card">
-        <div style="color:#FFB43D;font-size:16px;letter-spacing:.12em;filter:drop-shadow(0 0 6px rgba(255,180,61,.4))">★★★★★</div>
-        <p style="margin:16px 0 0;font-size:16px;line-height:1.6;font-style:italic;color:rgba(244,243,240,.82)">"Montaron dos instalaciones en mis naves industriales. Profesionalidad y cumplimiento de plazos impecables."</p>
-        <div style="margin-top:20px;display:flex;align-items:center;gap:12px"><div style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.3),rgba(255,180,61,.1));color:#FFC766;font-weight:700;font-size:14px">AP</div><div><p style="margin:0;font-size:15px;font-weight:600">Antonio P.</p><p style="margin:0;font-size:12px;color:rgba(244,243,240,.5)">Cartagena, Murcia · Solar industrial</p></div></div>
-      </div>
-      <div data-reveal class="sss-card">
-        <div style="color:#FFB43D;font-size:16px;letter-spacing:.12em;filter:drop-shadow(0 0 6px rgba(255,180,61,.4))">★★★★★</div>
-        <p style="margin:16px 0 0;font-size:16px;line-height:1.6;font-style:italic;color:rgba(244,243,240,.82)">"Instalaron las placas en mi casa en un solo día conforme a lo acordado. Empecé a ahorrar en la factura desde el día siguiente al montaje. Volvería a contratarlos siempre."</p>
-        <div style="margin-top:20px;display:flex;align-items:center;gap:12px"><div style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.3),rgba(255,180,61,.1));color:#FFC766;font-weight:700;font-size:14px">FM</div><div><p style="margin:0;font-size:15px;font-weight:600">Familia Martínez</p><p style="margin:0;font-size:12px;color:rgba(244,243,240,.5)">Orihuela, Alicante · Instalación residencial</p></div></div>
-      </div>
+    <div id="sss-reviews-meta" style="margin-top:14px;display:none;align-items:center;gap:10px;flex-wrap:wrap;font-size:14.5px;color:rgba(244,243,240,.75)"></div>
+    <div id="sss-reviews-grid" class="sss-3col" style="margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+      <div data-reveal class="sss-card" data-review-slot></div>
+      <div data-reveal class="sss-card" data-review-slot></div>
+      <div data-reveal class="sss-card" data-review-slot></div>
+      <div data-reveal class="sss-card" data-review-slot style="display:none"></div>
+      <div data-reveal class="sss-card" data-review-slot style="display:none"></div>
     </div>
   </div>
 </section>

@@ -20,6 +20,7 @@ import uvicorn
 from main import procesar_mensaje
 from database import get_all_conversaciones, guardar_lead_directo, toggle_gestionado, eliminar_conversacion, get_coste_historico, get_coste_sesion, purgar_conversaciones_antiguas
 from tools.crm_tools import enviar_lead_crm
+from google_reviews import refrescar_resenas_cache, obtener_resenas_cache
 from logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -52,11 +53,12 @@ def _validar_session(token: str) -> str | None:
 # permanente, no un paso temporal a quitar cuando se termine de limpiar index.html.
 _CSP = (
     "default-src 'self'; "
-    "script-src 'self' https://www.googletagmanager.com; "
+    "script-src 'self' https://www.googletagmanager.com https://www.clarity.ms; "
     "style-src 'self' 'unsafe-inline'; "
     "font-src 'self'; "
-    "img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com; "
-    "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; "
+    "img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com https://lh3.googleusercontent.com; "
+    "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com "
+    "https://www.clarity.ms; "
     "frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
 )
 
@@ -80,6 +82,7 @@ _CACHE_RULES = (
     ("/styles.css", "public, max-age=3600"),
     ("/script.js", "public, max-age=3600"),
     ("/consent.js", "public, max-age=3600"),
+    ("/api/reviews", "public, max-age=3600"),
 )
 
 @app.middleware("http")
@@ -280,6 +283,21 @@ def api_purgar_antiguos(_auth=Depends(verificar_admin), _rl=Depends(rate_limit_d
     filas = purgar_conversaciones_antiguas(RETENCION_DIAS)
     return {"status": "ok", "filas_borradas": filas}
 
+@app.post("/api/admin/refrescar-resenas")
+def api_refrescar_resenas(_auth=Depends(verificar_admin), _rl=Depends(rate_limit_dep)):
+    """Fuerza el refresco del caché de reseñas de Google (el mismo que corre a diario vía scheduler)."""
+    refrescar_resenas_cache()
+    return {
+        "status": "ok",
+        "es": obtener_resenas_cache("es").get("fetched_at"),
+        "en": obtener_resenas_cache("en").get("fetched_at"),
+    }
+
+@app.get("/api/reviews")
+def api_get_reviews(lang: str = "es"):
+    lang = lang if lang in ("es", "en") else "es"
+    return obtener_resenas_cache(lang)
+
 @app.get("/admin")
 def read_admin(_auth=Depends(verificar_admin), _rl=Depends(rate_limit_dep)):
     return FileResponse("static/admin.html")
@@ -342,14 +360,19 @@ def placas_solares_pilar_de_la_horadada_page():
 
 @app.on_event("startup")
 def _iniciar_scheduler_purga():
-    """Purga diaria de conversaciones más antiguas que RETENCION_DIAS (RGPD).
-    Un solo worker (ver CLAUDE.md) => sin riesgo de ejecuciones duplicadas."""
+    """Purga diaria de conversaciones más antiguas que RETENCION_DIAS (RGPD) y refresco
+    diario del caché de reseñas de Google. Un solo worker (ver CLAUDE.md) => sin riesgo
+    de ejecuciones duplicadas."""
     scheduler = BackgroundScheduler(timezone="Europe/Madrid")
     scheduler.add_job(
         lambda: purgar_conversaciones_antiguas(RETENCION_DIAS),
         CronTrigger(hour=4, minute=0),
     )
+    scheduler.add_job(refrescar_resenas_cache, CronTrigger(hour=4, minute=5))
     scheduler.start()
+    # Poblado inmediato al arrancar: el filesystem de Render es efímero entre redeploys,
+    # no conviene esperar al cron de las 4:05 para tener reseñas frescas tras un deploy.
+    refrescar_resenas_cache()
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
