@@ -4,90 +4,252 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración - Solsureste Solar CRM</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-800 font-sans">
+    <link rel="preload" href="/fonts/space-grotesk-variable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/fonts.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+        .hidden { display: none !important; }
 
-    <div id="login-screen" class="flex h-screen items-center justify-center bg-gray-50">
-        <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm border border-gray-100">
-            <div class="flex justify-center mb-6">
-                <span class="flex h-12 w-12 items-center justify-center rounded-full bg-orange-500 text-white shadow-sm">
+        /* --- Login --- */
+        #login-screen {
+            display: flex; min-height: 100vh; align-items: center; justify-content: center;
+            background: #f9fafb;
+        }
+        .login-card {
+            background: #fff; padding: 2rem; border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,.08), 0 4px 6px -4px rgba(0,0,0,.05);
+            width: 100%; max-width: 24rem; border: 1px solid #f3f4f6;
+        }
+        .login-icon-wrap { display: flex; justify-content: center; margin-bottom: 1.5rem; }
+        .login-icon {
+            display: flex; align-items: center; justify-content: center;
+            width: 3rem; height: 3rem; border-radius: 9999px;
+            background: #f97316; color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.05);
+        }
+        .login-card h2 { font-size: 1.5rem; font-weight: 700; text-align: center; margin-bottom: 1.5rem; color: #1f2937; }
+        .field { margin-bottom: 1rem; }
+        .field:nth-of-type(2) { margin-bottom: 1.5rem; }
+        .field label { display: block; font-size: .875rem; font-weight: 500; color: #374151; margin-bottom: .25rem; }
+        .field input {
+            width: 100%; border: 1px solid #d1d5db; border-radius: .5rem;
+            padding: .625rem 1rem; font: inherit; font-size: .95rem; color: #1f2937;
+            transition: border-color .15s, box-shadow .15s;
+        }
+        .field input:focus {
+            outline: none; border-color: #f97316; box-shadow: 0 0 0 1px #f97316;
+        }
+        .btn-entrar {
+            width: 100%; background: #f97316; color: #fff; font-weight: 700;
+            padding: .625rem 1rem; border: none; border-radius: .5rem; font-size: .95rem;
+            cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.05); transition: background .15s;
+            font-family: inherit;
+        }
+        .btn-entrar:hover { background: #ea580c; }
+
+        /* --- Dashboard shell --- */
+        #dashboard-screen { min-height: 100vh; display: flex; flex-direction: column; }
+        nav.topbar {
+            background: #111827; color: #fff; padding: 1rem 1.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,.1);
+        }
+        .brand { display: flex; align-items: center; gap: .75rem; }
+        .brand-logo {
+            display: flex; align-items: center; justify-content: center;
+            width: 2rem; height: 2rem; border-radius: .375rem; background: #f97316; color: #fff;
+        }
+        .brand h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.01em; }
+        .brand h1 span { color: #fb923c; font-weight: 500; }
+        .btn-logout {
+            font-size: .875rem; font-weight: 500; color: #d1d5db; background: #1f2937;
+            border: none; padding: .5rem 1rem; border-radius: .5rem; cursor: pointer;
+            transition: background .15s, color .15s; font-family: inherit;
+        }
+        .btn-logout:hover { background: #374151; color: #fff; }
+
+        main.content { flex: 1; padding: 1.5rem; max-width: 80rem; margin: 0 auto; width: 100%; }
+        @media (min-width: 768px) { main.content { padding: 2.5rem; } }
+
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+        .page-header h2 { font-size: 1.5rem; font-weight: 700; color: #111827; }
+        .page-header p { font-size: .875rem; color: #6b7280; margin-top: .25rem; }
+        .btn-refresh {
+            display: flex; align-items: center; gap: .5rem; background: #fff;
+            border: 1px solid #e5e7eb; color: #374151; padding: .5rem 1rem; border-radius: .5rem;
+            font-weight: 500; font-size: .9rem; box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            cursor: pointer; transition: background .15s; font-family: inherit;
+        }
+        .btn-refresh:hover { background: #f9fafb; }
+
+        #stats-bar { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        @media (min-width: 768px) { #stats-bar { grid-template-columns: repeat(4, 1fr); } }
+        .stat-card {
+            background: #fff; border-radius: .75rem; border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 2px rgba(0,0,0,.05); padding: 1rem;
+        }
+        .stat-label { font-size: .75rem; color: #6b7280; text-transform: uppercase; font-weight: 600; margin-bottom: .25rem; }
+        .stat-value { font-size: 1.875rem; font-weight: 700; color: #111827; }
+        .stat-value.coste { font-size: 1.5rem; }
+        .stat-blue { color: #2563eb; }
+        .stat-green { color: #16a34a; }
+        .stat-orange { color: #f97316; }
+
+        .filters { display: flex; flex-direction: column; gap: .75rem; margin-bottom: 1.5rem; }
+        @media (min-width: 640px) { .filters { flex-direction: row; } }
+        .filters input, .filters select {
+            border: 1px solid #d1d5db; border-radius: .5rem; padding: .625rem 1rem;
+            font-size: .875rem; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            font-family: inherit; color: #1f2937;
+        }
+        .filters input:focus, .filters select:focus {
+            outline: none; border-color: #f97316; box-shadow: 0 0 0 1px #f97316;
+        }
+        .filters input { flex: 1; }
+
+        .table-card {
+            background: #fff; border-radius: .75rem; box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            border: 1px solid #e5e7eb; overflow: hidden;
+        }
+        .table-scroll { overflow-x: auto; }
+        table { width: 100%; text-align: left; border-collapse: collapse; }
+        thead tr { background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+        thead th {
+            padding: 1rem 1.5rem; font-size: .75rem; font-weight: 600; color: #6b7280;
+            text-transform: uppercase; letter-spacing: .05em;
+        }
+        th.col-cliente { width: 33%; }
+        th.col-historial { width: 67%; }
+        tbody tr { border-bottom: 1px solid #f3f4f6; transition: background .15s; }
+        tbody tr:hover { background: #f9fafb; }
+        tbody tr.gestionado { opacity: .7; }
+        tbody td { padding: 1rem 1.5rem; vertical-align: top; }
+        td.col-cliente { border-right: 1px solid #f3f4f6; }
+        .empty-row td { padding: 2rem 1.5rem; text-align: center; color: #6b7280; }
+
+        .lead-name { font-weight: 700; color: #111827; font-size: 1.125rem; }
+        .lead-id { font-size: .75rem; color: #9ca3af; font-family: monospace; margin-top: .125rem; }
+        .lead-created { font-size: .75rem; color: #9ca3af; margin-top: .125rem; }
+        .lead-info { margin: .75rem 0 1rem; font-size: .875rem; color: #4b5563; }
+        .lead-info-row { display: flex; align-items: center; gap: .5rem; margin-bottom: .375rem; }
+        .lead-info-row.cost { font-size: .75rem; color: #9ca3af; }
+
+        .badges-row { display: flex; flex-wrap: wrap; gap: .25rem; margin-bottom: .75rem; }
+        .badge {
+            display: inline-flex; align-items: center; padding: .25rem .625rem; border-radius: 9999px;
+            font-size: .75rem; font-weight: 700; border: 1px solid;
+        }
+        .badge-default { background: #f3f4f6; color: #374151; border-color: #e5e7eb; }
+        .badge-cualificador { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+        .badge-agendador { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+        .badge-terminar { background: #e5e7eb; color: #374151; border-color: #d1d5db; }
+        .badge-lead-directo { background: #111827; color: #fff; border-color: #1f2937; }
+        .badge-gestionado { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; margin-left: .25rem; }
+
+        .actions-row { display: flex; gap: .5rem; padding-top: .5rem; border-top: 1px solid #f3f4f6; }
+        .btn-action {
+            font-size: .75rem; font-weight: 500; padding: .375rem .75rem; border-radius: .5rem;
+            border: 1px solid; cursor: pointer; transition: background .15s; font-family: inherit;
+        }
+        .btn-marcar { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+        .btn-marcar:hover { background: #dcfce7; }
+        .btn-desmarcar { background: #f3f4f6; color: #4b5563; border-color: #e5e7eb; }
+        .btn-desmarcar:hover { background: #e5e7eb; }
+        .btn-eliminar { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+        .btn-eliminar:hover { background: #fee2e2; }
+
+        .chat-panel {
+            display: flex; flex-direction: column; gap: .75rem; padding: 1rem;
+            max-height: 350px; overflow-y: auto; background: #f3f4f6; border-radius: .75rem;
+            border: 1px solid #e5e7eb; box-shadow: inset 0 2px 4px rgba(0,0,0,.05);
+        }
+        .chat-bubble { padding: .75rem; border-radius: .5rem; max-width: 85%; font-size: .875rem; box-shadow: 0 1px 2px rgba(0,0,0,.05); border: 1px solid; }
+        .chat-bubble strong { display: block; margin-bottom: .25rem; }
+        .chat-user { background: #dbeafe; color: #1e3a8a; align-self: flex-start; border-color: #bfdbfe; }
+        .chat-user strong { color: #1d4ed8; }
+        .chat-assistant { background: #fff; color: #1f2937; align-self: flex-end; border-color: #e5e7eb; }
+        .chat-assistant strong { color: #f97316; }
+        .chat-empty { font-size: .875rem; color: #6b7280; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-card">
+            <div class="login-icon-wrap">
+                <span class="login-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </span>
             </div>
-            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Acceso Admin</h2>
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
-                <input type="text" id="username" placeholder="admin" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors">
+            <h2>Acceso Admin</h2>
+            <div class="field">
+                <label>Usuario</label>
+                <input type="text" id="username" placeholder="admin">
             </div>
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                <input type="password" id="password" placeholder="•••••" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors" onkeypress="if(event.key === 'Enter') iniciarSesion()">
+            <div class="field">
+                <label>Contraseña</label>
+                <input type="password" id="password" placeholder="•••••" onkeypress="if(event.key === 'Enter') iniciarSesion()">
             </div>
-            <button onclick="iniciarSesion()" class="w-full bg-orange-500 text-white font-bold py-2.5 px-4 rounded-lg hover:bg-orange-600 transition-colors shadow-sm">Entrar al Panel</button>
+            <button onclick="iniciarSesion()" class="btn-entrar">Entrar al Panel</button>
         </div>
     </div>
 
-    <div id="dashboard-screen" class="hidden min-h-screen flex flex-col">
+    <div id="dashboard-screen" class="hidden">
 
-        <nav class="bg-gray-900 text-white px-6 py-4 flex justify-between items-center shadow-md">
-            <div class="flex items-center gap-3">
-                <span class="flex h-8 w-8 items-center justify-center rounded bg-orange-500 text-white">
+        <nav class="topbar">
+            <div class="brand">
+                <span class="brand-logo">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
                 </span>
-                <h1 class="text-xl font-bold tracking-tight">Solsureste Solar <span class="text-orange-400 font-medium">CRM</span></h1>
+                <h1>Solsureste Solar <span>CRM</span></h1>
             </div>
-            <button onclick="cerrarSesion()" class="text-sm font-medium text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors">Cerrar Sesión</button>
+            <button onclick="cerrarSesion()" class="btn-logout">Cerrar Sesión</button>
         </nav>
 
-        <main class="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full">
+        <main class="content">
 
-            <!-- Cabecera -->
-            <div class="flex justify-between items-center mb-6">
+            <div class="page-header">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900">Leads Captados</h2>
-                    <p class="text-sm text-gray-500 mt-1">Contactos extraídos de forma automática por la IA.</p>
+                    <h2>Leads Captados</h2>
+                    <p>Contactos extraídos de forma automática por la IA.</p>
                 </div>
-                <button onclick="cargarDatosBD()" class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg font-medium shadow-sm flex items-center gap-2 transition-colors">
+                <button onclick="cargarDatosBD()" class="btn-refresh">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                     Refrescar
                 </button>
             </div>
 
-            <!-- Barra de estadísticas -->
-            <div id="stats-bar" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-                    <div class="text-xs text-gray-500 uppercase font-semibold mb-1">Total Leads</div>
-                    <div id="stat-total" class="text-3xl font-bold text-gray-900">—</div>
+            <div id="stats-bar">
+                <div class="stat-card">
+                    <div class="stat-label">Total Leads</div>
+                    <div id="stat-total" class="stat-value">—</div>
                 </div>
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-                    <div class="text-xs text-gray-500 uppercase font-semibold mb-1">En Proceso</div>
-                    <div id="stat-en-proceso" class="text-3xl font-bold text-blue-600">—</div>
+                <div class="stat-card">
+                    <div class="stat-label">En Proceso</div>
+                    <div id="stat-en-proceso" class="stat-value stat-blue">—</div>
                 </div>
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-                    <div class="text-xs text-gray-500 uppercase font-semibold mb-1">Gestionados</div>
-                    <div id="stat-gestionados" class="text-3xl font-bold text-green-600">—</div>
+                <div class="stat-card">
+                    <div class="stat-label">Gestionados</div>
+                    <div id="stat-gestionados" class="stat-value stat-green">—</div>
                 </div>
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-                    <div class="text-xs text-gray-500 uppercase font-semibold mb-1">Coste Total IA</div>
-                    <div id="stat-coste" class="text-2xl font-bold text-orange-500">—</div>
+                <div class="stat-card">
+                    <div class="stat-label">Coste Total IA</div>
+                    <div id="stat-coste" class="stat-value coste stat-orange">—</div>
                 </div>
             </div>
 
-            <!-- Filtros -->
-            <div class="flex flex-col sm:flex-row gap-3 mb-6">
+            <div class="filters">
                 <input
                     type="text"
                     id="buscador"
                     placeholder="Buscar por nombre, correo, teléfono o ciudad..."
                     oninput="renderTabla()"
-                    class="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 bg-white shadow-sm"
                 >
-                <select
-                    id="filtroEstado"
-                    onchange="renderTabla()"
-                    class="border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 bg-white shadow-sm"
-                >
+                <select id="filtroEstado" onchange="renderTabla()">
                     <option value="">Todos los estados</option>
                     <option value="CUALIFICADOR">CUALIFICADOR</option>
                     <option value="AGENDADOR">AGENDADOR</option>
@@ -98,17 +260,16 @@
                 </select>
             </div>
 
-            <!-- Tabla de leads -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+            <div class="table-card">
+                <div class="table-scroll">
+                    <table>
                         <thead>
-                            <tr class="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 uppercase tracking-wider">
-                                <th class="px-6 py-4 font-semibold w-1/3">Datos del Cliente</th>
-                                <th class="px-6 py-4 font-semibold w-2/3">Historial de Conversación</th>
+                            <tr>
+                                <th class="col-cliente">Datos del Cliente</th>
+                                <th class="col-historial">Historial de Conversación</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-clientes" class="divide-y divide-gray-100"></tbody>
+                        <tbody id="tabla-clientes"></tbody>
                     </table>
                 </div>
             </div>
@@ -207,7 +368,7 @@
         }
 
         if (leads.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="2" class="px-6 py-8 text-center text-gray-500">No hay leads que coincidan con los filtros.</td></tr>';
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="2">No hay leads que coincidan con los filtros.</td></tr>';
             return;
         }
 
@@ -226,61 +387,57 @@
 
             const createdAt = cliente.created_at ? cliente.created_at.substring(0, 16).replace('T', ' ') : '';
 
-            let badgeColor = "bg-gray-100 text-gray-700 border-gray-200";
-            if (cEstado === "CUALIFICADOR")  badgeColor = "bg-blue-100 text-blue-800 border-blue-200";
-            if (cEstado === "AGENDADOR")     badgeColor = "bg-green-100 text-green-800 border-green-200";
-            if (cEstado === "TERMINAR")      badgeColor = "bg-gray-200 text-gray-700 border-gray-300";
-            if (cEstado === "LEAD_DIRECTO")  badgeColor = "bg-gray-900 text-white border-gray-800";
+            let badgeClase = "badge-default";
+            if (cEstado === "CUALIFICADOR")  badgeClase = "badge-cualificador";
+            if (cEstado === "AGENDADOR")     badgeClase = "badge-agendador";
+            if (cEstado === "TERMINAR")      badgeClase = "badge-terminar";
+            if (cEstado === "LEAD_DIRECTO")  badgeClase = "badge-lead-directo";
 
             const gestionadoBadge = gestionado
-                ? `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border bg-purple-100 text-purple-800 border-purple-200 ml-1">✓ Gestionado</span>`
+                ? `<span class="badge badge-gestionado">✓ Gestionado</span>`
                 : '';
 
             const gestionadoBtnLabel = gestionado ? '↩ Desmarcar' : '✓ Gestionado';
-            const gestionadoBtnColor = gestionado
-                ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-200'
-                : 'bg-green-50 text-green-700 hover:bg-green-100 border-green-200';
+            const gestionadoBtnClase = gestionado ? 'btn-desmarcar' : 'btn-marcar';
 
             const uid = cliente.user_id.replace(/'/g, "\\'");
 
             html += `
-            <tr class="hover:bg-gray-50 transition-colors border-b border-gray-100 ${gestionado ? 'opacity-70' : ''}">
-                <td class="px-6 py-4 align-top border-r border-gray-100">
-                    <div class="mb-3">
-                        <div class="font-bold text-gray-900 text-lg">${cNombre}</div>
-                        <div class="text-xs text-gray-400 font-mono mt-0.5" title="ID de Sesión">${cliente.user_id}</div>
-                        ${createdAt ? `<div class="text-xs text-gray-400 mt-0.5">🕐 ${createdAt}</div>` : ''}
+            <tr class="${gestionado ? 'gestionado' : ''}">
+                <td class="col-cliente">
+                    <div>
+                        <div class="lead-name">${cNombre}</div>
+                        <div class="lead-id" title="ID de Sesión">${cliente.user_id}</div>
+                        ${createdAt ? `<div class="lead-created">🕐 ${createdAt}</div>` : ''}
                     </div>
 
-                    <div class="space-y-1.5 mb-4 text-sm text-gray-600">
-                        <div class="flex items-center gap-2"><span>📞</span><span class="font-medium">${cTelefono}</span></div>
-                        <div class="flex items-center gap-2"><span>📧</span><span>${cCorreo}</span></div>
-                        <div class="flex items-center gap-2"><span>📍</span><span>${cCiudad}</span></div>
-                        ${costeStr ? `<div class="flex items-center gap-2 text-xs text-gray-400"><span>💰</span><span>${costeStr}</span></div>` : ''}
+                    <div class="lead-info">
+                        <div class="lead-info-row"><span>📞</span><span>${cTelefono}</span></div>
+                        <div class="lead-info-row"><span>📧</span><span>${cCorreo}</span></div>
+                        <div class="lead-info-row"><span>📍</span><span>${cCiudad}</span></div>
+                        ${costeStr ? `<div class="lead-info-row cost"><span>💰</span><span>${costeStr}</span></div>` : ''}
                     </div>
 
-                    <div class="flex flex-wrap gap-1 mb-3">
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${badgeColor}">
-                            ${cEstado}
-                        </span>
+                    <div class="badges-row">
+                        <span class="badge ${badgeClase}">${cEstado}</span>
                         ${gestionadoBadge}
                     </div>
 
-                    <div class="flex gap-2 pt-2 border-t border-gray-100">
+                    <div class="actions-row">
                         <button
                             onclick="toggleGestionado('${uid}')"
-                            class="text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors ${gestionadoBtnColor}">
+                            class="btn-action ${gestionadoBtnClase}">
                             ${gestionadoBtnLabel}
                         </button>
                         <button
                             onclick="eliminarLead('${uid}')"
-                            class="text-xs font-medium px-3 py-1.5 rounded-lg border bg-red-50 text-red-600 hover:bg-red-100 border-red-200 transition-colors">
+                            class="btn-action btn-eliminar">
                             🗑 Eliminar
                         </button>
                     </div>
                 </td>
-                <td class="px-6 py-4 align-top">
-                    <div class="flex flex-col gap-3 p-4 max-h-[350px] overflow-y-auto bg-gray-100 rounded-xl border border-gray-200 shadow-inner">`;
+                <td>
+                    <div class="chat-panel">`;
 
             if (cliente.historial && Array.isArray(cliente.historial)) {
                 let mensajesUtiles = 0;
@@ -289,16 +446,16 @@
                     mensajesUtiles++;
                     const contenido = String(msg.content).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
                     if (msg.role === 'user') {
-                        html += `<div class="bg-blue-100 text-blue-900 p-3 rounded-lg max-w-[85%] self-start text-sm shadow-sm border border-blue-200">
-                            <span class="font-bold block mb-1 text-blue-700">👤 Cliente:</span>${contenido}</div>`;
+                        html += `<div class="chat-bubble chat-user">
+                            <strong>👤 Cliente:</strong>${contenido}</div>`;
                     } else if (msg.role === 'assistant') {
-                        html += `<div class="bg-white text-gray-800 p-3 rounded-lg max-w-[85%] self-end text-sm shadow-sm border border-gray-200">
-                            <span class="font-bold block mb-1 text-orange-500">🤖 IA:</span>${contenido}</div>`;
+                        html += `<div class="chat-bubble chat-assistant">
+                            <strong>🤖 IA:</strong>${contenido}</div>`;
                     }
                 });
-                if (mensajesUtiles === 0) html += '<p class="text-sm text-gray-500 italic">Conversación en blanco.</p>';
+                if (mensajesUtiles === 0) html += '<p class="chat-empty">Conversación en blanco.</p>';
             } else {
-                html += '<p class="text-sm text-gray-500 italic">No hay historial legible.</p>';
+                html += '<p class="chat-empty">No hay historial legible.</p>';
             }
 
             html += `</div></td></tr>`;
