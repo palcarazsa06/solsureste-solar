@@ -50,6 +50,24 @@
       this.initChat();
       this.setupBindings();
       this.setupVisibilityPause();
+      this.setupContactTracking();
+    },
+
+    // Envía eventos a GA4 (si el usuario aceptó cookies analíticas; gtag no existe si no).
+    trackEvent(name, params) {
+      if (typeof gtag === 'function') gtag('event', name, params || {});
+    },
+
+    // Delegación global: cualquier enlace tel:/wa.me/mailto de la página (header, footer,
+    // botones flotantes, CTA inline) queda cubierto sin tener que instrumentar cada uno.
+    setupContactTracking() {
+      document.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href^="tel:"], a[href^="https://wa.me"], a[href^="mailto:"]');
+        if (!a) return;
+        const href = a.getAttribute('href');
+        const method = href.startsWith('tel:') ? 'phone' : href.startsWith('mailto:') ? 'email' : 'whatsapp';
+        this.trackEvent('contact_click', { method });
+      });
     },
 
     // Pausa los bucles requestAnimationFrame de los 4 canvas cuando la pestaña está oculta
@@ -736,6 +754,7 @@ void main(){
         });
         if (res.ok) {
           this.heroFeedback(true, '✅ ¡Solicitud enviada! Te llamamos en breve.');
+          this.trackEvent('generate_lead', { method: 'hero_form' });
           form.reset();
         } else {
           this.heroFeedback(false, 'Hubo un problema. Inténtalo de nuevo o llámanos al 968 869 532.');
@@ -838,6 +857,7 @@ void main(){
       const input = document.getElementById('sss-chat-input');
       const msg = (input.value || '').trim();
       if (!msg) return;
+      if (this.history.length <= 1) this.trackEvent('chat_start');
       this.bubble(msg, 'user');
       input.value = '';
       input.disabled = true;

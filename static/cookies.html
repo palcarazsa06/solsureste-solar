@@ -111,7 +111,7 @@
 
 <main class="page-body">
   <h2>1. Qué son las cookies</h2>
-  <p>Las cookies son pequeños archivos que se almacenan en tu navegador cuando visitas un sitio web. En solsurestesolar.com usamos el almacenamiento local del navegador (<code>localStorage</code>) de forma equivalente a una cookie, y cookies propiamente dichas de Google Analytics cuando das tu consentimiento.</p>
+  <p>Las cookies son pequeños archivos que se almacenan en tu navegador cuando visitas un sitio web. En solsurestesolar.com usamos el almacenamiento local del navegador (<code>localStorage</code>) de forma equivalente a una cookie, y cookies propiamente dichas de Google Analytics y Microsoft Clarity cuando das tu consentimiento.</p>
 
   <h2>2. Cookies que utilizamos</h2>
   <table class="cookie-table">
@@ -123,11 +123,13 @@
       <tr><td><code>sss_chat_v3</code></td><td>Técnica (localStorage)</td><td>Guarda el historial visible de la conversación con el asistente en tu propio navegador.</td><td>Indefinida, hasta que borres los datos del sitio</td><td>No requerido</td></tr>
       <tr><td><code>sss_cookie_consent</code></td><td>Técnica (localStorage)</td><td>Recuerda si has aceptado o rechazado las cookies analíticas, para no volver a preguntarte.</td><td>Indefinida, hasta que borres los datos del sitio</td><td>No requerido</td></tr>
       <tr><td><code>_ga</code>, <code>_ga_*</code></td><td>Analítica (Google Analytics)</td><td>Miden de forma agregada y anónima cómo se usa el sitio web (páginas vistas, procedencia del tráfico).</td><td>2 años</td><td>Requerido</td></tr>
+      <tr><td><code>_clck</code></td><td>Analítica (Microsoft Clarity)</td><td>Identifica tu navegador entre visitas para asociar mapas de calor y grabaciones de sesión anónimas.</td><td>1 año</td><td>Requerido</td></tr>
+      <tr><td><code>_clsk</code></td><td>Analítica (Microsoft Clarity)</td><td>Agrupa varias páginas vistas dentro de la misma sesión de navegación en una sola grabación.</td><td>1 día</td><td>Requerido</td></tr>
     </tbody>
   </table>
 
   <h2>3. Cómo aceptar o rechazar las cookies</h2>
-  <p>Al entrar por primera vez en el sitio, te mostramos un aviso donde puedes <strong>aceptar</strong> o <strong>rechazar</strong> las cookies analíticas. Si rechazas, Google Analytics no se carga en ningún momento durante tu visita.</p>
+  <p>Al entrar por primera vez en el sitio, te mostramos un aviso donde puedes <strong>aceptar</strong> o <strong>rechazar</strong> las cookies analíticas. Si rechazas, ni Google Analytics ni Microsoft Clarity se cargan en ningún momento durante tu visita.</p>
 
   <h2>4. Cómo revocar tu consentimiento</h2>
   <p>Puedes cambiar tu decisión en cualquier momento borrando el dato <code>sss_cookie_consent</code> del almacenamiento local de tu navegador (en la mayoría de navegadores: herramientas de desarrollador → Aplicación/Almacenamiento → borrar datos del sitio), o volviendo a cargar la página tras borrar los datos de navegación de este sitio para que el aviso vuelva a aparecer.</p>
