@@ -757,7 +757,19 @@ void main(){
           this.trackEvent('generate_lead', { method: 'hero_form' });
           form.reset();
         } else {
-          this.heroFeedback(false, 'Hubo un problema. Inténtalo de nuevo o llámanos al 968 869 532.');
+          let msg = 'Hubo un problema. Inténtalo de nuevo o llámanos al 968 869 532.';
+          try {
+            const body = await res.json();
+            const detail = body && body.detail;
+            if (Array.isArray(detail) && detail.length && detail[0] && typeof detail[0].msg === 'string' && detail[0].msg.trim()) {
+              msg = detail[0].msg.replace(/^Value error,\s*/, '');
+            } else if (typeof detail === 'string' && detail.trim()) {
+              msg = detail;
+            }
+          } catch (_) {
+            // cuerpo vacío o no-JSON — se mantiene el mensaje genérico de arriba
+          }
+          this.heroFeedback(false, msg);
         }
       } catch (_) {
         this.heroFeedback(false, 'Sin conexión. Llámanos al 968 869 532.');
