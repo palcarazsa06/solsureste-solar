@@ -499,7 +499,15 @@
       let gl;
       const opts = { antialias: true, alpha: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' };
       try { gl = cv.getContext('webgl', opts) || cv.getContext('experimental-webgl', opts); } catch (e) {}
-      if (!gl) { cv.style.background = 'radial-gradient(120% 80% at 50% 12%, rgba(255,150,40,.22), #06060c 55%)'; return; }
+      const fallback = () => { cv.style.background = 'radial-gradient(120% 80% at 50% 12%, rgba(255,150,40,.22), #06060c 55%)'; };
+      if (!gl) { fallback(); return; }
+      // Sin GPU real (SwiftShader/llvmpipe, típico de Chrome headless en tests de rendimiento)
+      // este shader de 6 octavas fbm a pantalla completa satura la CPU y dispara el TBT.
+      // Con GPU real el coste es prácticamente nulo (vive en la GPU), así que solo afecta
+      // a quien ya tendría una experiencia mala con el shader corriendo por software.
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      const renderer = dbg ? (gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '') : '';
+      if (/swiftshader|llvmpipe|software/i.test(renderer)) { fallback(); return; }
       const vsSrc = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}';
       const fsSrc = `precision highp float;
 uniform vec2 uRes; uniform float uTime; uniform float uProg; uniform float uReduce;
