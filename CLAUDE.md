@@ -43,17 +43,27 @@ uvicorn api:app --host 0.0.0.0 --port $PORT     # arranque de producción (el qu
 python main.py                                  # chatbot en terminal, sin servidor HTTP, para explorar el flujo libremente
 python cargar_pdfs.py                           # (re)indexa /documentos en ChromaDB — ejecutar tras editar la base de conocimiento
 python ver_bd.py                                # resumen rápido de leads en agencia.db (user_id, estado, últimos mensajes)
-./test_conversacion.sh                          # única suite de regresión — requiere jq y el servidor ya corriendo en localhost:8000
+pytest -q                                       # tests unitarios (recorte de historial, sesiones HMAC, fast-path de guardrails)
+pytest tests/test_main.py::test_recortar_historial_no_parte_un_tool_call_a_medias   # un solo test
+./test_conversacion.sh                          # regresión end-to-end vía curl+jq, requiere el servidor ya corriendo en localhost:8000
 tail -f logs/agencia.log                        # logs en vivo (o $DATA_DIR/logs/agencia.log en producción)
 ```
 
-**No hay framework de tests unitarios (sin pytest).** `test_conversacion.sh` es la única red de
-regresión automatizada: cubre flujo de cualificación (5 turnos), guardrail off-topic, guardrail de
-inyección de prompt, endpoint `/presupuesto`, sesión inválida (401) y rate limit (429). Lee las
-credenciales admin del `.env` para limpiar los usuarios de prueba que crea. Para probar un escenario
-suelto o nuevo, seguir el mismo patrón manualmente: `POST /session` → `POST /chat` reusando el mismo
-`user_id` en turnos sucesivos (ver el propio script como plantilla), leyendo `logs/agencia.log` para
-ver la decisión real del supervisor y los argumentos exactos pasados a las tools.
+`pytest`, `pytest-asyncio` y `pytest-socket` no están en `requirements.txt` (instalar aparte, una vez).
+`pytest.ini` fija `--disable-socket --allow-unix-socket`: cualquier test que intente abrir una conexión
+de red real (p. ej. a la API de OpenAI) falla en vez de colgarse — los tests mockean esas llamadas, no
+las ejecutan. `tests/conftest.py` define variables de entorno dummy (`OPENAI_API_KEY`, `SECRET_KEY`,
+etc.) y un `DATA_DIR` temporal *antes* de que ningún test importe `main`/`api`/`database`/`guardrails`,
+porque esos módulos construyen clientes reales (OpenAI, ChromaDB) en el momento del import. Corre en
+cada push/PR vía `.github/workflows/tests.yml`, sin necesidad de configurar ningún secret en GitHub.
+
+`test_conversacion.sh` sigue siendo la única regresión end-to-end real: cubre flujo de cualificación (5
+turnos), guardrail off-topic, guardrail de inyección de prompt, endpoint `/presupuesto`, sesión
+inválida (401) y rate limit (429). Lee las credenciales admin del `.env` para limpiar los usuarios de
+prueba que crea. Para probar un escenario suelto o nuevo, seguir el mismo patrón manualmente: `POST
+/session` → `POST /chat` reusando el mismo `user_id` en turnos sucesivos (ver el propio script como
+plantilla), leyendo `logs/agencia.log` para ver la decisión real del supervisor y los argumentos
+exactos pasados a las tools.
 
 ## Arquitectura: Sistema Router Multi-Agente
 
@@ -120,15 +130,24 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   coste de conversaciones eliminadas, para no perder la cuenta al borrar leads desde el admin).
   `reset_conversacion()` limpia historial y datos de contacto pero **no** el coste acumulado ni
   `gestionado` — persisten a través de un reset.
-- `static/admin.html` — panel de administración (login propio + Basic Auth a nivel de servidor en
-  `/admin`, doble capa). Tabla de leads con filtros por texto (insensible a tildes) y por estado,
-  marcar gestionado, eliminar, coste total acumulado.
+- `static/admin.html` + `static/admin.js` — panel de administración (login propio + Basic Auth a nivel
+  de servidor en `/admin`, doble capa). Tabla de leads con filtros por texto (insensible a tildes) y
+  por estado, marcar gestionado, eliminar, coste total acumulado. La lógica vive en `admin.js`
+  (externo) — antes estaba inline en `admin.html` (`<script>` + `onclick`/`onkeypress`/`oninput`) y la
+  CSP (`script-src 'self'`, sin `unsafe-inline`) lo bloqueaba en silencio, dejando el botón "Entrar al
+  Panel" sin hacer nada; no volver a poner JS ni handlers inline en esta página (ver CSP en "Detalles
+  importantes"). El CSS también es propio y autocontenido — antes dependía del CDN de
+  `cdn.tailwindcss.com`, que la misma CSP bloqueaba dejando `/admin` sin estilos.
 - `static/script.js` — además de la UI (chat, formulario, contadores, reveals, tarjetas spotlight),
   `setupStory()` monta un canvas WebGL fijo a pantalla completa (`#sss-story`, detrás de todo el
   contenido) que dibuja un shader de 7 actos (`ACTO I` sol → `ACTO VII` amanecer) controlado por el
   progreso de scroll de **toda la página** (`scrollTop / (scrollHeight - clientHeight)`, suavizado con
   lerp). El "sol" que se ve en el hero no es un asset del hero — es este canvas de fondo asomando a
   través de los overlays semitransparentes de `#inicio` (ver gotcha en "Detalles importantes").
+  También dispara eventos de negocio a GA4 vía `trackEvent()` (no-op si `gtag` no existe, i.e. el
+  usuario rechazó cookies): `generate_lead` al enviar con éxito el formulario del hero, `chat_start` en
+  el primer mensaje del chat, y `contact_click` (delegación global de clic sobre cualquier
+  `tel:`/`wa.me`/`mailto:` de la página) para teléfono/WhatsApp/email.
 - `documentos/solsureste_base_conocimiento.txt` — fuente de verdad del RAG. Tras editarlo, ejecutar
   `python cargar_pdfs.py` y **reiniciar el proceso del servidor** (ver gotcha de ChromaDB abajo).
 - `test_conversacion.sh` — regresión end-to-end vía curl+jq contra un servidor ya corriendo.
@@ -142,8 +161,11 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   Calendar, CRM, email de alerta, GA4) — si se añade una integración nueva que trate datos
   personales, actualizar esta página también.
 - `static/consent.js` — banner de consentimiento de cookies; solo carga `gtag.js` (GA4, ID
-  `G-X15TLEX3MB`) tras aceptación explícita, guardada en `localStorage['sss_cookie_consent']`.
-  Incluido en todas las páginas públicas (`index.html`, `faq.html`, y las 3 legales).
+  `G-X15TLEX3MB`) y el script de Microsoft Clarity (Project ID `xi6zd7zrwz`) tras aceptación explícita,
+  guardada en `localStorage['sss_cookie_consent']`. Incluido en todas las páginas públicas
+  (`index.html`, `faq.html`, y las 3 legales). Cualquier script de terceros nuevo que se añada aquí
+  necesita también su dominio en la CSP de `api.py` (ver "Detalles importantes") o se bloquea en
+  silencio igual que le pasó a Clarity la primera vez.
 - `static/manifest.json` — manifest PWA mínimo (iconos `icon-192.png`/`icon-512.png` generados desde
   `static/images/logo.jpg`).
 - `documentos/plantilla-pagina-seo.html` — plantilla comentada usada como base para las páginas de
@@ -223,6 +245,18 @@ base de conocimiento.
   ahí manualmente.
 - **`robots.txt`** bloquea `/admin`, `/api/`, `/session` y `/presupuesto` de los crawlers. `/faq`,
   `/aviso-legal`, `/privacidad` y `/cookies` sí son crawleables (están en `sitemap.xml`).
+- **La CSP de `api.py` (`_CSP`) es restrictiva por defecto y bloquea en silencio — ya ha mordido tres
+  veces**: `script-src` solo permite `'self'` más los dominios explícitamente listados (hoy
+  `googletagmanager.com` y `clarity.ms`); no hay `unsafe-inline` en `script-src` (sí en `style-src`, ver
+  comentario en el propio archivo). Cualquier `<script>` inline, atributo `onclick`/`oninput`/etc., o
+  script de un CDN/tercero nuevo que no esté en la lista **no lanza ningún error en el servidor** — el
+  navegador simplemente lo descarta, y el síntoma es "el botón no hace nada" o "la página no tiene
+  estilos", sin pista alguna en los logs de `agencia.log`. Ya pasó con el CDN de Tailwind en
+  `admin.html`, con los handlers inline del login de `admin.html`, y con el script de Microsoft Clarity
+  en `consent.js`. Regla: cualquier script/CDN de terceros nuevo necesita su dominio añadido a
+  `script-src` (y a `connect-src` si además envía datos por fetch/beacon) antes de darlo por probado —
+  comprobarlo en la consola del navegador (pestaña Network/Console), no basta con mirar que el deploy
+  fue bien.
 - **El hero debe quedarse semitransparente, nunca opaco**: dentro de `#inicio`, las capas
   `.sss-hero-bg-cinematic`/`.sss-hero-bg-aurora` solo deben llevar overlays semitransparentes
   (degradados, blur) — cualquier capa opaca ahí (un `<video>` de fondo, un `background` sólido) tapa
