@@ -45,25 +45,41 @@ python cargar_pdfs.py                           # (re)indexa /documentos en Chro
 python ver_bd.py                                # resumen rápido de leads en agencia.db (user_id, estado, últimos mensajes)
 pytest -q                                       # tests unitarios (recorte de historial, sesiones HMAC, fast-path de guardrails)
 pytest tests/test_main.py::test_recortar_historial_no_parte_un_tool_call_a_medias   # un solo test
+pytest --cov=. --cov-report=term-missing        # cobertura real (ver huecos conocidos más abajo)
 ./test_conversacion.sh                          # regresión end-to-end vía curl+jq, requiere el servidor ya corriendo en localhost:8000
 tail -f logs/agencia.log                        # logs en vivo (o $DATA_DIR/logs/agencia.log en producción)
 ```
 
-`pytest`, `pytest-asyncio` y `pytest-socket` no están en `requirements.txt` (instalar aparte, una vez).
-`pytest.ini` fija `--disable-socket --allow-unix-socket`: cualquier test que intente abrir una conexión
-de red real (p. ej. a la API de OpenAI) falla en vez de colgarse — los tests mockean esas llamadas, no
-las ejecutan. `tests/conftest.py` define variables de entorno dummy (`OPENAI_API_KEY`, `SECRET_KEY`,
-etc.) y un `DATA_DIR` temporal *antes* de que ningún test importe `main`/`api`/`database`/`guardrails`,
-porque esos módulos construyen clientes reales (OpenAI, ChromaDB) en el momento del import. Corre en
-cada push/PR vía `.github/workflows/tests.yml`, sin necesidad de configurar ningún secret en GitHub.
+`pytest`, `pytest-asyncio`, `pytest-socket` y `pytest-cov` no están en `requirements.txt`, viven en
+`requirements-dev.txt` (`pip install -r requirements-dev.txt`, también usado por CI). `pytest.ini` fija
+`--disable-socket --allow-unix-socket`: cualquier test que intente abrir una conexión de red real (p.
+ej. a la API de OpenAI) falla en vez de colgarse — los tests mockean esas llamadas, no las ejecutan.
+`tests/conftest.py` define variables de entorno dummy (`OPENAI_API_KEY`, `SECRET_KEY`, etc.) y un
+`DATA_DIR` temporal *antes* de que ningún test importe `main`/`api`/`database`/`guardrails`, porque
+esos módulos construyen clientes reales (OpenAI, ChromaDB) en el momento del import. Corre en cada
+push/PR vía `.github/workflows/tests.yml`, sin necesidad de configurar ningún secret en GitHub.
 
-`test_conversacion.sh` sigue siendo la única regresión end-to-end real: cubre flujo de cualificación (5
-turnos), guardrail off-topic, guardrail de inyección de prompt, endpoint `/presupuesto`, sesión
-inválida (401) y rate limit (429). Lee las credenciales admin del `.env` para limpiar los usuarios de
-prueba que crea. Para probar un escenario suelto o nuevo, seguir el mismo patrón manualmente: `POST
-/session` → `POST /chat` reusando el mismo `user_id` en turnos sucesivos (ver el propio script como
-plantilla), leyendo `logs/agencia.log` para ver la decisión real del supervisor y los argumentos
-exactos pasados a las tools.
+`tests/test_chat_flow.py` cubre vía `TestClient` + mocks los mismos escenarios que `test_conversacion.sh`
+(flujo de cualificación multi-turno, guardrail de entrada, sesión inválida, rate limit) para que corran
+en CI sin gastar dinero real en OpenAI ni depender de contenido no determinista del LLM.
+`test_conversacion.sh` sigue siendo la única regresión end-to-end **real** (contra un servidor vivo y la
+API de OpenAI de verdad): cubre flujo de cualificación (5 turnos), guardrail off-topic, guardrail de
+inyección de prompt, endpoint `/presupuesto`, sesión inválida (401) y rate limit (429). Lee las
+credenciales admin del `.env` para limpiar los usuarios de prueba que crea. **Importante**:
+`CRM_WEBHOOK_URL` en `.env` apunta al escenario REAL de Make.com (no un endpoint de pruebas pese a lo
+que decía un comentario antiguo en `crm_tools.py`, ya corregido) — si el flujo de prueba llega a dar
+los 4 datos de contacto, crea un lead real en la Google Sheet de clientes; confirmar esto antes de
+ejecutar el script si no se está seguro del entorno. Para probar un escenario suelto o nuevo, seguir
+el mismo patrón manualmente: `POST /session` → `POST /chat` reusando el mismo `user_id` en turnos
+sucesivos (ver el propio script como plantilla), leyendo `logs/agencia.log` para ver la decisión real
+del supervisor y los argumentos exactos pasados a las tools.
+
+**Huecos de cobertura conocidos** (medidos con `pytest --cov`, ~81% total): `tools/calendar_tools.py`
+(~46%, la llamada real a la API de Google Calendar en `reservar_cita`/`_reservar_cita_sync` no está
+testeada más allá de la lógica de horario laboral) y `tools/rag_tools.py` (~50%, el camino real de
+embeddings+ChromaDB en `buscar_informacion` no está testeado, solo la lógica de caché). `cargar_pdfs.py`
+y `ver_bd.py` están al 0% a propósito — son scripts manuales de un solo uso, no parte del servidor.
+No se exige cerrar estos huecos ahora; revisar si crecen mucho al tocar esos archivos.
 
 ## Arquitectura: Sistema Router Multi-Agente
 
@@ -100,7 +116,16 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   patrón que `/admin`), sirve `static/` como fallback. Rate limit en memoria (20 req/60s por IP) en
   `/chat`, `/presupuesto` y los tres endpoints `/api/leads/*`. Sesiones HMAC firmadas, security
   headers, validación de inputs, `GZipMiddleware` y `Cache-Control` para estáticos (`/images/`,
-  `/videos/`, `/icon-*`, `.css`, `.js`).
+  `/videos/`, `/icon-*`, `.css`, `.js`). **El rate limit es un contador por proceso** (`defaultdict`
+  en memoria, `api.py:127`), correcto solo mientras Render corra 1 worker/instancia (hoy es así: el
+  arranque de producción no lleva `--workers`). Si algún día se escala horizontalmente, cada proceso
+  llevaría su propio contador y el límite total se multiplicaría sin control — requeriría migrar a
+  un backend compartido (Redis) para seguir siendo un límite global real. **`/api/leads` devuelve
+  todos los leads sin paginación, historial completo incluido** (`database.py:get_all_conversaciones`)
+  — evaluado y pospuesto a propósito: `admin.js` ya pinta ese `historial` en línea en la tabla
+  ("Historial de Conversación"), así que separarlo en un endpoint bajo demanda rompería esa vista
+  salvo que se reescriba también el frontend. Con el volumen real actual (~86 leads) el payload es
+  trivial — revisar esto si el número de leads crece mucho.
 - `agentes/supervisor.py` — prompt de enrutamiento + schema Pydantic `DecisionRuta`.
 - `agentes/cualificador.py` — agente de ventas con RAG obligatorio (`buscar_informacion`) y acceso a
   `enviar_lead_crm`. Su sección de "protocolo de seguridad" solo debe activarse ante intentos reales
@@ -121,6 +146,18 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   STARTTLS). Se dispara fire-and-forget vía `asyncio.create_task` desde `main.py` (flujo de chat) y
   `api.py` (`/presupuesto`). Es una notificación **independiente** del envío al CRM — no debe quedar
   anidada dentro del mismo guard de "CRM ya enviado" (ver "Detalles importantes").
+- `google_reviews.py` — integración con Google Places API (New) para las reseñas reales de la
+  empresa. `refrescar_resenas_cache()` llama a `_fetch_place_details()` para "es" y "en", guarda el
+  resultado en un caché en memoria (`_cache`, persistido también en disco en
+  `DATA_DIR/google_reviews_cache.json`) y, si el idioma "es" trae `rating`/`user_rating_count`,
+  reescribe en caliente el nodo `"aggregateRating"` del JSON-LD de `static/index.html` y
+  `static/en/index.html` (son estáticos sin templating server-side). Si el refresco de un idioma
+  falla, se conserva el valor cacheado anterior de ese idioma en vez de vaciarlo. Se ejecuta
+  automáticamente cada día a las 4:05 vía APScheduler (`api.py`, `_iniciar_scheduler_purga`) y puede
+  forzarse manualmente desde el panel admin (`POST /api/admin/refrescar-resenas`). El frontend lee el
+  caché ya calculado vía `GET /api/reviews?lang=es|en` (público, sin auth). Tests en
+  `tests/test_google_reviews.py` (mockean `requests.get` y redirigen `CACHE_FILE`/
+  `_AGGREGATE_RATING_FILES` a rutas temporales — nunca tocan los `static/*.html` reales).
 - `guardrails.py` — `verificar_input`: firewall de entrada (bloquea off-topic/ataques, con reglas
   explícitas para no bloquear preguntas legítimas de negocio aunque suenen genéricas). `verificar_output`:
   revisa/corrige la respuesta antes de guardarla, con un fast-path regex (`_es_claramente_segura`) que
@@ -175,7 +212,15 @@ enum — no está forzado a nivel de esquema, solo por prompt.
 - `documentos/plantilla-pagina-seo.html` — plantilla comentada usada como base para las páginas de
   ciudad/provincia de abajo. Vive fuera de `static/` a propósito para que `StaticFiles` nunca la sirva
   por accidente. Sigue sirviendo de base para futuras páginas de servicio (residencial/industrial/
-  huertos solares/mantenimiento), aún no implementadas.
+  huertos solares/mantenimiento), aún no implementadas. Trae su propio comentario-guía de 6 pasos y
+  placeholders (`{{TITLE}}`, `{{DESCRIPTION}}`, `{{URL}}`, `{{JSON_LD}}`, `{{LABEL}}`, `{{H1}}`,
+  `{{CONTENIDO_ESPECÍFICO_NO_DUPLICADO}}`) — al usarla para una página nueva, seguir el mismo patrón de
+  registro que las páginas `placas-solares-*`: ruta nueva en `api.py` (`@app.get("/<slug>")` +
+  `FileResponse`), añadir la URL a `static/sitemap.xml`, y enlazarla desde la página pilar/relacionada
+  correspondiente vía `.cluster-links`.
+- `static/sitemap.xml` — cada `<url>` lleva `loc`/`lastmod`/`changefreq`/`priority`. **Actualizar
+  `lastmod` a mano** (formato `YYYY-MM-DD`) cada vez que se edite contenido visible de una página que
+  ya esté en el sitemap — no hay ningún mecanismo automático que lo haga por ti.
 - `static/placas-solares-{murcia,alicante}.html` — páginas **pilar** de SEO local (rutas
   `/placas-solares-murcia` y `/placas-solares-alicante`), cobertura a nivel provincia/región. Enlazan
   a sus páginas de ciudad correspondientes vía `.cluster-links`. Schema `Service` (no `LocalBusiness`
