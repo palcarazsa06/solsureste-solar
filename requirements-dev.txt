@@ -1,0 +1,6 @@
+# Dependencias de desarrollo/tests. No se instalan en producción (Render solo instala
+# requirements.txt) — CI las instala aparte, ver .github/workflows/tests.yml.
+pytest
+pytest-asyncio
+pytest-socket
+pip-tools
