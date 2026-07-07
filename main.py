@@ -22,6 +22,7 @@ from guardrails import verificar_input, verificar_output, MENSAJE_RECHAZO_ES
 # para la crm
 from tools.crm_tools import tool_enviar_lead, enviar_lead_crm
 from database import reset_conversacion
+from validadores import telefono_valido, email_valido
 
 from logging_config import get_logger
 logger = get_logger(__name__)
@@ -166,7 +167,19 @@ async def _extraer_y_guardar_lead(user_id, historial_para_ia) -> tuple[int, int]
         db.update_datos_cliente(user_id, nombre_limpio, correo_limpio, telefono_limpio, ciudad_limpia)
         logger.info(f"Datos guardados en SQLite: {nombre_limpio} | {telefono_limpio} | {correo_limpio}")
 
-        if not db.crm_ya_enviado(user_id):
+        # El LLM puede alucinar o formatear mal el teléfono/correo (auditoría de robustez).
+        # El dato SIEMPRE se guarda en SQLite (arriba, nunca se pierde el lead); el envío al
+        # CRM solo se dispara si pasa el mismo formato que ya exigimos en el formulario
+        # público /presupuesto — si no, se loguea para revisar manualmente en el panel admin
+        # (columna "CRM"), en vez de mandar un dato inservible a un comercial.
+        datos_validos = telefono_valido(telefono_limpio) and email_valido(correo_limpio)
+
+        if not datos_validos:
+            logger.warning(
+                f"Datos de contacto no válidos, NO se envía al CRM (revisar en el panel admin): "
+                f"telefono='{telefono_limpio}' correo='{correo_limpio}' user_id={user_id}"
+            )
+        elif not db.crm_ya_enviado(user_id):
             try:
                 await enviar_lead_crm(nombre=nombre_limpio, telefono=telefono_limpio, ubicacion=ciudad_limpia, necesidad="Instalación Solar")
                 db.marcar_crm_enviado(user_id)
@@ -239,8 +252,27 @@ async def procesar_mensaje(user_id, mensaje_usuario):
     _, historial_completo = db.get_conversacion(user_id)
     historial_reciente = recortar_historial(historial_completo, max_mensajes=12)
 
-    # --- 🛡️ 2. INPUT GUARDRAIL ---
-    es_valido, mensaje_rechazo, p, c = await verificar_input(mensaje_usuario, historial_reciente)
+    # Construimos en memoria el historial "con el mensaje nuevo ya añadido" ANTES de
+    # tocar la BD, para poder lanzar el guardrail de entrada y el supervisor EN PARALELO
+    # (auditoría de robustez: antes se esperaba secuencialmente al guardrail para recién
+    # entonces persistir y releer de la BD el historial que necesitaba el supervisor).
+    # Si el guardrail bloquea, el mensaje nunca se persiste y la decisión del supervisor
+    # (ya calculada) simplemente se descarta — mismo comportamiento que antes en el caso
+    # de bloqueo, con el compromiso consciente de que ahora esa llamada también se paga
+    # (en tokens) incluso cuando el mensaje se acaba bloqueando.
+    historial_actualizado = historial_completo + [{"role": "user", "content": mensaje_usuario}]
+    historial_para_ia = recortar_historial(historial_actualizado, max_mensajes=12)
+    mensajes_supervisor = [{"role": "system", "content": PROMPT_SUPERVISOR}] + historial_para_ia
+
+    # --- 🛡️ 2. INPUT GUARDRAIL + 4. SUPERVISOR, EN PARALELO ---
+    (es_valido, mensaje_rechazo, p, c), respuesta_sup = await asyncio.gather(
+        verificar_input(mensaje_usuario, historial_reciente),
+        client.beta.chat.completions.parse(
+            model="gpt-4o-mini",
+            messages=mensajes_supervisor,
+            response_format=DecisionRuta,
+        ),
+    )
     tok_prompt += p
     tok_completion += c
 
@@ -251,18 +283,6 @@ async def procesar_mensaje(user_id, mensaje_usuario):
     # 3. Si pasa el filtro, guardamos el mensaje nuevo en la BD
     db.append_mensaje(user_id, "user", mensaje_usuario)
 
-    # Volvemos a leer y recortar para incluir el mensaje del usuario que acabamos de añadir
-    _, historial_actualizado = db.get_conversacion(user_id)
-    historial_para_ia = recortar_historial(historial_actualizado, max_mensajes=12)
-
-    # 4. EL SUPERVISOR DECIDE
-    mensajes_supervisor = [{"role": "system", "content": PROMPT_SUPERVISOR}] + historial_para_ia
-
-    respuesta_sup = await client.beta.chat.completions.parse(
-        model="gpt-4o-mini",
-        messages=mensajes_supervisor,
-        response_format=DecisionRuta,
-    )
     decision = respuesta_sup.choices[0].message.parsed
     siguiente_agente = decision.siguiente_agente
     tok_prompt += respuesta_sup.usage.prompt_tokens
@@ -275,7 +295,12 @@ async def procesar_mensaje(user_id, mensaje_usuario):
     if siguiente_agente == "AGENDADOR":
         estado_actual, _ = db.get_conversacion(user_id)
         if estado_actual != "AGENDADOR":
-            p, c = await _extraer_y_guardar_lead(user_id, historial_para_ia)
+            # Historial COMPLETO, no el recorte de 12 mensajes: si el cliente dio su nombre
+            # al principio de una conversación larga, el recorte lo deja fuera de la ventana
+            # y la extracción devuelve "Desconocido" (auditoría de seguridad/robustez). Es una
+            # llamada puntual en esta transición, no repetida cada turno — el coste extra es
+            # aceptable.
+            p, c = await _extraer_y_guardar_lead(user_id, historial_actualizado)
             tok_prompt += p
             tok_completion += c
 

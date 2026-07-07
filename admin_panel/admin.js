@@ -122,6 +122,15 @@ function renderTabla() {
             ? `<span class="badge badge-gestionado">✓ Gestionado</span>`
             : '';
 
+        // Solo se muestra si ya se capturó algún dato de contacto: para un chat recién
+        // empezado (sin teléfono ni correo) el estado de CRM aún no es relevante.
+        const tieneDatosContacto = cTelefono !== 'Sin teléfono' || cCorreo !== 'Sin correo';
+        const crmBadge = !tieneDatosContacto
+            ? ''
+            : cliente.crm_enviado
+                ? `<span class="badge badge-crm-ok">📤 CRM enviado</span>`
+                : `<span class="badge badge-crm-pendiente" title="Dato inválido o webhook caído: revisar y reenviar a mano">⚠ CRM no enviado</span>`;
+
         const gestionadoBtnLabel = gestionado ? '↩ Desmarcar' : '✓ Gestionado';
         const gestionadoBtnClase = gestionado ? 'btn-desmarcar' : 'btn-marcar';
 
@@ -146,6 +155,7 @@ function renderTabla() {
                 <div class="badges-row">
                     <span class="badge ${badgeClase}">${cEstado}</span>
                     ${gestionadoBadge}
+                    ${crmBadge}
                 </div>
 
                 <div class="actions-row">

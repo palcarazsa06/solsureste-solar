@@ -11,7 +11,6 @@ from starlette.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-import re
 from pydantic import BaseModel, Field, EmailStr, field_validator
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -160,7 +159,12 @@ def verificar_admin(request: Request, credentials: HTTPBasicCredentials = Depend
         )
 
 # --- CORS ---
-_origins = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "*").split(",")]
+# Si ALLOWED_ORIGINS no está definida, NO se cae a "*" (auditoría de seguridad): el fallback es
+# el dominio real de producción, para que un despiste al configurar el entorno de Render no deje
+# la API abierta a cualquier origen. Desarrollo local sigue funcionando porque .env.example ya
+# documenta ALLOWED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000.
+_ORIGINS_PRODUCCION = "https://solsurestesolar.com,https://www.solsurestesolar.com"
+_origins = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", _ORIGINS_PRODUCCION).split(",")]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
@@ -205,7 +209,9 @@ async def chat_endpoint(req: MensajeEntrante, request: Request, _rl=Depends(rate
         raise HTTPException(status_code=500, detail="No se pudo procesar el mensaje, inténtalo de nuevo.")
 
 # --- 2. ENDPOINT DEL FORMULARIO DIRECTO ---
-TELEFONO_ES_RE = re.compile(r"^(?:\+34|0034)?[\s.-]?[6789]\d{2}[\s.-]?\d{3}[\s.-]?\d{3}$")
+# TELEFONO_ES_RE vive en validadores.py: main.py también lo necesita para validar el
+# teléfono que extrae el LLM del chat antes de enviarlo al CRM (ver auditoría de robustez).
+from validadores import TELEFONO_ES_RE
 
 class FormularioPresupuesto(BaseModel):
     nombre: str = Field(max_length=100)

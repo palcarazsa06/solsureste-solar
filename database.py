@@ -98,25 +98,35 @@ def update_datos_cliente(user_id, nombre, correo, telefono, ciudad):
     conn.commit()
     conn.close()
 
-def append_mensaje(user_id, role, content):
+def _append_historial(user_id, nuevo_mensaje):
+    """Lee, modifica y escribe el historial dentro de UNA transacción (BEGIN IMMEDIATE
+    adquiere el lock de escritura antes del SELECT). Sin esto, dos escrituras
+    concurrentes para el mismo user_id (doble clic, retry del frontend) pueden pisarse
+    un mensaje: ambas leen el mismo historial "viejo" antes de que la otra escriba
+    (auditoría de robustez). isolation_level=None cede el control de la transacción por
+    completo al BEGIN/COMMIT explícitos de abajo, en vez del autocommit implícito de
+    sqlite3 en INSERT/UPDATE."""
     conn = get_connection()
-    cursor = conn.cursor()
-    row = cursor.execute("SELECT historial FROM conversaciones WHERE user_id = ?", (user_id,)).fetchone()
-    historial = json.loads(row[0]) if row else []
-    historial.append({"role": role, "content": content})
-    cursor.execute("UPDATE conversaciones SET historial = ? WHERE user_id = ?", (json.dumps(historial), user_id))
-    conn.commit()
-    conn.close()
+    conn.isolation_level = None
+    try:
+        conn.execute("BEGIN IMMEDIATE")
+        cursor = conn.cursor()
+        row = cursor.execute("SELECT historial FROM conversaciones WHERE user_id = ?", (user_id,)).fetchone()
+        historial = json.loads(row[0]) if row else []
+        historial.append(nuevo_mensaje)
+        cursor.execute("UPDATE conversaciones SET historial = ? WHERE user_id = ?", (json.dumps(historial), user_id))
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+def append_mensaje(user_id, role, content):
+    _append_historial(user_id, {"role": role, "content": content})
 
 def append_mensaje_dict(user_id, mensaje_dict):
-    conn = get_connection()
-    cursor = conn.cursor()
-    row = cursor.execute("SELECT historial FROM conversaciones WHERE user_id = ?", (user_id,)).fetchone()
-    historial = json.loads(row[0]) if row else []
-    historial.append(mensaje_dict)
-    cursor.execute("UPDATE conversaciones SET historial = ? WHERE user_id = ?", (json.dumps(historial), user_id))
-    conn.commit()
-    conn.close()
+    _append_historial(user_id, mensaje_dict)
 
 def guardar_lead_directo(nombre, apellido, telefono, correo, ciudad, tipo_instalacion, mensaje):
     """Guarda un lead enviado desde el formulario web directo."""
@@ -230,7 +240,7 @@ def get_all_conversaciones():
     cursor = conn.cursor()
     cursor.execute("""
         SELECT user_id, estado, historial, nombre, correo, telefono, ciudad,
-               tokens_prompt, tokens_completion, coste_usd, gestionado, created_at
+               tokens_prompt, tokens_completion, coste_usd, gestionado, created_at, crm_enviado
         FROM conversaciones
         ORDER BY created_at DESC
     """)
@@ -252,5 +262,6 @@ def get_all_conversaciones():
             "coste_usd": fila[9] or 0.0,
             "gestionado": bool(fila[10]),
             "created_at": fila[11] or "",
+            "crm_enviado": bool(fila[12]),
         })
     return resultados
