@@ -3,4 +3,5 @@
 pytest
 pytest-asyncio
 pytest-socket
+pytest-cov
 pip-tools

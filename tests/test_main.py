@@ -1,4 +1,5 @@
 import asyncio
+import json
 import time
 import types
 
@@ -189,7 +190,7 @@ async def test_extraccion_de_lead_envia_al_crm_si_los_datos_son_validos(monkeypa
 
     async def _crm_mock(**kwargs):
         llamadas_crm.append(kwargs)
-        return {"status": "ok"}
+        return json.dumps({"status": "success"})
     monkeypatch.setattr(main, "enviar_lead_crm", _crm_mock)
 
     import tools.email_tools as email_tools
@@ -234,6 +235,52 @@ async def test_extraccion_de_lead_no_envia_al_crm_si_el_telefono_es_invalido(mon
     assert lead["nombre"] == "Luis Perez"
     assert lead["telefono"] == "N/A"
     assert "no se envía al CRM" in caplog.text.lower() or "no válidos" in caplog.text.lower()
+
+
+@pytest.mark.asyncio
+async def test_extraccion_de_lead_no_marca_crm_enviado_si_el_webhook_falla(monkeypatch):
+    """enviar_lead_crm nunca lanza excepción (crm_tools.py la captura internamente y
+    devuelve status='error'), así que había que inspeccionar el JSON devuelto en vez de
+    marcar crm_ya_enviado incondicionalmente tras el await — si no, un lead que falló
+    en el CRM se daba por enviado para siempre, sin reintento posible."""
+    user_id = "test_lead_crm_falla"
+    db.get_conversacion(user_id)
+
+    _mock_extraccion_json(monkeypatch, (
+        '{"nombre": "Carlos Ruiz", "correo": "carlos@example.com", '
+        '"telefono": "666123456", "ciudad": "Alicante"}'
+    ))
+
+    async def _crm_mock_error(**kwargs):
+        return json.dumps({"status": "error", "mensaje": "Fallo técnico de conexión."})
+    monkeypatch.setattr(main, "enviar_lead_crm", _crm_mock_error)
+
+    import tools.email_tools as email_tools
+    monkeypatch.setattr(email_tools, "enviar_alerta_lead_email", lambda **kw: _noop_coro())
+
+    await main._extraer_y_guardar_lead(user_id, [{"role": "user", "content": "hola"}])
+
+    assert db.crm_ya_enviado(user_id) is False
+
+
+@pytest.mark.asyncio
+async def test_handler_enviar_lead_crm_no_marca_enviado_si_el_webhook_falla(monkeypatch):
+    """Mismo bug que arriba pero en la tool del CUALIFICADOR (_handler_enviar_lead_crm),
+    que tiene su propio call site independiente a enviar_lead_crm."""
+    user_id = "test_handler_crm_falla"
+    db.get_conversacion(user_id)
+
+    async def _crm_mock_error(*args, **kwargs):
+        return json.dumps({"status": "error", "mensaje": "Fallo técnico de conexión."})
+    monkeypatch.setattr(main, "enviar_lead_crm", _crm_mock_error)
+
+    resultado = await main._handler_enviar_lead_crm(
+        {"nombre": "Ana", "telefono": "666123456", "ubicacion": "Murcia", "necesidad": "placas"},
+        user_id,
+    )
+
+    assert json.loads(resultado)["status"] == "error"
+    assert db.crm_ya_enviado(user_id) is False
 
 
 async def _noop_coro(*args, **kwargs):

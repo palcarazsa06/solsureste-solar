@@ -1,5 +1,6 @@
 import os
 import json
+from collections import OrderedDict
 import chromadb
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
@@ -15,14 +16,18 @@ DATA_DIR = os.getenv("DATA_DIR", ".")
 chroma_client = chromadb.PersistentClient(path=os.path.join(DATA_DIR, "chroma_db"))
 collection = chroma_client.get_or_create_collection(name="conocimiento_empresa")
 
-# Caché en memoria: clave = pregunta normalizada, valor = resultado completo
-_cache_rag: dict[str, str] = {}
+# Caché LRU en memoria: clave = pregunta normalizada, valor = resultado completo.
+# Límite para que no crezca sin cota durante la vida del proceso — al superarlo,
+# se descarta la entrada usada hace más tiempo (menos probable que se repita).
+_cache_rag: "OrderedDict[str, str]" = OrderedDict()
+CACHE_RAG_MAX_ENTRADAS = 500
 
 async def buscar_informacion(pregunta: str) -> str:
     """Busca en ChromaDB los documentos más relevantes para la pregunta."""
     clave = pregunta.strip().lower()
     if clave in _cache_rag:
         logger.info(f"[RAG TOOL] Cache hit para: '{pregunta}' — sin llamada a OpenAI.")
+        _cache_rag.move_to_end(clave)
         return _cache_rag[clave]
 
     logger.info(f"[RAG TOOL] Buscando en manuales la respuesta a: '{pregunta}'")
@@ -60,6 +65,9 @@ async def buscar_informacion(pregunta: str) -> str:
             resultado = f"Información de los manuales:\n{contexto}"
 
         _cache_rag[clave] = resultado
+        _cache_rag.move_to_end(clave)
+        if len(_cache_rag) > CACHE_RAG_MAX_ENTRADAS:
+            _cache_rag.popitem(last=False)
         return resultado
 
     except Exception as e:

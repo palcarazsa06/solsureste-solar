@@ -195,7 +195,10 @@ enum — no está forzado a nivel de esquema, solo por prompt.
 - `static/faq.html` — página `/faq` con las 9 preguntas frecuentes reales (acordeón `<details>`),
   schema `FAQPage` + `BreadcrumbList`. Autocontenida (su propio `<style>`, sin depender de
   `styles.css`). Si se edita el contenido, mantener el texto sincronizado con la sección "FAQ" de
-  `documentos/solsureste_base_conocimiento.txt` y con el JSON-LD de `static/index.html`.
+  `documentos/solsureste_base_conocimiento.txt`. El JSON-LD `FAQPage` vive únicamente aquí (no en
+  `static/index.html` ni `static/en/index.html`, que solo enlazan a esta página vía una tarjeta
+  teaser): duplicarlo ahí violaba las directrices de datos estructurados de Google, que exigen que el
+  contenido marcado esté visible en la misma página (auditoría SEO).
 - `static/aviso-legal.html`, `static/privacidad.html`, `static/cookies.html` — páginas legales
   (rutas `/aviso-legal`, `/privacidad`, `/cookies`), mismo patrón autocontenido que `faq.html`. El
   contenido de `privacidad.html` describe los tratamientos reales (RAG en `agencia.db`, Google

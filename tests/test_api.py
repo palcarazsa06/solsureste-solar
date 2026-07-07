@@ -94,3 +94,87 @@ def test_presupuesto_con_telefono_invalido_devuelve_422_y_no_llama_al_crm(monkey
 
     assert respuesta.status_code == 422
     assert llamadas_crm == []
+
+
+def test_health_devuelve_ok_y_recuento_de_chroma():
+    respuesta = client.get("/health")
+
+    assert respuesta.status_code == 200
+    cuerpo = respuesta.json()
+    assert cuerpo["status"] == "ok"
+    assert isinstance(cuerpo["chroma_count"], int)
+
+
+def test_health_devuelve_503_si_chroma_falla(monkeypatch):
+    def _count_falla():
+        raise RuntimeError("chroma caído en el test")
+    monkeypatch.setattr(api.rag_collection, "count", _count_falla)
+
+    respuesta = client.get("/health")
+
+    assert respuesta.status_code == 503
+    assert respuesta.json()["status"] == "error"
+
+
+def test_session_devuelve_un_session_id():
+    respuesta = client.post("/session")
+
+    assert respuesta.status_code == 200
+    assert respuesta.json()["session_id"]
+
+
+_AUTH_ADMIN = ("test-admin", "test-pass")  # coincide con ADMIN_USER/ADMIN_PASSWORD de conftest.py
+
+
+def test_api_leads_sin_auth_devuelve_401():
+    respuesta = client.get("/api/leads")
+    assert respuesta.status_code == 401
+
+
+def test_api_leads_con_auth_incorrecta_devuelve_401():
+    respuesta = client.get("/api/leads", auth=("test-admin", "password-incorrecta"))
+    assert respuesta.status_code == 401
+
+
+def test_api_leads_con_auth_correcta_devuelve_los_leads():
+    user_id = api.guardar_lead_directo(
+        nombre="Lead", apellido="DeTest", telefono="666111222",
+        correo="lead.test@example.com", ciudad="Murcia",
+        tipo_instalacion="Residencial", mensaje="",
+    )
+
+    respuesta = client.get("/api/leads", auth=_AUTH_ADMIN)
+
+    assert respuesta.status_code == 200
+    cuerpo = respuesta.json()
+    assert cuerpo["status"] == "success"
+    assert any(lead["user_id"] == user_id for lead in cuerpo["data"])
+
+
+def test_eliminar_lead_sin_auth_devuelve_401():
+    respuesta = client.delete("/api/leads/cualquier-id")
+    assert respuesta.status_code == 401
+
+
+def test_eliminar_lead_con_auth_correcta_lo_borra():
+    user_id = api.guardar_lead_directo(
+        nombre="Lead", apellido="AEliminar", telefono="666333444",
+        correo="lead.borrar@example.com", ciudad="Alicante",
+        tipo_instalacion="Residencial", mensaje="",
+    )
+
+    respuesta = client.delete(f"/api/leads/{user_id}", auth=_AUTH_ADMIN)
+    assert respuesta.status_code == 200
+
+    leads_restantes = api.get_all_conversaciones()
+    assert not any(lead["user_id"] == user_id for lead in leads_restantes)
+
+
+def test_admin_sin_auth_devuelve_401():
+    respuesta = client.get("/admin")
+    assert respuesta.status_code == 401
+
+
+def test_admin_con_auth_correcta_devuelve_200():
+    respuesta = client.get("/admin", auth=_AUTH_ADMIN)
+    assert respuesta.status_code == 200

@@ -723,12 +723,13 @@ void main(){
       const resize = () => { const w = window.innerWidth, h = window.innerHeight; cv.width = Math.max(1, Math.round(w * dpr)); cv.height = Math.max(1, Math.round(h * dpr)); gl.viewport(0, 0, cv.width, cv.height); };
       resize(); window.addEventListener('resize', resize);
       this._story = { p: 0, target: 0 };
-      const readProg = () => { const d = document.documentElement; const max = d.scrollHeight - d.clientHeight; this._story.target = max > 0 ? d.scrollTop / max : 0; };
-      window.addEventListener('scroll', readProg, { passive: true }); readProg();
       const t0 = performance.now();
       const frame = () => {
         const st = this._story;
-        st.p += (st.target - st.p) * 0.08;
+        // Con reduced-motion no animamos el lerp: st.p ya se fija directamente al target
+        // real en readProg(), así que el fondo refleja el scroll real en vez de quedarse
+        // congelado casi en el Acto I tras un único paso de lerp desde 0.
+        if (!this.reduce) st.p += (st.target - st.p) * 0.08;
         const tt = (performance.now() - t0) / 1000;
         gl.uniform2f(uRes, cv.width, cv.height);
         gl.uniform1f(uTime, this.reduce ? 4.0 : tt);
@@ -738,6 +739,17 @@ void main(){
         if (!this.reduce) this._storyRaf = requestAnimationFrame(frame);
       };
       this._storyFrameFn = frame;
+      const readProg = () => {
+        const d = document.documentElement; const max = d.scrollHeight - d.clientHeight;
+        this._story.target = max > 0 ? d.scrollTop / max : 0;
+        if (this.reduce) {
+          // Sin animación: cada scroll salta directamente a la posición correcta y
+          // renderiza un único frame nuevo (no hay bucle de rAF corriendo en este modo).
+          this._story.p = this._story.target;
+          this._storyFrameFn();
+        }
+      };
+      window.addEventListener('scroll', readProg, { passive: true }); readProg();
       this._storyRaf = requestAnimationFrame(frame);
     },
 

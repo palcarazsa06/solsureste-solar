@@ -11,6 +11,8 @@ venv/
 logs/
 __pycache__/
 *.pyc
+.coverage
+.pytest_cache/
 credenciales_google.json
 agencia.db*
 chroma_db/

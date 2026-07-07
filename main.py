@@ -164,7 +164,7 @@ async def _extraer_y_guardar_lead(user_id, historial_para_ia) -> tuple[int, int]
         telefono_limpio = datos_extraidos.get("telefono", "Desconocido")
         ciudad_limpia = datos_extraidos.get("ciudad", "Desconocido")
 
-        db.update_datos_cliente(user_id, nombre_limpio, correo_limpio, telefono_limpio, ciudad_limpia)
+        await asyncio.to_thread(db.update_datos_cliente, user_id, nombre_limpio, correo_limpio, telefono_limpio, ciudad_limpia)
         logger.info(f"Datos guardados en SQLite: {nombre_limpio} | {telefono_limpio} | {correo_limpio}")
 
         # El LLM puede alucinar o formatear mal el teléfono/correo (auditoría de robustez).
@@ -179,10 +179,13 @@ async def _extraer_y_guardar_lead(user_id, historial_para_ia) -> tuple[int, int]
                 f"Datos de contacto no válidos, NO se envía al CRM (revisar en el panel admin): "
                 f"telefono='{telefono_limpio}' correo='{correo_limpio}' user_id={user_id}"
             )
-        elif not db.crm_ya_enviado(user_id):
+        elif not await asyncio.to_thread(db.crm_ya_enviado, user_id):
             try:
-                await enviar_lead_crm(nombre=nombre_limpio, telefono=telefono_limpio, ubicacion=ciudad_limpia, necesidad="Instalación Solar")
-                db.marcar_crm_enviado(user_id)
+                resultado_crm = await enviar_lead_crm(nombre=nombre_limpio, telefono=telefono_limpio, ubicacion=ciudad_limpia, necesidad="Instalación Solar")
+                if json.loads(resultado_crm).get("status") == "success":
+                    await asyncio.to_thread(db.marcar_crm_enviado, user_id)
+                else:
+                    logger.warning(f"Se guardó en la DB pero el CRM no confirmó éxito, se reintentará más tarde: {resultado_crm}")
             except Exception as error_crm:
                 logger.warning(f"Se guardó en la DB pero falló el envío al CRM externo: {error_crm}")
         else:
@@ -220,9 +223,10 @@ async def _handler_buscar_informacion(args, user_id):
     return await buscar_informacion(args["pregunta"])
 
 async def _handler_enviar_lead_crm(args, user_id):
-    if not db.crm_ya_enviado(user_id):
+    if not await asyncio.to_thread(db.crm_ya_enviado, user_id):
         resultado = await enviar_lead_crm(args["nombre"], args["telefono"], args["ubicacion"], args["necesidad"])
-        db.marcar_crm_enviado(user_id)
+        if json.loads(resultado).get("status") == "success":
+            await asyncio.to_thread(db.marcar_crm_enviado, user_id)
         return resultado
     logger.info("CRM ya enviado previamente para este usuario, se omite el duplicado.")
     return json.dumps({"status": "skipped", "mensaje": "Lead ya enviado al CRM anteriormente."})
@@ -244,12 +248,12 @@ async def procesar_mensaje(user_id, mensaje_usuario):
     tok_completion = 0
 
     # 0. Si el usuario vuelve a escribir tras haber terminado, reiniciamos la sesión
-    estado_previo, _ = db.get_conversacion(user_id)
+    estado_previo, _ = await asyncio.to_thread(db.get_conversacion, user_id)
     if estado_previo == "TERMINAR":
-        reset_conversacion(user_id)
+        await asyncio.to_thread(reset_conversacion, user_id)
 
     # 1. Recuperamos el historial ANTES de evaluar para darle contexto al firewall
-    _, historial_completo = db.get_conversacion(user_id)
+    _, historial_completo = await asyncio.to_thread(db.get_conversacion, user_id)
     historial_reciente = recortar_historial(historial_completo, max_mensajes=12)
 
     # Construimos en memoria el historial "con el mensaje nuevo ya añadido" ANTES de
@@ -277,11 +281,11 @@ async def procesar_mensaje(user_id, mensaje_usuario):
     tok_completion += c
 
     if not es_valido:
-        db.acumular_tokens(user_id, tok_prompt, tok_completion)
+        await asyncio.to_thread(db.acumular_tokens, user_id, tok_prompt, tok_completion)
         return mensaje_rechazo or MENSAJE_RECHAZO_ES
 
     # 3. Si pasa el filtro, guardamos el mensaje nuevo en la BD
-    db.append_mensaje(user_id, "user", mensaje_usuario)
+    await asyncio.to_thread(db.append_mensaje, user_id, "user", mensaje_usuario)
 
     decision = respuesta_sup.choices[0].message.parsed
     siguiente_agente = decision.siguiente_agente
@@ -293,7 +297,7 @@ async def procesar_mensaje(user_id, mensaje_usuario):
     # Si el Supervisor decide que ya es hora de pasar al Agendador, disparamos
     # la extracción de datos y el envío al CRM.
     if siguiente_agente == "AGENDADOR":
-        estado_actual, _ = db.get_conversacion(user_id)
+        estado_actual, _ = await asyncio.to_thread(db.get_conversacion, user_id)
         if estado_actual != "AGENDADOR":
             # Historial COMPLETO, no el recorte de 12 mensajes: si el cliente dio su nombre
             # al principio de una conversación larga, el recorte lo deja fuera de la ventana
@@ -308,8 +312,8 @@ async def procesar_mensaje(user_id, mensaje_usuario):
         mensaje_despedida, p, c = await _generar_despedida(historial_para_ia)
         tok_prompt += p
         tok_completion += c
-        db.update_estado(user_id, "TERMINAR")
-        db.acumular_tokens(user_id, tok_prompt, tok_completion)
+        await asyncio.to_thread(db.update_estado, user_id, "TERMINAR")
+        await asyncio.to_thread(db.acumular_tokens, user_id, tok_prompt, tok_completion)
         return mensaje_despedida
 
     # 5. PREPARAMOS AL ESPECIALISTA Y SUS HERRAMIENTAS DINÁMICAMENTE
@@ -331,7 +335,7 @@ async def procesar_mensaje(user_id, mensaje_usuario):
     # 6. COMPROBAMOS SI LA IA HA DECIDIDO USAR UNA HERRAMIENTA
     if mensaje_ia.tool_calls:
         # A) Guardamos la petición de la IA (tool_call) en la DB
-        db.append_mensaje_dict(user_id, mensaje_ia.model_dump(exclude_unset=True))
+        await asyncio.to_thread(db.append_mensaje_dict, user_id, mensaje_ia.model_dump(exclude_unset=True))
 
         # B) Ejecutamos la función de Python correspondiente
         for tool_call in mensaje_ia.tool_calls:
@@ -348,10 +352,10 @@ async def procesar_mensaje(user_id, mensaje_usuario):
                 "tool_call_id": tool_call.id,
                 "content": resultado_python
             }
-            db.append_mensaje_dict(user_id, mensaje_resultado)
+            await asyncio.to_thread(db.append_mensaje_dict, user_id, mensaje_resultado)
 
         # D) Volvemos a llamar a la IA para que lea el resultado de la DB y responda
-        _, historial_final = db.get_conversacion(user_id)
+        _, historial_final = await asyncio.to_thread(db.get_conversacion, user_id)
         historial_para_ia_final = recortar_historial(historial_final, max_mensajes=12)
 
         mensajes_agente_final = [{"role": "system", "content": prompt_especialista}] + historial_para_ia_final
@@ -373,13 +377,13 @@ async def procesar_mensaje(user_id, mensaje_usuario):
     tok_prompt += p
     tok_completion += c
 
-    db.append_mensaje(user_id, "assistant", respuesta_final_segura)
+    await asyncio.to_thread(db.append_mensaje, user_id, "assistant", respuesta_final_segura)
 
     # 8. Actualizamos la fase en la que se quedó el usuario
-    db.update_estado(user_id, siguiente_agente)
+    await asyncio.to_thread(db.update_estado, user_id, siguiente_agente)
 
     # 9. Guardamos el coste acumulado de esta request
-    db.acumular_tokens(user_id, tok_prompt, tok_completion)
+    await asyncio.to_thread(db.acumular_tokens, user_id, tok_prompt, tok_completion)
     logger.info(f"[TOKENS] Request de {user_id}: {tok_prompt} prompt + {tok_completion} completion = {tok_prompt + tok_completion} total")
 
     return respuesta_final_segura

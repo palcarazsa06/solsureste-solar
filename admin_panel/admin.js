@@ -228,12 +228,35 @@ async function eliminarLead(userId) {
     }
 }
 
+function csvEscape(valor) {
+    const str = (valor === null || valor === undefined) ? '' : String(valor);
+    return `"${str.replace(/"/g, '""')}"`;
+}
+
+function exportarCSV() {
+    const columnas = ['nombre', 'telefono', 'correo', 'ciudad', 'estado', 'gestionado', 'crm_enviado', 'coste_usd', 'created_at'];
+    const cabecera = columnas.join(',');
+    const filas = todosLosLeads.map(lead => columnas.map(col => csvEscape(lead[col])).join(','));
+    const csv = [cabecera, ...filas].join('\r\n');
+
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const enlace = document.createElement('a');
+    enlace.href = url;
+    enlace.download = `leads_solsureste_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(enlace);
+    enlace.click();
+    document.body.removeChild(enlace);
+    URL.revokeObjectURL(url);
+}
+
 document.getElementById('password').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') iniciarSesion();
 });
 document.querySelector('#login-screen .btn-entrar').addEventListener('click', iniciarSesion);
 document.querySelector('.btn-logout').addEventListener('click', cerrarSesion);
 document.querySelector('.btn-refresh').addEventListener('click', cargarDatosBD);
+document.querySelector('.btn-export').addEventListener('click', exportarCSV);
 document.getElementById('buscador').addEventListener('input', renderTabla);
 document.getElementById('filtroEstado').addEventListener('change', renderTabla);
 document.getElementById('tabla-clientes').addEventListener('click', (e) => {

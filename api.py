@@ -9,7 +9,7 @@ from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import FileResponse, Response, JSONResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel, Field, EmailStr, field_validator
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -19,6 +19,7 @@ import uvicorn
 from main import procesar_mensaje
 from database import get_all_conversaciones, guardar_lead_directo, toggle_gestionado, eliminar_conversacion, get_coste_historico, get_coste_sesion, purgar_conversaciones_antiguas
 from tools.crm_tools import enviar_lead_crm
+from tools.rag_tools import collection as rag_collection
 from google_reviews import refrescar_resenas_cache, obtener_resenas_cache
 from logging_config import get_logger
 
@@ -122,6 +123,12 @@ def _client_ip(request: Request) -> str:
     return request.client.host if request.client else "desconocida"
 
 # --- RATE LIMIT ---
+# Contador en memoria del proceso — correcto mientras Render corra 1 solo worker/instancia
+# (el arranque de producción documentado, `uvicorn api:app --host 0.0.0.0 --port $PORT`,
+# no lleva `--workers`, por lo que hoy siempre es así). Si en el futuro se escala a
+# `--workers > 1` o a más de una instancia, cada proceso llevaría su propio contador y
+# el límite efectivo total se multiplicaría sin control — habría que migrar a un backend
+# compartido (p. ej. Redis) para que vuelva a ser un límite global real.
 RATE_LIMIT_MAX_PETICIONES = 20
 RATE_LIMIT_VENTANA_SEGUNDOS = 60
 _peticiones_por_ip = defaultdict(deque)
@@ -304,6 +311,18 @@ def api_refrescar_resenas(_auth=Depends(verificar_admin), _rl=Depends(rate_limit
 def api_get_reviews(lang: str = "es"):
     lang = lang if lang in ("es", "en") else "es"
     return obtener_resenas_cache(lang)
+
+@app.get("/health")
+def health(_rl=Depends(rate_limit_dep)):
+    """Chequeo barato para uptime-checkers externos: confirma que el proceso responde y que
+    ChromaDB (el vector store del RAG) es accesible. No comprueba Google Calendar (requiere leer
+    credenciales de disco + red) ni OpenAI (costaría dinero en cada ping) — ver CLAUDE.md."""
+    try:
+        chroma_count = rag_collection.count()
+    except Exception as e:
+        logger.error(f"[HEALTH] ChromaDB no responde: {e}", exc_info=True)
+        return JSONResponse(status_code=503, content={"status": "error", "detalle": "chroma no disponible"})
+    return {"status": "ok", "chroma_count": chroma_count}
 
 @app.get("/admin")
 def read_admin(_auth=Depends(verificar_admin), _rl=Depends(rate_limit_dep)):
