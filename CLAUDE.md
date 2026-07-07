@@ -130,10 +130,14 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   coste de conversaciones eliminadas, para no perder la cuenta al borrar leads desde el admin).
   `reset_conversacion()` limpia historial y datos de contacto pero **no** el coste acumulado ni
   `gestionado` — persisten a través de un reset.
-- `static/admin.html` + `static/admin.js` — panel de administración (login propio + Basic Auth a nivel
-  de servidor en `/admin`, doble capa). Tabla de leads con filtros por texto (insensible a tildes) y
-  por estado, marcar gestionado, eliminar, coste total acumulado. La lógica vive en `admin.js`
-  (externo) — antes estaba inline en `admin.html` (`<script>` + `onclick`/`onkeypress`/`oninput`) y la
+- `admin_panel/admin.html` + `admin_panel/admin.js` — panel de administración (login propio + Basic
+  Auth a nivel de servidor en `/admin`, doble capa). Viven fuera de `static/` a propósito: si
+  estuvieran ahí, `StaticFiles` los serviría directamente sin pasar por `verificar_admin` (ya pasó,
+  ver auditoría de seguridad). Se sirven vía `GET /admin` y `GET /admin.js`, ambas rutas protegidas
+  por `Depends(verificar_admin)` en `api.py`. Tabla de leads con filtros por texto (insensible a
+  tildes) y por estado, marcar gestionado, eliminar, coste total acumulado. La lógica vive en
+  `admin.js` (externo) — antes estaba inline en `admin.html` (`<script>` + `onclick`/`onkeypress`/
+  `oninput`) y la
   CSP (`script-src 'self'`, sin `unsafe-inline`) lo bloqueaba en silencio, dejando el botón "Entrar al
   Panel" sin hacer nada; no volver a poner JS ni handlers inline en esta página (ver CSP en "Detalles
   importantes"). El CSS también es propio y autocontenido — antes dependía del CDN de

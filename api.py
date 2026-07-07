@@ -301,7 +301,13 @@ def api_get_reviews(lang: str = "es"):
 
 @app.get("/admin")
 def read_admin(_auth=Depends(verificar_admin), _rl=Depends(rate_limit_dep)):
-    return FileResponse("static/admin.html")
+    return FileResponse("admin_panel/admin.html")
+
+@app.get("/admin.js")
+def read_admin_js(_auth=Depends(verificar_admin), _rl=Depends(rate_limit_dep)):
+    # Fuera de static/ a propósito: si viviera ahí, StaticFiles lo serviría sin pasar
+    # por verificar_admin (ver auditoría de seguridad, "admin.html/admin.js sin auth").
+    return FileResponse("admin_panel/admin.js", media_type="application/javascript")
 
 @app.get("/en")
 def home_en_page():
