@@ -9,7 +9,7 @@ from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, Response, JSONResponse
+from fastapi.responses import FileResponse, Response, JSONResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel, Field, EmailStr, field_validator
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -390,6 +390,14 @@ def placas_solares_orihuela_costa_page():
 def placas_solares_pilar_de_la_horadada_page():
     return FileResponse("static/placas-solares-pilar-de-la-horadada.html")
 
+@app.get("/blog")
+def blog_index_page():
+    return FileResponse("static/blog/index.html")
+
+@app.get("/blog/index.html")
+def redirect_blog_index_html():
+    return RedirectResponse(url="/blog", status_code=301)
+
 @app.on_event("startup")
 def _iniciar_scheduler_purga():
     """Purga diaria de conversaciones más antiguas que RETENCION_DIAS (RGPD) y refresco
@@ -405,6 +413,39 @@ def _iniciar_scheduler_purga():
     # Poblado inmediato al arrancar: el filesystem de Render es efímero entre redeploys,
     # no conviene esperar al cron de las 4:05 para tener reseñas frescas tras un deploy.
     refrescar_resenas_cache()
+
+# Rutas .html duplicadas: StaticFiles(html=True) sirve cada página también por su ruta
+# literal con extensión (p. ej. /placas-solares-murcia.html), en paralelo a la ruta limpia
+# ya registrada arriba. Cada página lleva su <link rel="canonical"> a la versión limpia, pero
+# eso no evita que Google gaste crawl budget rastreando ambas — se redirige con 301 para
+# consolidar señales en una sola URL. Debe registrarse antes del mount para tener prioridad.
+_REDIRECTS_HTML_LIMPIAS = {
+    "index": "/",
+    "faq": "/faq",
+    "aviso-legal": "/aviso-legal",
+    "privacidad": "/privacidad",
+    "cookies": "/cookies",
+    "placas-solares-murcia": "/placas-solares-murcia",
+    "placas-solares-alicante": "/placas-solares-alicante",
+    "placas-solares-lorca": "/placas-solares-lorca",
+    "placas-solares-cartagena": "/placas-solares-cartagena",
+    "placas-solares-molina-de-segura": "/placas-solares-molina-de-segura",
+    "placas-solares-orihuela": "/placas-solares-orihuela",
+    "placas-solares-torrevieja": "/placas-solares-torrevieja",
+    "placas-solares-orihuela-costa": "/placas-solares-orihuela-costa",
+    "placas-solares-pilar-de-la-horadada": "/placas-solares-pilar-de-la-horadada",
+}
+
+@app.get("/en/index.html")
+def redirect_en_index_html():
+    return RedirectResponse(url="/en", status_code=301)
+
+@app.get("/{nombre_pagina}.html")
+def redirect_html_a_ruta_limpia(nombre_pagina: str):
+    destino = _REDIRECTS_HTML_LIMPIAS.get(nombre_pagina)
+    if destino is None:
+        raise HTTPException(status_code=404)
+    return RedirectResponse(url=destino, status_code=301)
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 

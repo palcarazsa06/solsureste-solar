@@ -1046,7 +1046,7 @@ void main(){
     setLang(lang) {
       const en = {
         'nav.services': 'Services', 'nav.projects': 'Projects', 'nav.resources': 'Process', 'nav.faq': 'FAQ',
-        'nav.contact': 'Contact', 'nav.cta': 'Book a call',
+        'nav.blog': 'Blog', 'nav.contact': 'Contact', 'nav.cta': 'Book a call',
         'hero.h1': 'We install solar panels across Murcia and Alicante, ',
         'hero.p': 'Solar panels for homes and businesses, plus solar-farm development. With our own machinery and crews we execute every project without relying on third parties.',
         'form.title': 'Request your free study',

@@ -117,7 +117,7 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   `/chat`, `/presupuesto` y los tres endpoints `/api/leads/*`. Sesiones HMAC firmadas, security
   headers, validación de inputs, `GZipMiddleware` y `Cache-Control` para estáticos (`/images/`,
   `/videos/`, `/icon-*`, `.css`, `.js`). **El rate limit es un contador por proceso** (`defaultdict`
-  en memoria, `api.py:127`), correcto solo mientras Render corra 1 worker/instancia (hoy es así: el
+  en memoria, `api.py:134`), correcto solo mientras Render corra 1 worker/instancia (hoy es así: el
   arranque de producción no lleva `--workers`). Si algún día se escala horizontalmente, cada proceso
   llevaría su propio contador y el límite total se multiplicaría sin control — requeriría migrar a
   un backend compartido (Redis) para seguir siendo un límite global real. **`/api/leads` devuelve
@@ -125,7 +125,15 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   — evaluado y pospuesto a propósito: `admin.js` ya pinta ese `historial` en línea en la tabla
   ("Historial de Conversación"), así que separarlo en un endpoint bajo demanda rompería esa vista
   salvo que se reescriba también el frontend. Con el volumen real actual (~86 leads) el payload es
-  trivial — revisar esto si el número de leads crece mucho.
+  trivial — revisar esto si el número de leads crece mucho. **Redirect de URLs `.html` duplicadas**:
+  justo antes del `app.mount(StaticFiles(...))` final, un catch-all `@app.get("/{nombre_pagina}.html")`
+  (más una ruta explícita para `/en/index.html`) redirige con 301 a la ruta limpia correspondiente.
+  Es necesario porque `StaticFiles(html=True)` sigue sirviendo cualquier archivo por su nombre literal
+  con extensión en paralelo a la ruta limpia ya registrada (p. ej. `/placas-solares-murcia.html`
+  devolvía 200 con el mismo contenido que `/placas-solares-murcia`, desperdiciando crawl budget pese
+  al `<link rel="canonical">` de cada página). El dict `_REDIRECTS_HTML_LIMPIAS` es la lista blanca de
+  slugs válidos — cualquier `.html` no listado da 404 en vez de caer al `mount`. Al añadir una página
+  estática nueva, añadirla también a este dict.
 - `agentes/supervisor.py` — prompt de enrutamiento + schema Pydantic `DecisionRuta`.
 - `agentes/cualificador.py` — agente de ventas con RAG obligatorio (`buscar_informacion`) y acceso a
   `enviar_lead_crm`. Su sección de "protocolo de seguridad" solo debe activarse ante intentos reales
@@ -233,7 +241,12 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   "Detalles importantes"). Cada una enlaza de vuelta a su pilar vía breadcrumb + enlace inline.
   Lorca/Cartagena/Orihuela expanden los casos reales que también aparecen (de forma resumida, con
   teaser "Leer caso completo →") en la sección "Resultados reales" de `static/index.html`. Schema
-  `Service` con `areaServed` de tipo `City`.
+  `Service` con `areaServed` de tipo `City`, con dos excepciones deliberadas: **Molina de Segura**
+  (la sede real) tiene el `provider` enriquecido a `HomeAndConstructionBusiness` con `PostalAddress`
+  y `geo` reales en vez del `Organization` genérico del resto; **Orihuela Costa** usa
+  `areaServed: {"@type":"Place","containedInPlace":{"@type":"City","name":"Orihuela"}}` en vez de
+  `City` directamente, porque no es un municipio independiente sino una franja costera dentro de
+  Orihuela.
 - `static/en/index.html` — traducción manual completa de la home al inglés, servida en la ruta
   `/en` (registrada explícitamente en `api.py`, fuera del patrón de las demás páginas). `hreflang`
   recíproco con `static/index.html` (`es`↔`en`, `x-default` apunta siempre a `/`). No usa el
@@ -243,7 +256,10 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   cambio en `static/en/index.html` (estructura, clases e IDs deben mantenerse idénticos entre
   ambos; solo cambia el texto). El saludo inicial del chat (`greetingText()` en `script.js`) sí es
   compartido y ya es sensible al idioma vía `document.documentElement.lang` — no duplicar esa
-  lógica al traducir.
+  lógica al traducir. La sincronización estructural está cubierta por
+  `tests/test_html_estructura_sincronizada.py`: compara el conjunto de `id="..."` de ambos ficheros y
+  falla si uno tiene un `id` que el otro no tiene, así que un cambio de estructura sin traducir revienta
+  en CI en vez de descubrirse manualmente.
 
 ## DATA_DIR — persistencia en producción (Render)
 
@@ -328,7 +344,11 @@ base de conocimiento.
   (cobertura a nivel región/provincia) que enlazan a sus páginas de ciudad; cada página de ciudad
   enlaza de vuelta a su pilar (breadcrumb + enlace inline). Al añadir una ciudad nueva: crear la
   página, enlazarla desde su pilar (`.cluster-links`), añadirla a `static/sitemap.xml` y registrarla
-  en `api.py` con el mismo patrón `@app.get("/placas-solares-<slug>")`.
+  en `api.py` con el mismo patrón `@app.get("/placas-solares-<slug>")` (y a `_REDIRECTS_HTML_LIMPIAS`,
+  ver más arriba). Las páginas de ciudad geográficamente cercanas también se enlazan **entre sí**, no
+  solo verticalmente con su pilar: Lorca↔Cartagena↔Molina de Segura (mismo pilar, Región de Murcia) y
+  Torrevieja↔Orihuela Costa↔Pilar de la Horadada (mismo pilar, Alicante) — al añadir una ciudad nueva,
+  enlazarla también con sus vecinas reales de comarca/costa, no solo con el pilar.
 - **Orihuela vs. Orihuela Costa no es contenido duplicado**: son la misma entidad municipal pero dos
   ángulos de negocio deliberadamente distintos — `/placas-solares-orihuela` cubre la vega
   agrícola/interior (huertos solares, bombeo de riego), `/placas-solares-orihuela-costa` cubre las
@@ -339,3 +359,16 @@ base de conocimiento.
   la Horadada (es una sección dentro de `/placas-solares-pilar-de-la-horadada`) ni para las
   urbanizaciones individuales de Orihuela Costa — son secciones dentro de esa misma página, no rutas
   independientes.
+- **Contenido fiscal citado en `placas-solares-*`: verificar siempre la fuente primaria de la
+  ordenanza/administración, nunca un blog SEO comercial**: varias páginas de ciudad citan ayudas y
+  deducciones fiscales reales para diferenciarse de la plantilla compartida (deducción autonómica del
+  IRPF en la Comunitat Valenciana y en la Región de Murcia, bonificaciones del IBI de los ayuntamientos
+  de Orihuela y Torrevieja). Cada cifra se verificó contra la fuente oficial (sede.gva.es, Agencia
+  Tributaria, BOP/ordenanza municipal en PDF), no contra agregadores comerciales tipo sotysolar.es o
+  esirenovables.es — estos se contradicen entre sí con frecuencia (p. ej. daban 30% y 50% distintos
+  para el mismo IBI de Torrevieja; el PDF oficial del BOP confirmó 50%). Ojo también con el **alcance
+  exacto** de cada bonificación antes de citarla: la del ICIO del Ayuntamiento de Pilar de la Horadada
+  existe (50%) pero su ordenanza la limita explícitamente a "aprovechamiento térmico" de energía
+  solar — no cubre las instalaciones fotovoltaicas que vende la empresa, así que a propósito **no** se
+  citó en esa página pese a existir. Al tocar estas páginas o añadir una ciudad nueva, no reutilizar
+  una cifra fiscal de otro municipio/comunidad autónoma sin comprobar que aplica literalmente ahí.
