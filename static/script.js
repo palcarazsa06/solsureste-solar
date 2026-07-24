@@ -24,12 +24,14 @@
         .then((data) => {
           this.userId = data.session_id;
           try { localStorage.setItem('sss_user_id', this.userId); } catch (_) {}
-        });
+        })
+        .catch(() => {});
     },
 
     init() {
       const root = document.getElementById('sss-root');
       if (!root) return;
+      this.setupEmailObfuscation();
       this.reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       requestAnimationFrame(() => {
         root.classList.add('js-ready');
@@ -57,6 +59,18 @@
     // Envía eventos a GA4 (si el usuario aceptó cookies analíticas; gtag no existe si no).
     trackEvent(name, params) {
       if (typeof gtag === 'function') gtag('event', name, params || {});
+    },
+
+    // Reconstruye los mailto: en tiempo de ejecución a partir de data-u/data-d para que la
+    // dirección nunca aparezca como "user@domain" literal en el HTML fuente (protección básica
+    // contra bots de spam que raspan el HTML sin ejecutar JS).
+    setupEmailObfuscation() {
+      document.querySelectorAll('.sss-email-obf').forEach((el) => {
+        const addr = el.dataset.u + '@' + el.dataset.d;
+        el.href = 'mailto:' + addr;
+        const span = el.querySelector('.sss-email-text');
+        if (span) span.textContent = addr;
+      });
     },
 
     // Delegación global: cualquier enlace tel:/wa.me/mailto de la página (header, footer,
@@ -227,7 +241,8 @@
       if (rv.author_photo_url) {
         const img = document.createElement('img');
         img.src = rv.author_photo_url;
-        img.alt = '';
+        const en = document.documentElement.lang === 'en';
+        img.alt = (en ? 'Profile photo of ' : 'Foto de perfil de ') + (rv.author_name || (en ? 'customer' : 'cliente'));
         img.loading = 'lazy';
         img.referrerPolicy = 'no-referrer';
         img.style.cssText = 'width:42px;height:42px;border-radius:50%;object-fit:cover;flex-shrink:0';
@@ -1039,7 +1054,8 @@ void main(){
         .then((data) => {
           this.userId = data.session_id;
           try { localStorage.setItem('sss_user_id', this.userId); } catch (_) {}
-        });
+        })
+        .catch(() => {});
     },
 
     // ---------- i18n ----------
