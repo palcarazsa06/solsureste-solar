@@ -20,6 +20,7 @@ google_reviews_cache.json*
 
 # Claude Code (local-only overrides, no compartir)
 .claude/settings.local.json
+.claude/launch.json
 
 # Assets sin usar (vídeo del hero retirado, ya no referenciado)
 static/videos/dron.mp4
