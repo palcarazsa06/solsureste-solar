@@ -775,7 +775,7 @@ void main(){
       if (!sec || !cv) return;
       const ctx = cv.getContext('2d');
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      let W = 0, H = 0, nodes = [], edges = [];
+      let W = 0, H = 0, nodes = [], edges = [], pulses = [];
       const A = 'rgba(255,180,61,';
 
       const build = () => {
@@ -798,10 +798,6 @@ void main(){
           if (c < cols - 1 && r < rows - 1 && Math.random() < 0.32) addEdge(idx(c, r), idx(c + 1, r + 1));
         }
       };
-      build();
-      window.addEventListener('resize', build);
-      if (window.ResizeObserver) { try { new ResizeObserver(build).observe(sec); } catch (_) {} }
-
       const nextNb = (cur, prev) => {
         const nb = nodes[cur].nb;
         if (!nb.length) return cur;
@@ -811,7 +807,19 @@ void main(){
       };
       const mkPulse = () => { const from = (Math.random() * nodes.length) | 0; return { prev: from, from, to: nextNb(from, -1), t: 0, sp: 0.012 + Math.random() * 0.02 }; };
       const NP = this.reduce ? 0 : 16;
-      const pulses = []; for (let i = 0; i < NP; i++) { const p = mkPulse(); p.t = Math.random(); pulses.push(p); }
+      // Regenera los pulsos cada vez que el grid se reconstruye (resize/ResizeObserver): si se
+      // reutilizaran los pulsos anteriores, sus índices from/to podrían apuntar a nodos que ya no
+      // existen en el nuevo grid (más pequeño), y nodes[i] sería undefined en step() al leer .x/.y.
+      const resetPulses = () => {
+        pulses.length = 0;
+        for (let i = 0; i < NP; i++) { const p = mkPulse(); p.t = Math.random(); pulses.push(p); }
+      };
+
+      build();
+      resetPulses();
+      const rebuild = () => { build(); resetPulses(); };
+      window.addEventListener('resize', rebuild);
+      if (window.ResizeObserver) { try { new ResizeObserver(rebuild).observe(sec); } catch (_) {} }
 
       const drawStatic = () => {
         ctx.lineWidth = 1;
