@@ -247,6 +247,19 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   `areaServed: {"@type":"Place","containedInPlace":{"@type":"City","name":"Orihuela"}}` en vez de
   `City` directamente, porque no es un municipio independiente sino una franja costera dentro de
   Orihuela.
+- `static/blog/` — blog SEO, mismo enfoque estático sin build step que el resto de `static/`.
+  `static/blog/index.html` (ruta `/blog`, registrada en `api.py` + link en nav/footer de
+  `index.html`/`en/index.html`) lista manualmente cada artículo como un bloque
+  `<article class="blog-card">` — **no hay generación automática ni orden por fecha real**, el propio
+  comentario dentro del archivo recuerda pegar las tarjetas nuevas arriba del todo. Los artículos
+  viven en `static/blog/articulos/<slug>.html` y se sirven directamente vía el `mount` de
+  `StaticFiles` (no necesitan ruta nueva en `api.py`). `articulo-de-ejemplo.html` es la plantilla a
+  duplicar para un artículo nuevo (trae su propio comentario-guía de 4 pasos): lleva
+  `<meta name="robots" content="noindex,follow">` y está deliberadamente fuera de
+  `static/sitemap.xml` porque es contenido de relleno, no un artículo real — quitar ese `noindex` y
+  añadir la URL al sitemap es parte de "publicar" un artículo, no un paso opcional. `/blog/index.html`
+  tiene su propio redirect 301 a `/blog` en `api.py` (mismo patrón que `/en/index.html`), fuera del
+  dict `_REDIRECTS_HTML_LIMPIAS` porque ese catch-all solo matchea un segmento de ruta sin barras.
 - `static/en/index.html` — traducción manual completa de la home al inglés, servida en la ruta
   `/en` (registrada explícitamente en `api.py`, fuera del patrón de las demás páginas). `hreflang`
   recíproco con `static/index.html` (`es`↔`en`, `x-default` apunta siempre a `/`). No usa el
@@ -372,3 +385,11 @@ base de conocimiento.
   solar — no cubre las instalaciones fotovoltaicas que vende la empresa, así que a propósito **no** se
   citó en esa página pese a existir. Al tocar estas páginas o añadir una ciudad nueva, no reutilizar
   una cifra fiscal de otro municipio/comunidad autónoma sin comprobar que aplica literalmente ahí.
+- **`CONTEXTO-SEO-solsurestesolar.md`** (raíz del repo) es un informe puntual de una sesión anterior
+  con acceso al conector de Google Search Console del dominio, fechado el 14 de julio de 2026 — no es
+  un documento vivo ni se actualiza solo, sus cifras de posición/impresiones/clics son una foto fija
+  de ese día. Pide explícitamente auditar antes de tocar código y esperar confirmación antes de
+  desplegar cambios de SEO. Las páginas de ciudad y el blog (ver `static/blog/` arriba) nacieron en
+  parte de sus recomendaciones. Si se retoma trabajo de SEO, tratar sus datos concretos como
+  contexto histórico, no como el estado actual — pedir un análisis fresco de GSC en vez de asumir que
+  la situación descrita sigue vigente.
