@@ -1,0 +1,43 @@
+# Solsureste Solar
+
+> Instalación de placas solares y huertos solares para hogares, empresas y agricultura en la
+> Región de Murcia y la provincia de Alicante (España). Más de 25 años de experiencia, maquinaria
+> propia y financiación 100%. Sede en Molina de Segura, Murcia.
+
+## Páginas principales
+
+- [Inicio (español)](https://solsurestesolar.com/): presentación de la empresa, servicios,
+  proyectos reales, proceso de instalación, financiación y formulario de contacto.
+- [Home (English)](https://solsurestesolar.com/en): English version of the homepage.
+- [Preguntas frecuentes](https://solsurestesolar.com/faq): respuestas a las dudas más habituales
+  sobre precios, plazos, mantenimiento y ayudas.
+- [Blog](https://solsurestesolar.com/blog): artículos sobre energía solar, ahorro y normativa.
+
+## Cobertura geográfica (páginas pilar → clúster de ciudad)
+
+- [Placas solares en Murcia](https://solsurestesolar.com/placas-solares-murcia) (región): enlaza a
+  Lorca, Cartagena y Molina de Segura.
+- [Placas solares en Alicante](https://solsurestesolar.com/placas-solares-alicante) (provincia):
+  enlaza a Torrevieja, Orihuela, Orihuela Costa y Pilar de la Horadada.
+- Ciudades: [Lorca](https://solsurestesolar.com/placas-solares-lorca),
+  [Cartagena](https://solsurestesolar.com/placas-solares-cartagena),
+  [Molina de Segura](https://solsurestesolar.com/placas-solares-molina-de-segura) (sede),
+  [Orihuela](https://solsurestesolar.com/placas-solares-orihuela),
+  [Orihuela Costa](https://solsurestesolar.com/placas-solares-orihuela-costa),
+  [Torrevieja](https://solsurestesolar.com/placas-solares-torrevieja),
+  [Pilar de la Horadada](https://solsurestesolar.com/placas-solares-pilar-de-la-horadada).
+
+## Legal
+
+- [Aviso legal](https://solsurestesolar.com/aviso-legal)
+- [Política de privacidad](https://solsurestesolar.com/privacidad)
+- [Política de cookies](https://solsurestesolar.com/cookies)
+
+## Contacto
+
+Teléfono: +34 968 869 532 · Email: info@solsurestesolar.com
+Dirección: Calle Aldebarán, 51, P.I. La Estrella, Molina de Segura (30509), Murcia, España.
+
+## Otros recursos
+
+- [Mapa del sitio (XML)](https://solsurestesolar.com/sitemap.xml)
