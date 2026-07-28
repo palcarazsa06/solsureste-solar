@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<title>TikTok — código de autorización</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 3rem auto; padding: 0 1rem; color: #222; }
+  h1 { font-size: 1.2rem; }
+  .campo { margin: 1.5rem 0; }
+  label { display: block; font-weight: 600; margin-bottom: 0.3rem; }
+  code { display: block; background: #f2f2f2; padding: 0.8rem; border-radius: 6px; word-break: break-all; font-size: 0.95rem; }
+  .aviso { color: #a33; }
+</style>
+</head>
+<body>
+  <h1>Código de autorización de TikTok</h1>
+  <p>Página interna de un solo uso para configurar Agente CM. Copia los valores de abajo y pégalos donde te lo pida el script <code>tiktok_oauth_inicial.py</code>.</p>
+
+  <div class="campo">
+    <label for="code">code</label>
+    <code id="code">(leyendo...)</code>
+  </div>
+
+  <div class="campo">
+    <label for="state">state</label>
+    <code id="state">(leyendo...)</code>
+  </div>
+
+  <p id="sin-parametros" class="aviso" hidden>No hay parámetros en la URL — esta página solo sirve como destino de la redirección de TikTok tras autorizar la app.</p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    const state = params.get("state");
+    document.getElementById("code").textContent = code || "(vacío)";
+    document.getElementById("state").textContent = state || "(vacío)";
+    if (!code && !state) {
+      document.getElementById("sin-parametros").hidden = false;
+    }
+  </script>
+</body>
+</html>
