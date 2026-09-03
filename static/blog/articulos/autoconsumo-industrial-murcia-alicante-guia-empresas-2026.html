@@ -11,7 +11,7 @@
 <meta property="og:title" content="Autoconsumo industrial en Murcia y Alicante: la factura que pasó de 860 € a 22 € | Blog Solsureste Solar">
 <meta property="og:description" content="En una nave industrial de Cartagena la factura de verano bajó de 860 € a 22 €. Así cambia el autoconsumo industrial las cuentas de una empresa en Murcia y Alicante.">
 <meta property="og:url" content="https://solsurestesolar.com/blog/articulos/autoconsumo-industrial-murcia-alicante-guia-empresas-2026.html">
-<meta property="og:image" content="https://solsurestesolar.com/images/og-cover.jpg">
+<meta property="og:image" content="https://solsurestesolar.com/images/foto2.webp">
 <meta property="og:locale" content="es_ES">
 <meta property="og:site_name" content="Solsureste Solar">
 
@@ -58,7 +58,7 @@
   "datePublished": "2026-09-03",
   "dateModified": "2026-09-03",
   "url": "https://solsurestesolar.com/blog/articulos/autoconsumo-industrial-murcia-alicante-guia-empresas-2026.html",
-  "image": "https://solsurestesolar.com/images/og-cover.jpg",
+  "image": "https://solsurestesolar.com/images/foto2.webp",
   "author": {
     "@type": "Organization",
     "name": "Solsureste Solar",
@@ -89,12 +89,25 @@
   .breadcrumb { max-width: 42rem; margin: 1.25rem auto 0; padding: 0 1.5rem; font-size: .8125rem; color: rgba(244,243,240,.5); }
   .breadcrumb a { color: rgba(244,243,240,.5); text-decoration: none; }
   .breadcrumb a:hover { color: #FFB43D; }
-  .page-hero { background: rgba(13,13,16,.4); padding: 1.25rem 1.5rem 2.5rem; border-bottom: 1px solid rgba(255,255,255,.06); }
-  .page-hero-inner { max-width: 42rem; margin: 0 auto; }
-  .page-h1 { margin-top: .75rem; font-size: clamp(1.6rem, 3.6vw, 2.2rem); font-weight: 700; line-height: 1.15; letter-spacing: -.02em; }
+
+  .page-hero { position: relative; overflow: hidden; padding: 1.75rem 1.5rem 3rem; border-bottom: 1px solid rgba(255,255,255,.06);
+    background:
+      radial-gradient(120% 160% at 12% -10%, rgba(255,180,61,.20), transparent 55%),
+      radial-gradient(90% 130% at 100% 110%, rgba(224,122,12,.16), transparent 55%),
+      #0b0b0f; }
+  .page-hero::before { content: ''; position: absolute; width: 24rem; height: 24rem; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,180,61,.32), transparent 70%);
+    top: -11rem; right: -7rem; filter: blur(6px); animation: heroGlow 11s ease-in-out infinite alternate; pointer-events: none; }
+  @keyframes heroGlow { 0% { transform: translate(0,0) scale(1); opacity: .55; } 100% { transform: translate(-1.75rem,1.5rem) scale(1.18); opacity: .9; } }
+  .page-hero-inner { position: relative; max-width: 42rem; margin: 0 auto; }
+  .eyebrow { display: inline-block; font-size: .8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #FFB43D; }
+  .page-h1 { margin-top: .6rem; font-size: clamp(1.6rem, 3.6vw, 2.2rem); font-weight: 700; line-height: 1.15; letter-spacing: -.02em; }
   .post-meta { margin-top: .9rem; font-size: .875rem; color: rgba(244,243,240,.55); }
-  .ai-disclosure { margin-top: .4rem; font-size: .8125rem; color: rgba(244,243,240,.45); font-style: italic; }
+
   .page-body { max-width: 42rem; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+  .hero-cover { display: block; width: 100%; height: 15rem; object-fit: cover; border-radius: 1.1rem; margin: 0 0 1.75rem;
+    border: 1px solid rgba(255,180,61,.18); box-shadow: 0 24px 50px -24px rgba(255,180,61,.35); }
+  .hero-caption { margin: -1.35rem 0 1.75rem; font-size: .8125rem; color: rgba(244,243,240,.45); }
   .page-body h2 { margin: 2.25rem 0 .9rem; font-size: 1.375rem; font-weight: 600; }
   .page-body h2:first-child { margin-top: 0; }
   .page-body p { margin: 0 0 .9rem; font-size: .9375rem; color: rgba(244,243,240,.72); }
@@ -103,14 +116,30 @@
   .page-body strong { color: #f4f3f0; }
   .page-body a { color: #FFB43D; text-decoration: none; }
   .page-body a:hover { text-decoration: underline; }
-  .page-body blockquote { margin: 0 0 1.1rem; padding: .9rem 1.1rem; border-left: 3px solid #FFB43D; background: rgba(255,180,61,.06); border-radius: 0 .6rem .6rem 0; font-style: italic; color: rgba(244,243,240,.85); font-size: .9375rem; }
-  .page-body blockquote cite { display: block; margin-top: .5rem; font-style: normal; font-size: .8125rem; color: rgba(244,243,240,.5); }
+
+  .case-box { background: linear-gradient(135deg, rgba(255,180,61,.09), rgba(224,122,12,.03)), #141417;
+    border: 1px solid rgba(255,180,61,.16); border-radius: 1rem; padding: 1.5rem; margin: 0 0 1.5rem; }
+  .case-box .quote { font-style: italic; color: rgba(244,243,240,.88); font-size: 1rem; margin-bottom: .6rem; }
+  .case-box .who { font-size: .8125rem; color: #FFB43D; font-weight: 600; }
+
+  .stat-row { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0 0 1.5rem; }
+  .stat-box { flex: 1 1 8.5rem; background: #141417; border: 1px solid rgba(255,255,255,.07); border-radius: .9rem; padding: 1rem 1.15rem; }
+  .stat-box .num { font-size: 1.375rem; font-weight: 700; background: linear-gradient(135deg,#FFB43D,#F5921E); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .stat-box .lbl { font-size: .75rem; color: rgba(244,243,240,.55); margin-top: .2rem; }
+
   .page-cta { margin-top: 2.5rem; padding: 1.75rem 2rem; border-radius: 1.25rem; border: 1px solid rgba(255,180,61,.18); background: radial-gradient(120% 140% at 0% 0%,rgba(255,180,61,.08),transparent 55%), #0e0e11; text-align: center; }
   .page-cta p { color: rgba(244,243,240,.8); font-size: 1.0625rem; margin-bottom: 1.1rem; }
   a.btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; background: linear-gradient(135deg,#FFB43D,#F5921E); color: #1a1205; font-weight: 600; font-size: .9375rem; padding: 0 1.5rem; height: 2.75rem; border-radius: .65rem; text-decoration: none; box-shadow: 0 10px 30px rgba(255,180,61,.35); }
   .back-to-blog { display: inline-block; margin-top: 2.5rem; font-size: .875rem; font-weight: 500; color: #FFB43D; text-decoration: none; }
   .page-footer { border-top: 1px solid rgba(255,255,255,.06); padding: 1.25rem 1.5rem; text-align: center; font-size: .8125rem; color: rgba(244,243,240,.5); }
   .page-footer a { color: #FFB43D; text-decoration: none; }
+
+  [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
+  [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .page-hero::before { animation: none; }
+    [data-reveal] { opacity: 1; transform: none; transition: none; }
+  }
 </style>
 </head>
 <body>
@@ -134,41 +163,50 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
+    <span class="eyebrow">Caso real · Cartagena, Murcia</span>
     <h1 class="page-h1">Autoconsumo industrial en Murcia y Alicante: la factura que pasó de 860 € a 22 €</h1>
     <p class="post-meta">Publicado el <time datetime="2026-09-03">3 de septiembre de 2026</time></p>
-    <p class="ai-disclosure">Artículo generado con ayuda de inteligencia artificial, con supervisión editorial de Solsureste Solar.</p>
   </div>
 </section>
 
 <main class="page-body">
-    <p>Hay un mes que decide el ánimo de muchas empresas del sureste: agosto. En una nave industrial, agosto no es solo calor — es la maquinaria a pleno rendimiento, las cámaras de refrigeración sin descanso, la iluminación encendida turno tras turno. Y es, casi siempre, el mes en el que llega la factura de la luz que nadie tiene ganas de abrir.</p>
+    <img data-reveal class="hero-cover" src="/images/foto2.webp" alt="Instalación solar en nave industrial en Cartagena, Murcia" width="900" height="506" loading="lazy">
+    <p class="hero-caption" data-reveal>La nave industrial en Cartagena de la que habla este artículo.</p>
 
-    <p>En una nave de un polígono industrial de Cartagena, esa factura de verano llevaba años rondando los <strong>860 €</strong>. La actividad no iba a parar —ni la refrigeración, ni la maquinaria, ni las luces—, así que la empresa asumía ese coste como parte del negocio, mes tras mes, sin plantearse demasiado si existía otra forma de llevar las cuentas.</p>
+    <p data-reveal>Hay un mes que decide el ánimo de muchas empresas del sureste: agosto. En una nave industrial, agosto no es solo calor — es la maquinaria a pleno rendimiento, las cámaras de refrigeración sin descanso, la iluminación encendida turno tras turno. Y es, casi siempre, el mes en el que llega la factura de la luz que nadie tiene ganas de abrir.</p>
 
-    <blockquote>
-      "Montaron dos instalaciones en mis naves industriales. Profesionalidad y cumplimiento de plazos impecables."
-      <cite>— Antonio P., Cartagena (Murcia)</cite>
-    </blockquote>
+    <p data-reveal>En una nave de un polígono industrial de Cartagena, esa factura de verano llevaba años rondando los <strong>860 €</strong>. La actividad no iba a parar —ni la refrigeración, ni la maquinaria, ni las luces—, así que la empresa asumía ese coste como parte del negocio, mes tras mes, sin plantearse demasiado si existía otra forma de llevar las cuentas.</p>
 
-    <p>Un año después de instalar autoconsumo industrial con Solsureste, la factura de ese mismo mes de verano bajó de 860 € a <strong>22 €</strong> —cargo fijo de potencia incluido—. En el cómputo anual, la instalación libera hoy <strong>más de 5.000 €</strong> que antes se iban directamente a la eléctrica.</p>
+    <div class="case-box" data-reveal>
+      <p class="quote">"Montaron dos instalaciones en mis naves industriales. Profesionalidad y cumplimiento de plazos impecables."</p>
+      <p class="who">— Antonio P., Cartagena (Murcia)</p>
+    </div>
 
-    <p>No fue casualidad ni un cálculo genérico sacado de una tabla. Detrás de ese número hay una empresa que lleva desde 1999 con el mismo CIF instalando placas solares y desarrollando huertos solares en Murcia y Alicante, con maquinaria y personal propio —sin subcontratas— y una garantía de trabajo de 25 años que solo se ofrece cuando se sabe que lo hecho aguanta. El cómo exacto de cada instalación —el dimensionado, los equipos, los plazos— es algo que en Solsureste prefieren explicarlo con tu factura real delante, no en un artículo genérico de internet.</p>
+    <p data-reveal>Un año después de instalar autoconsumo industrial con Solsureste, la factura de ese mismo mes de verano bajó de 860 € a <strong>22 €</strong> —cargo fijo de potencia incluido—. En el cómputo anual, la instalación libera hoy más de 5.000 € que antes se iban directamente a la eléctrica.</p>
 
-    <h2>Naves que se reconocen en esta historia</h2>
-    <p>El caso de esta nave cartagenera no es una excepción aislada. En polígonos como Los Camachos, El Bohío, Cabezo Beaza o Valle de Escombreras —y en el resto de zonas industriales de Murcia y Alicante— hay negocios que reconocerán algunos de estos síntomas:</p>
-    <ul>
+    <div class="stat-row" data-reveal>
+      <div class="stat-box"><div class="num">860 € → 22 €</div><div class="lbl">factura del mismo mes de verano</div></div>
+      <div class="stat-box"><div class="num">+5.000 €</div><div class="lbl">liberados cada año</div></div>
+      <div class="stat-box"><div class="num">25 años</div><div class="lbl">de garantía del trabajo</div></div>
+    </div>
+
+    <p data-reveal>No fue casualidad ni un cálculo genérico sacado de una tabla. Detrás de ese número hay una empresa que lleva desde 1999 con el mismo CIF instalando placas solares y desarrollando huertos solares en Murcia y Alicante, con maquinaria y personal propio —sin subcontratas—. El cómo exacto de cada instalación —el dimensionado, los equipos, los plazos— es algo que en Solsureste prefieren explicarlo con tu factura real delante, no en un artículo genérico de internet.</p>
+
+    <h2 data-reveal>Naves que se reconocen en esta historia</h2>
+    <p data-reveal>El caso de esta nave cartagenera no es una excepción aislada. En polígonos como Los Camachos, El Bohío, Cabezo Beaza o Valle de Escombreras —y en el resto de zonas industriales de Murcia y Alicante— hay negocios que reconocerán algunos de estos síntomas:</p>
+    <ul data-reveal>
       <li>Facturas de verano que se disparan por el aire acondicionado, las cámaras o la maquinaria</li>
       <li>Un consumo que se concentra precisamente en horario diurno, justo cuando más produce el sol</li>
       <li>Cubiertas de nave enormes que hoy no hacen nada más que dar sombra al tejado</li>
     </ul>
-    <p>Si alguno de esos puntos te suena, es la misma situación de la que partió esta nave de Cartagena antes de cambiar de facturas. El resultado ya lo conoces. El cómo llegar hasta ahí, en tu caso concreto, empieza con un estudio de rentabilidad gratuito —sin compromiso—, donde se pone tu factura real sobre la mesa, no una estimación genérica de internet.</p>
+    <p data-reveal>Si alguno de esos puntos te suena, es la misma situación de la que partió esta nave de Cartagena antes de cambiar de facturas. El resultado ya lo conoces. El cómo llegar hasta ahí, en tu caso concreto, empieza con un estudio de rentabilidad gratuito —sin compromiso—, donde se pone tu factura real sobre la mesa, no una estimación genérica de internet.</p>
 
-    <h2>Dónde más pasan estas historias</h2>
-    <p>Trabajamos con equipo propio en toda la Región de Murcia y toda la provincia de Alicante: desde los polígonos de Cartagena hasta Molina de Segura, donde está nuestra sede, pasando por Lorca, Murcia capital, Elche, Alicante capital y Orihuela. Si tu nave o tu empresa está en cualquiera de estas zonas, el autoconsumo industrial y las placas solares para empresas no son solo teoría: son la factura de alguien que hoy paga 22 € donde antes pagaba 860.</p>
+    <h2 data-reveal>Dónde más pasan estas historias</h2>
+    <p data-reveal>Trabajamos con equipo propio en toda la Región de Murcia y toda la provincia de Alicante: desde los polígonos de Cartagena hasta Molina de Segura, donde está nuestra sede, pasando por Lorca, Murcia capital, Elche, Alicante capital y Orihuela. Si tu nave o tu empresa está en cualquiera de estas zonas, el autoconsumo industrial y las placas solares para empresas no son solo teoría: son la factura de alguien que hoy paga 22 € donde antes pagaba 860.</p>
 
-    <p>Esta historia todavía no tiene final para tu empresa. Puede seguir siendo la misma factura de siempre cada agosto, o puede convertirse en la próxima que enseñemos aquí. Eso, de momento, solo lo decides tú.</p>
+    <p data-reveal>Esta historia todavía no tiene final para tu empresa. Puede seguir siendo la misma factura de siempre cada agosto, o puede convertirse en la próxima que enseñemos aquí. Eso, de momento, solo lo decides tú.</p>
 
-  <div class="page-cta">
+  <div class="page-cta" data-reveal>
     <p>¿Cuál sería el próximo capítulo de tu factura?</p>
     <a href="/#inicio" class="btn-primary">Solicitar estudio gratuito →</a>
   </div>
@@ -181,5 +219,6 @@
 </footer>
 
 <script src="/consent.js" defer></script>
+<script src="/blog/reveal.js" defer></script>
 </body>
 </html>
