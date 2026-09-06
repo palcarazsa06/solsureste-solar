@@ -11,6 +11,10 @@
   4. Añade/actualiza su tarjeta <article class="blog-card"> en static/blog/index.html
      (arriba del todo si es el más reciente).
   No hace falta tocar api.py — este archivo ya se sirve tal cual en /blog/articulos/<nombre>.html.
+
+  El aviso "Contenido generado con ayuda de inteligencia artificial..." de después del <footer>
+  ya viene incluido: no lo quites ni lo subas arriba del artículo, va deliberadamente al final
+  (esquina inferior, letra pequeña) para que se vea solo después de leer el artículo completo.
 -->
 <!DOCTYPE html>
 <html lang="es">
@@ -97,6 +101,7 @@
   .back-to-blog { display: inline-block; margin-top: 2.5rem; font-size: .875rem; font-weight: 500; color: #FFB43D; text-decoration: none; }
   .page-footer { border-top: 1px solid rgba(255,255,255,.06); padding: 1.25rem 1.5rem; text-align: center; font-size: .8125rem; color: rgba(244,243,240,.5); }
   .page-footer a { color: #FFB43D; text-decoration: none; }
+  .ai-disclosure { max-width: 42rem; margin: .5rem auto 0; padding: 0 1.5rem; text-align: right; font-size: .6875rem; color: rgba(244,243,240,.32); font-style: italic; }
 </style>
 </head>
 <body>
@@ -151,6 +156,7 @@
 <footer class="page-footer">
   © 2026 Solsureste Solar · <a href="mailto:info@solsurestesolar.com">info@solsurestesolar.com</a> · <a href="tel:+34968869532">968 869 532</a>
 </footer>
+<p class="ai-disclosure">Contenido generado con ayuda de inteligencia artificial, con supervisión editorial de Solsureste Solar.</p>
 
 <script src="/consent.js" defer></script>
 </body>
