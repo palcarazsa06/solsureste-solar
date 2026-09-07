@@ -8,7 +8,7 @@ import google_reviews as gr
 @pytest.fixture(autouse=True)
 def _estado_limpio(monkeypatch, tmp_path):
     """Aísla cada test de _cache y del fichero de disco real — nunca debe tocar
-    google_reviews_cache.json ni los static/*.html reales del repo."""
+    google_reviews_cache.json."""
     gr._cache.clear()
     monkeypatch.setattr(gr, "CACHE_FILE", str(tmp_path / "cache.json"))
     yield
@@ -68,17 +68,7 @@ def test_fetch_place_details_sin_credenciales_devuelve_none(monkeypatch):
     assert gr._fetch_place_details("es") is None
 
 
-def test_refrescar_resenas_cache_actualiza_cache_y_aggregate_rating(monkeypatch, tmp_path):
-    html_es = tmp_path / "index.html"
-    html_en = tmp_path / "en_index.html"
-    contenido = (
-        '<script type="application/ld+json">{"@type":"HomeAndConstructionBusiness",'
-        '"aggregateRating": {"@type":"AggregateRating","ratingValue":"4.0","reviewCount":"10"}}</script>'
-    )
-    html_es.write_text(contenido, encoding="utf-8")
-    html_en.write_text(contenido, encoding="utf-8")
-    monkeypatch.setattr(gr, "_AGGREGATE_RATING_FILES", (str(html_es), str(html_en)))
-
+def test_refrescar_resenas_cache_actualiza_cache(monkeypatch):
     # _fetch_place_details devuelve el dict ya "aplanado" (rating/user_rating_count/...),
     # no el payload crudo de la API — replicamos esa forma exacta aquí.
     def _fetch_mock(lang):
@@ -97,13 +87,8 @@ def test_refrescar_resenas_cache_actualiza_cache_y_aggregate_rating(monkeypatch,
     assert gr.obtener_resenas_cache("es")["rating"] == 4.9
     assert gr.obtener_resenas_cache("en")["rating"] == 4.9
 
-    html_actualizado = html_es.read_text(encoding="utf-8")
-    assert '"ratingValue":"4.9"' in html_actualizado
-    assert '"reviewCount":"30"' in html_actualizado
 
-
-def test_refrescar_resenas_cache_conserva_el_caché_previo_si_un_idioma_falla(monkeypatch, tmp_path):
-    monkeypatch.setattr(gr, "_AGGREGATE_RATING_FILES", ())
+def test_refrescar_resenas_cache_conserva_el_caché_previo_si_un_idioma_falla(monkeypatch):
     gr._cache["en"] = {"status": "ok", "rating": 4.5, "user_rating_count": 12, "reviews": []}
 
     def _fetch_mock(lang):
@@ -124,3 +109,40 @@ def test_obtener_resenas_cache_con_idioma_no_cacheado_devuelve_unavailable():
     resultado = gr.obtener_resenas_cache("fr")
 
     assert resultado == {"status": "unavailable", "reviews": []}
+
+
+# --- El aggregateRating del JSON-LD ---
+# Sustituye a la antigua reescritura del fragmento dentro de static/index.html: ahora el
+# rating cacheado se pasa como variable a la plantilla. Estos dos tests cubren el mismo
+# contrato de negocio (el rating real llega al JSON-LD) sobre el HTML servido de verdad.
+
+def test_aggregate_rating_llega_al_jsonld_renderizado():
+    from fastapi.testclient import TestClient
+
+    import api
+
+    gr._cache["es"] = {"status": "ok", "rating": 4.9, "user_rating_count": 30, "reviews": []}
+    html = TestClient(api.app).get("/").text
+
+    bloque = html.split('<script type="application/ld+json">')[1].split("</script>")[0]
+    negocio = next(n for n in json.loads(bloque)["@graph"] if "aggregateRating" in n)
+
+    assert negocio["aggregateRating"]["ratingValue"] == "4.9"
+    assert negocio["aggregateRating"]["reviewCount"] == "30"
+
+
+def test_sin_resenas_cacheadas_el_jsonld_omite_el_aggregate_rating():
+    """Sin datos reales no se inventa una valoración: el nodo desaparece y el JSON-LD
+    sigue siendo válido (mismo criterio que la sección de reseñas del front, que se
+    oculta entera en vez de mostrar testimonios falsos)."""
+    from fastapi.testclient import TestClient
+
+    import api
+
+    gr._cache.clear()
+    html = TestClient(api.app).get("/").text
+
+    bloque = html.split('<script type="application/ld+json">')[1].split("</script>")[0]
+    doc = json.loads(bloque)  # revienta si la coma del nodo omitido rompe el JSON
+
+    assert all("aggregateRating" not in nodo for nodo in doc["@graph"])

@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Autoconsumo industrial en Murcia y Alicante: la factura que pasó de 860 € a 22 € | Blog Solsureste Solar</title>
-<meta name="description" content="En una nave industrial de Cartagena la factura de verano bajó de 860 € a 22 €. Así cambia el autoconsumo industrial las cuentas de una empresa en Murcia y Alicante.">
-<link rel="canonical" href="https://solsurestesolar.com/blog/articulos/autoconsumo-industrial-murcia-alicante-guia-empresas-2026.html">
+<title>{{ a.titulo }} | Blog Solsureste Solar</title>
+<meta name="description" content="{{ a.meta_description }}">
+<link rel="canonical" href="{{ url_articulo }}">
 
 <meta property="og:type" content="article">
-<meta property="og:title" content="Autoconsumo industrial en Murcia y Alicante: la factura que pasó de 860 € a 22 € | Blog Solsureste Solar">
-<meta property="og:description" content="En una nave industrial de Cartagena la factura de verano bajó de 860 € a 22 €. Así cambia el autoconsumo industrial las cuentas de una empresa en Murcia y Alicante.">
-<meta property="og:url" content="https://solsurestesolar.com/blog/articulos/autoconsumo-industrial-murcia-alicante-guia-empresas-2026.html">
-<meta property="og:image" content="https://solsurestesolar.com/images/foto2.webp">
+<meta property="og:title" content="{{ a.titulo }} | Blog Solsureste Solar">
+<meta property="og:description" content="{{ a.meta_description }}">
+<meta property="og:url" content="{{ url_articulo }}">
+<meta property="og:image" content="{{ url_portada }}">
 <meta property="og:locale" content="es_ES">
 <meta property="og:site_name" content="Solsureste Solar">
 
@@ -44,8 +44,8 @@
     {
       "@type": "ListItem",
       "position": 3,
-      "name": "Autoconsumo industrial en Murcia y Alicante: la factura que pasó de 860 € a 22 €",
-      "item": "https://solsurestesolar.com/blog/articulos/autoconsumo-industrial-murcia-alicante-guia-empresas-2026.html"
+      "name": {{ a.titulo | tojson }},
+      "item": {{ url_articulo | tojson }}
     }
   ]
 }
@@ -54,11 +54,11 @@
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": "Autoconsumo industrial en Murcia y Alicante: la factura que pasó de 860 € a 22 €",
-  "datePublished": "2026-09-03",
-  "dateModified": "2026-09-03",
-  "url": "https://solsurestesolar.com/blog/articulos/autoconsumo-industrial-murcia-alicante-guia-empresas-2026.html",
-  "image": "https://solsurestesolar.com/images/foto2.webp",
+  "headline": {{ a.titulo | tojson }},
+  "datePublished": {{ a.publicado_en | tojson }},
+  "dateModified": {{ a.actualizado_en | tojson }},
+  "url": {{ url_articulo | tojson }},
+  "image": {{ url_portada | tojson }},
   "author": {
     "@type": "Organization",
     "name": "Solsureste Solar",
@@ -160,59 +160,23 @@
   </div>
 </header>
 
-<p class="breadcrumb"><a href="/">Inicio</a> / <a href="/blog">Blog</a> / Autoconsumo industrial en Murcia y Alicante: la factura que pasó de 860 € a 22 €</p>
+<p class="breadcrumb"><a href="/">Inicio</a> / <a href="/blog">Blog</a> / {{ a.titulo }}</p>
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <span class="eyebrow">Caso real · Cartagena, Murcia</span>
-    <h1 class="page-h1">Autoconsumo industrial en Murcia y Alicante: la factura que pasó de 860 € a 22 €</h1>
-    <p class="post-meta">Publicado el <time datetime="2026-09-03">3 de septiembre de 2026</time></p>
+    {% if a.eyebrow %}<span class="eyebrow">{{ a.eyebrow }}</span>{% endif %}
+    <h1 class="page-h1">{{ a.titulo }}</h1>
+    <p class="post-meta">Publicado el <time datetime="{{ a.publicado_en }}">{{ a.fecha_legible }}</time></p>
   </div>
 </section>
 
 <main class="page-body">
-    <img data-reveal class="hero-cover" src="/images/foto2.webp" alt="Instalación solar en nave industrial en Cartagena, Murcia" width="900" height="506" loading="lazy">
-    <p class="hero-caption" data-reveal>La nave industrial en Cartagena de la que habla este artículo.</p>
-
-    <p data-reveal>Hay un mes que decide el ánimo de muchas empresas del sureste: agosto. En una nave industrial, agosto no es solo calor — es la maquinaria a pleno rendimiento, las cámaras de refrigeración sin descanso, la iluminación encendida turno tras turno. Y es, casi siempre, el mes en el que llega la factura de la luz que nadie tiene ganas de abrir.</p>
-
-    <p data-reveal>En una nave de un polígono industrial de Cartagena, esa factura de verano llevaba años rondando los <strong>860 €</strong>. La actividad no iba a parar —ni la refrigeración, ni la maquinaria, ni las luces—, así que la empresa asumía ese coste como parte del negocio, mes tras mes, sin plantearse demasiado si existía otra forma de llevar las cuentas.</p>
-
-    <div class="case-box" data-reveal>
-      <p class="quote">"Montaron dos instalaciones en mis naves industriales. Profesionalidad y cumplimiento de plazos impecables."</p>
-      <p class="who">— Antonio P., Cartagena (Murcia)</p>
-    </div>
-
-    <p data-reveal>Un año después de instalar autoconsumo industrial con Solsureste, la factura de ese mismo mes de verano bajó de 860 € a <strong>22 €</strong> —cargo fijo de potencia incluido—. En el cómputo anual, la instalación libera hoy más de 5.000 € que antes se iban directamente a la eléctrica.</p>
-
-    <div class="stat-row" data-reveal>
-      <div class="stat-box"><div class="num">860 € → 22 €</div><div class="lbl">factura del mismo mes de verano</div></div>
-      <div class="stat-box"><div class="num">+5.000 €</div><div class="lbl">liberados cada año</div></div>
-      <div class="stat-box"><div class="num">25 años</div><div class="lbl">de garantía del trabajo</div></div>
-    </div>
-
-    <p data-reveal>No fue casualidad ni un cálculo genérico sacado de una tabla. Detrás de ese número hay una empresa que lleva desde 1999 con el mismo CIF instalando placas solares y desarrollando huertos solares en Murcia y Alicante, con maquinaria y personal propio —sin subcontratas—. El cómo exacto de cada instalación —el dimensionado, los equipos, los plazos— es algo que en Solsureste prefieren explicarlo con tu factura real delante, no en un artículo genérico de internet.</p>
-
-    <h2 data-reveal>Naves que se reconocen en esta historia</h2>
-    <p data-reveal>El caso de esta nave cartagenera no es una excepción aislada. En polígonos como Los Camachos, El Bohío, Cabezo Beaza o Valle de Escombreras —y en el resto de zonas industriales de Murcia y Alicante— hay negocios que reconocerán algunos de estos síntomas:</p>
-    <ul data-reveal>
-      <li>Facturas de verano que se disparan por el aire acondicionado, las cámaras o la maquinaria</li>
-      <li>Un consumo que se concentra precisamente en horario diurno, justo cuando más produce el sol</li>
-      <li>Cubiertas de nave enormes que hoy no hacen nada más que dar sombra al tejado</li>
-    </ul>
-    <p data-reveal>Si alguno de esos puntos te suena, es la misma situación de la que partió esta nave de Cartagena antes de cambiar de facturas. El resultado ya lo conoces. El cómo llegar hasta ahí, en tu caso concreto, empieza con un estudio de rentabilidad gratuito —sin compromiso—, donde se pone tu factura real sobre la mesa, no una estimación genérica de internet.</p>
-
-    <h2 data-reveal>Dónde más pasan estas historias</h2>
-    <p data-reveal>Trabajamos con equipo propio en toda la <a href="/placas-solares-murcia">Región de Murcia</a> y toda la <a href="/placas-solares-alicante">provincia de Alicante</a>: desde los polígonos de <a href="/placas-solares-cartagena">Cartagena</a> hasta <a href="/placas-solares-molina-de-segura">Molina de Segura</a>, donde está nuestra sede, pasando por <a href="/placas-solares-lorca">Lorca</a>, Murcia capital, Elche, Alicante capital y <a href="/placas-solares-orihuela">Orihuela</a>. Si tu nave o tu empresa está en cualquiera de estas zonas, el autoconsumo industrial y las placas solares para empresas no son solo teoría: son la factura de alguien que hoy paga 22 € donde antes pagaba 860.</p>
-
-    <p data-reveal>Esta historia todavía no tiene final para tu empresa. Puede seguir siendo la misma factura de siempre cada agosto, o puede convertirse en la próxima que enseñemos aquí. Eso, de momento, solo lo decides tú.</p>
-
-  <div class="page-cta" data-reveal>
-    <p>¿Cuál sería el próximo capítulo de tu factura?</p>
-    <a href="/#inicio" class="btn-primary">Solicitar estudio gratuito →</a>
-  </div>
-
-  <a href="/blog" class="back-to-blog">← Volver al blog</a>
+{% if a.imagen_portada %}    <img data-reveal class="hero-cover" src="{{ a.imagen_portada }}" alt="{{ a.alt_portada }}" width="900" height="506" loading="lazy">
+{% endif %}{% if a.pie_portada %}    <p class="hero-caption" data-reveal>{{ a.pie_portada }}</p>
+{% endif %}
+{# cuerpo_html viene del editor del panel y pasa por cms_sanitize antes de guardarse:
+   solo sobreviven las etiquetas de la lista blanca, así que aquí es seguro no escaparlo. #}
+{{ a.cuerpo_html | safe }}
 </main>
 
 <footer class="page-footer">

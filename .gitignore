@@ -17,6 +17,10 @@ credenciales_google.json
 agencia.db*
 chroma_db/
 google_reviews_cache.json*
+# Imágenes subidas desde el panel: son datos, no código. En local caen aquí (DATA_DIR=.) y en
+# Render en el disco persistente. La barra inicial ancla el patrón a la raíz, para no ignorar
+# static/uploads/, que sí va versionado.
+/uploads/
 
 # Claude Code (local-only overrides, no compartir)
 .claude/settings.local.json

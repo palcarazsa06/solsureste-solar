@@ -63,7 +63,7 @@
       "foundingDate": "1999",
       "geo": { "@type": "GeoCoordinates", "latitude": 38.0880, "longitude": -1.2193 },
       "priceRange": "€€-€€€",
-      "aggregateRating": {"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"10"},
+{% if resenas_rating %}      "aggregateRating": {"@type":"AggregateRating","ratingValue":"{{ resenas_rating }}","reviewCount":"{{ resenas_num }}"},{% endif %}
       "sameAs": ["https://share.google/y92ODPPpFX7JV0CSn", "https://www.facebook.com/profile.php?id=61591879814700", "https://www.instagram.com/solsurestesolar/"],
       "openingHoursSpecification": [
         { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday"], "opens": "08:30", "closes": "14:00" },
@@ -149,15 +149,15 @@
   <div style="position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:84px 24px 72px">
     <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;border:1px solid rgba(255,180,61,.4);background:rgba(255,180,61,.10);font-size:13px;font-weight:500;color:#FFC766;margin-bottom:22px;box-shadow:0 0 30px rgba(255,180,61,.18),inset 0 1px 0 rgba(255,255,255,.08);animation:sssRise .7s both,sssBloom 4s ease-in-out 1s infinite">
       <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#FFB43D;box-shadow:0 0 10px #FFB43D;animation:sssPulse 2s infinite"></span>
-      25 años · Murcia &amp; Alicante · maquinaria propia
+      {{ c.hero_badge }}
     </div>
-    <h1 data-i18n="hero.h1" class="sss-h1" style="font-size:60px;font-weight:700;line-height:1.04;letter-spacing:-.03em;max-width:900px;margin:0;animation:sssRise .8s .08s both">Instalamos placas solares en Murcia y Alicante, <span class="sss-shimmer" style="filter:drop-shadow(0 0 24px rgba(255,180,61,.55))">de principio a fin</span></h1>
-    <p data-i18n="hero.p" style="margin:22px 0 0;max-width:620px;font-size:19px;line-height:1.55;color:rgba(244,243,240,.78);animation:sssRise .8s .18s both">Instalamos placas solares para hogares y empresas, y desarrollamos huertos solares. Con maquinaria y recursos propios, gestionamos cada proyecto de principio a fin sin depender de terceros.</p>
+    <h1 data-i18n="hero.h1" class="sss-h1" style="font-size:60px;font-weight:700;line-height:1.04;letter-spacing:-.03em;max-width:900px;margin:0;animation:sssRise .8s .08s both">{{ c.hero_h1 }} <span class="sss-shimmer" style="filter:drop-shadow(0 0 24px rgba(255,180,61,.55))">{{ c.hero_h1_destacado }}</span></h1>
+    <p data-i18n="hero.p" style="margin:22px 0 0;max-width:620px;font-size:19px;line-height:1.55;color:rgba(244,243,240,.78);animation:sssRise .8s .18s both">{{ c.hero_subtitulo }}</p>
 
     <div class="sss-herogrid" style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch;animation:sssRise .9s .28s both">
       <!-- FORM -->
       <form id="sss-hero-form" class="sss-halo" style="position:relative;display:flex;flex-direction:column;border-radius:20px;border:1px solid rgba(255,190,80,.32);background:rgba(20,20,23,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:26px;box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 90px rgba(255,180,61,.14),inset 0 1px 0 rgba(255,255,255,.09);animation:sssCardFloat 7s ease-in-out infinite">
-        <h2 data-i18n="form.title" style="margin:0 0 18px;font-size:17px;font-weight:600">Solicita tu estudio gratuito</h2>
+        <h2 data-i18n="form.title" style="margin:0 0 18px;font-size:17px;font-weight:600">{{ c.hero_form_titulo }}</h2>
         <div class="sss-formgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
           <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Nombre *<input id="sss-hf-nombre" required placeholder="Juan" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
           <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Apellidos *<input id="sss-hf-apellidos" required placeholder="García López" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
@@ -169,7 +169,7 @@
         <p style="margin:14px 0 0;font-size:11.5px;line-height:1.5;color:rgba(244,243,240,.5)">Al enviar aceptas el tratamiento de tus datos para gestionar tu solicitud — <a href="#" class="sss-email-obf" data-u="info" data-d="solsurestesolar.com" style="color:#FFB43D"><span class="sss-email-text">info [at] solsurestesolar.com</span></a>.</p>
         <button id="sss-hero-submit" data-magnetic type="submit" class="sss-submit" style="margin-top:16px;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:11px;border:none;cursor:pointer;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:14.5px;font-weight:700;height:46px;font-family:inherit;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 50px rgba(255,180,61,.22),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg>
-          <span id="sss-hero-submit-label">Solicitar estudio gratuito</span>
+          <span id="sss-hero-submit-label">{{ c.hero_form_boton }}</span>
         </button>
         <div id="sss-hero-fb" style="display:none;margin-top:12px;border-radius:10px;padding:9px 12px;font-size:13px;font-weight:600;text-align:center"></div>
       </form>
@@ -209,10 +209,10 @@
   <canvas id="sss-grid-fx" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none"></canvas>
   <div style="position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 120% at 50% 50%,transparent 40%,#0e0e11 92%)"></div>
   <div class="sss-statgrid" style="position:relative;z-index:2;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:46px 24px">
-    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="25" data-prefix="+" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">+0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Años de experiencia</p></div>
-    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="500" data-prefix="+" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">+0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Instalaciones realizadas</p></div>
-    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="25" data-prefix="+" data-suffix=" MW" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">+0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Potencia instalada</p></div>
-    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="100" data-suffix="%" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">0%</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Recursos propios</p></div>
+    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="{{ c.stat_1_valor }}" data-prefix="+" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">+0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.stat_1_texto }}</p></div>
+    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="{{ c.stat_2_valor }}" data-prefix="+" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">+0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.stat_2_texto }}</p></div>
+    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="{{ c.stat_3_valor }}" data-prefix="+" data-suffix=" MW" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">+0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.stat_3_texto }}</p></div>
+    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="{{ c.stat_4_valor }}" data-suffix="%" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">0%</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.stat_4_texto }}</p></div>
   </div>
 </section>
 
@@ -230,10 +230,10 @@
       <a data-magnetic data-reveal href="#inicio" class="sss-btn" style="margin-top:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:15px;font-weight:600;height:46px;padding:0 24px;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 44px rgba(255,180,61,.20),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">Solicitar estudio gratuito</a>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">€0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Coste del estudio inicial</p></div>
-      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">−80%</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Reducción media en factura</p></div>
-      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">5–7</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Años de amortización</p></div>
-      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">25+</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">Años de vida útil</p></div>
+      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">{{ c.tarjeta_1_valor }}</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.tarjeta_1_texto }}</p></div>
+      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">{{ c.tarjeta_2_valor }}</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.tarjeta_2_texto }}</p></div>
+      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">{{ c.tarjeta_3_valor }}</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.tarjeta_3_texto }}</p></div>
+      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">{{ c.tarjeta_4_valor }}</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.tarjeta_4_texto }}</p></div>
     </div>
   </div>
 </section>
@@ -298,20 +298,20 @@
     <div class="sss-3col" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px">
       <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
         <img src="/images/foto1-card.webp" alt="Instalación residencial de placas solares en Lorca, Murcia" width="900" height="506" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
-        <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">Aire acondicionado todo el día con factura cero</h3>
-        <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">Este cliente en Lorca recibió en agosto una factura con <strong style="color:#f4f3f0">coste de energía €0</strong>. Respecto al año anterior ahorró €170 ese mes. Con el año completo libera cerca de <strong style="color:#f4f3f0">€1.800 anuales</strong>, pudiendo encender el aire sin preocuparse.</p>
+        <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">{{ c.caso_1_titulo }}</h3>
+        <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">{{ c.caso_1_texto | destacar }}</p>
         <a href="/placas-solares-lorca" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Leer caso completo en Lorca →</a>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
         <img src="/images/foto2.webp" alt="Instalación solar en nave industrial en Cartagena, Murcia" width="900" height="506" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
-        <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">€5.000 liberados de la factura cada año</h3>
-        <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">Esta empresa en Cartagena tenía una factura de €860 en verano. Un año después de la instalación esa factura <strong style="color:#f4f3f0">bajó a €22</strong> (incluido el cargo fijo). Libera ahora <strong style="color:#f4f3f0">más de €5.000 anuales</strong> que antes iban a la eléctrica.</p>
+        <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">{{ c.caso_2_titulo }}</h3>
+        <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">{{ c.caso_2_texto | destacar }}</p>
         <a href="/placas-solares-cartagena" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Leer caso completo en Cartagena →</a>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
         <img src="/images/foto3.webp" alt="Huerto solar agrícola en Orihuela, Alicante" width="900" height="506" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
-        <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">Amortización en 6 años en gran instalación agrícola</h3>
-        <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">Explotación en Orihuela (Alicante) con factura de bombeo de €3.100 en verano. Tras el huerto solar propio, esa factura cayó a €390 el año siguiente. La reducción de €2.700 supuso <strong style="color:#f4f3f0">amortizar en menos de 6 años</strong>.</p>
+        <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">{{ c.caso_3_titulo }}</h3>
+        <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">{{ c.caso_3_texto | destacar }}</p>
         <a href="/placas-solares-orihuela" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Leer caso completo en Orihuela →</a>
       </div>
     </div>
@@ -394,17 +394,13 @@
           <th style="padding:15px 18px;text-align:right;font-weight:700">Ahorro 25a</th>
         </tr></thead>
         <tbody>
-          <tr style="border-top:1px solid rgba(255,255,255,.06);background:#141417"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">5 kW</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">10</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">6.957,50 €</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">103,85 €</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">80,60 €</td><td style="padding:14px 18px;text-align:right">3.687,09 €</td><td style="padding:14px 18px;text-align:right;font-weight:700">27.283,69 €</td></tr>
-          <tr style="border-top:1px solid rgba(255,255,255,.06);background:#0e0e11"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">6 kW</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">12</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">7.986,00 €</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">124,62 €</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">92,52 €</td><td style="padding:14px 18px;text-align:right">5.148,15 €</td><td style="padding:14px 18px;text-align:right;font-weight:700">33.885,68 €</td></tr>
-          <tr style="border-top:1px solid rgba(255,255,255,.06);background:#141417"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">7 kW</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">14</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">9.317,00 €</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">145,39 €</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">107,94 €</td><td style="padding:14px 18px;text-align:right">6.188,67 €</td><td style="padding:14px 18px;text-align:right;font-weight:700">40.067,13 €</td></tr>
-          <tr style="border-top:1px solid rgba(255,255,255,.06);background:#0e0e11"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">8 kW</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">16</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">10.164,00 €</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">166,16 €</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">117,75 €</td><td style="padding:14px 18px;text-align:right">7.902,05 €</td><td style="padding:14px 18px;text-align:right;font-weight:700">46.921,45 €</td></tr>
-          <tr style="border-top:1px solid rgba(255,255,255,.06);background:#141417"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">10 kW</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">20</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">12.100,00 €</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">207,70 €</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">140,18 €</td><td style="padding:14px 18px;text-align:right">10.992,39 €</td><td style="padding:14px 18px;text-align:right;font-weight:700">60.293,64 €</td></tr>
-        </tbody>
+{% for fila in c.financiacion_tabla %}          <tr style="border-top:1px solid rgba(255,255,255,.06);background:{{ '#141417' if loop.index0 % 2 == 0 else '#0e0e11' }}"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">{{ fila[0] }}</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">{{ fila[1] }}</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">{{ fila[2] }}</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">{{ fila[3] }}</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">{{ fila[4] }}</td><td style="padding:14px 18px;text-align:right">{{ fila[5] }}</td><td style="padding:14px 18px;text-align:right;font-weight:700">{{ fila[6] }}</td></tr>
+{% endfor %}        </tbody>
       </table>
     </div>
     <div style="margin-top:14px;display:flex;flex-direction:column;gap:4px">
-      <p style="margin:0;font-size:12px;color:rgba(244,243,240,.45)">* Estimación de rentabilidad calculada con un precio de energía de 0,16 €/kWh + IVA.</p>
-      <p style="margin:0;font-size:12px;color:rgba(244,243,240,.45)">* Financiación: 100% de la inversión + IVA a 10 años al 6,95% de interés.</p>
+      <p style="margin:0;font-size:12px;color:rgba(244,243,240,.45)">{{ c.financiacion_nota_1 }}</p>
+      <p style="margin:0;font-size:12px;color:rgba(244,243,240,.45)">{{ c.financiacion_nota_2 }}</p>
     </div>
   </div>
 </section>
@@ -525,6 +521,10 @@
   </a>
 </div>
 
+<!-- Textos ingleses de los bloques que gestiona el panel de contenido, para el toggle ES/EN
+     de script.js. Es un bloque de datos, no código: el navegador no lo ejecuta, así que la
+     CSP (script-src 'self') lo permite igual que cualquier otro contenido de la página. -->
+<script type="application/json" id="sss-i18n">{{ i18n_en | tojson }}</script>
 <script src="./script.js"></script>
 <script src="/consent.js" defer></script>
 </body>

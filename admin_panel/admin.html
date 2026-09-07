@@ -6,6 +6,8 @@
     <title>Panel de Administración - Solsureste Solar CRM</title>
     <link rel="preload" href="/fonts/space-grotesk-variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/fonts.css">
+    <!-- Quill autoalojado: la CSP (script-src 'self') descarta cualquier CDN sin avisar. -->
+    <link rel="stylesheet" href="/admin/vendor/quill.snow.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -14,6 +16,104 @@
             color: #1f2937;
         }
         .hidden { display: none !important; }
+
+        /* --- Pestañas + panel de contenido ---
+           Sin JS ni handlers inline en toda esta página: la CSP (script-src 'self', sin
+           unsafe-inline) los descarta en silencio y el síntoma es "el botón no hace nada".
+           Toda la lógica vive en /admin.js y /cms.js. */
+        .topbar-right { display: flex; align-items: center; gap: 1rem; }
+        .tabs { display: flex; gap: .25rem; background: rgba(255,255,255,.08); padding: .25rem; border-radius: .5rem; }
+        .tab {
+            border: none; background: transparent; color: rgba(255,255,255,.7);
+            font: inherit; font-size: .85rem; font-weight: 600; cursor: pointer;
+            padding: .4rem .85rem; border-radius: .375rem; transition: background .15s, color .15s;
+        }
+        .tab:hover { color: #fff; }
+        .tab.is-active { background: #f97316; color: #fff; }
+
+        .cms-grupo { margin-bottom: 1.5rem; background: #fff; border: 1px solid #e5e7eb; border-radius: .75rem; overflow: hidden; }
+        .cms-grupo > header { padding: 1rem 1.25rem; border-bottom: 1px solid #f3f4f6; background: #fafafa; }
+        .cms-grupo h3 { font-size: 1rem; font-weight: 700; color: #1f2937; }
+        .cms-grupo header p { font-size: .8rem; color: #6b7280; margin-top: .15rem; }
+
+        .cms-campo { padding: 1.1rem 1.25rem; border-bottom: 1px solid #f3f4f6; }
+        .cms-campo:last-child { border-bottom: none; }
+        .cms-campo-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: .4rem; flex-wrap: wrap; }
+        .cms-campo label { font-size: .875rem; font-weight: 600; color: #374151; }
+        .cms-campo .ayuda { font-size: .78rem; color: #6b7280; margin-bottom: .45rem; }
+        .cms-contador { font-size: .72rem; color: #9ca3af; font-variant-numeric: tabular-nums; }
+        .cms-contador.pasado { color: #dc2626; font-weight: 700; }
+
+        .cms-campo input[type=text], .cms-campo textarea {
+            width: 100%; border: 1px solid #d1d5db; border-radius: .5rem;
+            padding: .55rem .75rem; font: inherit; font-size: .9rem; color: #1f2937;
+            transition: border-color .15s, box-shadow .15s; resize: vertical;
+        }
+        .cms-campo input[type=text]:focus, .cms-campo textarea:focus {
+            outline: none; border-color: #f97316; box-shadow: 0 0 0 1px #f97316;
+        }
+        .cms-campo textarea { min-height: 5.5rem; line-height: 1.5; }
+
+        .cms-acciones { display: flex; gap: .5rem; align-items: center; margin-top: .55rem; flex-wrap: wrap; }
+        .cms-btn {
+            border: 1px solid #d1d5db; background: #fff; color: #374151; font: inherit;
+            font-size: .78rem; font-weight: 600; padding: .3rem .7rem; border-radius: .375rem; cursor: pointer;
+        }
+        .cms-btn:hover { background: #f9fafb; }
+        .cms-btn-guardar { background: #f97316; border-color: #f97316; color: #fff; }
+        .cms-btn-guardar:hover { background: #ea580c; }
+        .cms-btn:disabled { opacity: .45; cursor: default; }
+
+        .cms-estado { font-size: .78rem; font-weight: 600; margin-left: auto; }
+        .cms-estado.ok { color: #16a34a; }
+        .cms-estado.error { color: #dc2626; }
+        .cms-badge {
+            font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em;
+            padding: .12rem .45rem; border-radius: .25rem; background: #fef3c7; color: #92400e;
+        }
+        .cms-badge.modificado { background: #dbeafe; color: #1e40af; }
+
+        .cms-tabla { width: 100%; border-collapse: collapse; font-size: .82rem; }
+        .cms-tabla th { text-align: left; font-size: .7rem; text-transform: uppercase; letter-spacing: .03em; color: #6b7280; padding: .3rem .35rem; }
+        .cms-tabla td { padding: .15rem .15rem; }
+        .cms-tabla input {
+            width: 100%; min-width: 5.5rem; border: 1px solid #e5e7eb; border-radius: .3rem;
+            padding: .35rem .45rem; font: inherit; font-size: .82rem; color: #1f2937;
+        }
+        .cms-tabla input:focus { outline: none; border-color: #f97316; box-shadow: 0 0 0 1px #f97316; }
+        .cms-tabla-scroll { overflow-x: auto; }
+        .cms-btn-fila { border: none; background: transparent; color: #dc2626; cursor: pointer; font-size: 1rem; padding: 0 .3rem; }
+
+        .cms-aviso { padding: .75rem 1rem; border-radius: .5rem; margin-bottom: 1rem; font-size: .85rem; font-weight: 600; }
+        .cms-aviso.error { background: #fee2e2; color: #991b1b; }
+        .cms-aviso.ok { background: #dcfce7; color: #166534; }
+
+        /* Editor de artículos. La barra de herramientas se recorta a propósito en cms.js:
+           sin colores ni tamaños de fuente, para que no puedan desmaquetar la página. */
+        #blog-editor-quill { background: #fff; border-radius: 0 0 .5rem .5rem; }
+        #blog-editor-quill .ql-editor { min-height: 22rem; font-size: .95rem; line-height: 1.65; }
+        .ql-toolbar.ql-snow, .ql-container.ql-snow { border-color: #d1d5db; }
+        .ql-toolbar.ql-snow { border-radius: .5rem .5rem 0 0; }
+
+        .blog-fila { display: flex; align-items: center; gap: 1rem; padding: .9rem 1.1rem; border-bottom: 1px solid #f3f4f6; }
+        .blog-fila:last-child { border-bottom: none; }
+        .blog-fila .titulo { flex: 1; font-size: .9rem; font-weight: 600; color: #1f2937; }
+        .blog-fila .fecha { font-size: .78rem; color: #9ca3af; white-space: nowrap; }
+        .badge-borrador { background: #fef3c7; color: #92400e; }
+        .badge-publicado { background: #dcfce7; color: #166534; }
+
+        .img-galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+        .img-tarjeta { background: #fff; border: 1px solid #e5e7eb; border-radius: .75rem; overflow: hidden; }
+        .img-tarjeta img { width: 100%; height: 130px; object-fit: cover; display: block; background: #f3f4f6; }
+        .img-datos { padding: .6rem .7rem; }
+        .img-datos p { font-size: .75rem; color: #6b7280; word-break: break-all; }
+        .img-datos .nombre { font-size: .8rem; font-weight: 600; color: #374151; margin-bottom: .15rem; }
+        .img-acciones { display: flex; gap: .35rem; padding: 0 .7rem .7rem; }
+
+        .cms-historial { margin-top: .5rem; border-left: 3px solid #e5e7eb; padding-left: .75rem; }
+        .cms-historial-item { font-size: .78rem; color: #4b5563; padding: .25rem 0; display: flex; gap: .6rem; align-items: baseline; }
+        .cms-historial-item span { flex: 1; word-break: break-word; }
+        .cms-historial-item time { color: #9ca3af; font-size: .7rem; white-space: nowrap; }
 
         /* --- Login --- */
         #login-screen {
@@ -210,11 +310,21 @@
                 </span>
                 <h1>Solsureste Solar <span>CRM</span></h1>
             </div>
-            <button class="btn-logout">Cerrar Sesión</button>
+            <div class="topbar-right">
+                <nav class="tabs" id="tabs">
+                    <button class="tab is-active" data-vista="leads">Leads</button>
+                    <button class="tab" data-vista="contenido">Contenido de la web</button>
+                    <button class="tab" data-vista="faq">Preguntas frecuentes</button>
+                    <button class="tab" data-vista="blog">Blog</button>
+                    <button class="tab" data-vista="imagenes">Imágenes</button>
+                </nav>
+                <button class="btn-logout">Cerrar Sesión</button>
+            </div>
         </nav>
 
         <main class="content">
 
+          <section id="vista-leads">
             <div class="page-header">
                 <div>
                     <h2>Leads Captados</h2>
@@ -281,9 +391,130 @@
                     </table>
                 </div>
             </div>
+          </section>
+
+          <section id="vista-contenido" class="hidden">
+            <div class="page-header">
+                <div>
+                    <h2>Contenido de la web</h2>
+                    <p>Los cambios se publican al instante. Si te equivocas, cada campo tiene «Deshacer».</p>
+                </div>
+                <div class="page-header-actions">
+                    <a class="btn-refresh" href="/" target="_blank" rel="noopener">Ver la web</a>
+                </div>
+            </div>
+
+            <div class="filters">
+                <select id="cms-idioma">
+                    <option value="es">🇪🇸 Web en español</option>
+                    <option value="en">🇬🇧 Web en inglés</option>
+                </select>
+            </div>
+
+            <div id="cms-aviso" class="cms-aviso hidden"></div>
+            <div id="cms-campos"></div>
+          </section>
+
+          <section id="vista-faq" class="hidden">
+            <div class="page-header">
+                <div>
+                    <h2>Preguntas frecuentes</h2>
+                    <p>Las de la página <a href="/faq" target="_blank" rel="noopener">solsurestesolar.com/faq</a>.</p>
+                </div>
+                <div class="page-header-actions">
+                    <button class="btn-refresh" id="faq-nueva">+ Añadir pregunta</button>
+                </div>
+            </div>
+
+            <div class="cms-aviso ok">
+                Recuerda: el chatbot responde con su propia base de conocimiento. Si cambias una
+                respuesta aquí, avisa a Paco para que la actualice también en el chatbot.
+            </div>
+
+            <div id="faq-lista"></div>
+          </section>
+
+          <section id="vista-blog" class="hidden">
+            <div class="page-header">
+                <div>
+                    <h2 id="blog-titulo-vista">Artículos del blog</h2>
+                    <p id="blog-sub-vista">Los borradores no se ven en la web hasta que los publiques.</p>
+                </div>
+                <div class="page-header-actions">
+                    <button class="btn-refresh" id="blog-nuevo">+ Escribir artículo</button>
+                </div>
+            </div>
+
+            <div id="blog-aviso" class="cms-aviso hidden"></div>
+            <div id="blog-lista"></div>
+
+            <div id="blog-editor" class="hidden">
+              <div class="cms-grupo">
+                <div class="cms-campo">
+                  <div class="cms-campo-cab"><label for="blog-f-titulo">Título</label>
+                    <span class="cms-contador" id="blog-c-titulo"></span></div>
+                  <input type="text" id="blog-f-titulo">
+                </div>
+                <div class="cms-campo">
+                  <div class="cms-campo-cab"><label for="blog-f-slug">Dirección en la web</label></div>
+                  <p class="ayuda">solsurestesolar.com/blog/articulos/<strong id="blog-slug-vista">…</strong>.html</p>
+                  <input type="text" id="blog-f-slug">
+                </div>
+                <div class="cms-campo">
+                  <div class="cms-campo-cab"><label for="blog-f-meta">Descripción para Google</label>
+                    <span class="cms-contador" id="blog-c-meta"></span></div>
+                  <p class="ayuda">El texto que aparece debajo del título en los resultados de búsqueda.</p>
+                  <textarea id="blog-f-meta" style="min-height:3.5rem"></textarea>
+                </div>
+                <div class="cms-campo">
+                  <div class="cms-campo-cab"><label for="blog-f-eyebrow">Etiqueta superior (opcional)</label></div>
+                  <p class="ayuda">Por ejemplo: «Caso real · Cartagena, Murcia».</p>
+                  <input type="text" id="blog-f-eyebrow">
+                </div>
+                <div class="cms-campo">
+                  <div class="cms-campo-cab"><label>Foto de portada (opcional)</label></div>
+                  <p class="ayuda">Pega aquí el enlace de una imagen de la pestaña «Imágenes».</p>
+                  <input type="text" id="blog-f-portada" placeholder="/uploads/…">
+                  <input type="text" id="blog-f-alt" placeholder="Descripción de la foto, para accesibilidad y SEO" style="margin-top:.4rem">
+                  <input type="text" id="blog-f-pie" placeholder="Pie de foto (opcional)" style="margin-top:.4rem">
+                </div>
+                <div class="cms-campo">
+                  <div class="cms-campo-cab"><label>Contenido del artículo</label></div>
+                  <div id="blog-editor-quill"></div>
+                </div>
+                <div class="cms-campo">
+                  <div class="cms-acciones">
+                    <button class="cms-btn cms-btn-guardar" id="blog-guardar">Guardar borrador</button>
+                    <button class="cms-btn cms-btn-guardar" id="blog-publicar">Publicar en la web</button>
+                    <button class="cms-btn" id="blog-previsualizar">Vista previa</button>
+                    <button class="cms-btn" id="blog-cancelar">Volver a la lista</button>
+                    <span class="cms-estado" id="blog-estado"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="vista-imagenes" class="hidden">
+            <div class="page-header">
+                <div>
+                    <h2>Imágenes</h2>
+                    <p>Las fotos se optimizan solas al subirlas. Máximo 8 MB por archivo.</p>
+                </div>
+                <div class="page-header-actions">
+                    <label class="btn-refresh" for="img-archivo" style="cursor:pointer">+ Subir imagen</label>
+                    <input type="file" id="img-archivo" accept="image/jpeg,image/png,image/gif,image/webp" class="hidden">
+                </div>
+            </div>
+
+            <div id="img-aviso" class="cms-aviso hidden"></div>
+            <div id="img-galeria" class="img-galeria"></div>
+          </section>
         </main>
     </div>
 
+<script src="/admin/vendor/quill.js"></script>
 <script src="/admin.js"></script>
+<script src="/cms.js"></script>
 </body>
 </html>

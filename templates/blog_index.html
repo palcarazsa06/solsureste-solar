@@ -109,38 +109,16 @@
 </section>
 
 <main class="page-body">
-  <!--
-    Cómo añadir un artículo nuevo:
-    1. Crea static/blog/articulos/<slug>.html (duplica articulo-de-ejemplo.html como plantilla).
-    2. Pega aquí abajo un nuevo bloque <article class="blog-card">, SIEMPRE arriba del todo
-       (la lista va ordenada por fecha, más reciente primero — no hay ordenación automática).
-    3. Añade su <url> a static/sitemap.xml.
-    No hace falta tocar api.py para nada de esto.
-  -->
   <div class="blog-list">
 
-    <a class="blog-card" href="/blog/articulos/autoconsumo-industrial-murcia-alicante-guia-empresas-2026.html">
-      <time datetime="2026-09-03">3 de septiembre de 2026</time>
-      <h2>Autoconsumo industrial en Murcia y Alicante: la factura que pasó de 860 € a 22 €</h2>
-      <p>En una nave industrial de Cartagena la factura de verano bajó de 860 € a 22 €. Así cambia el autoconsumo industrial las cuentas de una empresa.</p>
+{% for a in articulos %}    <a class="blog-card" href="/blog/articulos/{{ a.slug }}.html">
+      <time datetime="{{ a.publicado_en }}">{{ a.fecha_legible }}</time>
+      <h2>{{ a.titulo }}</h2>
+      <p>{{ a.meta_description }}</p>
       <span class="read-more">Leer más →</span>
     </a>
-
-    <a class="blog-card" href="/blog/articulos/cuanto-cuesta-placas-solares-en-murcia-desglose-de-precios-y-factores-2026.html">
-      <time datetime="2026-07-21">21 de julio de 2026</time>
-      <h2>¿Cuánto cuesta placas solares en Murcia? Desglose de precios y factores 2026</h2>
-      <p>Cuánto cuesta placas solares en Murcia depende de tu vivienda y consumo. Te contamos qué factores mueven el precio y cómo saber el tuyo.</p>
-      <span class="read-more">Leer más →</span>
-    </a>
-
-
-    <a class="blog-card" href="/blog/articulos/cuanto-cuesta-instalar-placas-solares-en-molina-de-segura-presupuesto-desglosado-2026.html">
-      <time datetime="2026-07-21">21 de julio de 2026</time>
-      <h2>Cuánto cuesta instalar placas solares en Molina de Segura: presupuesto desglosado 2026</h2>
-      <p>¿Cuánto cuesta instalar placas solares en Molina de Segura? Descubre qué factores influyen en tu presupuesto y pide tu estudio gratuito con Solsureste.</p>
-      <span class="read-more">Leer más →</span>
-    </a>
-
+{% else %}    <p>Todavía no hay artículos publicados.</p>
+{% endfor %}
 
   </div>
 </main>

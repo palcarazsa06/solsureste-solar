@@ -74,11 +74,13 @@ el mismo patrón manualmente: `POST /session` → `POST /chat` reusando el mismo
 sucesivos (ver el propio script como plantilla), leyendo `logs/agencia.log` para ver la decisión real
 del supervisor y los argumentos exactos pasados a las tools.
 
-**Huecos de cobertura conocidos** (medidos con `pytest --cov`, ~81% total): `tools/calendar_tools.py`
+**Huecos de cobertura conocidos** (medidos con `pytest --cov`, ~86% total): `tools/calendar_tools.py`
 (~46%, la llamada real a la API de Google Calendar en `reservar_cita`/`_reservar_cita_sync` no está
-testeada más allá de la lógica de horario laboral) y `tools/rag_tools.py` (~50%, el camino real de
-embeddings+ChromaDB en `buscar_informacion` no está testeado, solo la lógica de caché). `cargar_pdfs.py`
-y `ver_bd.py` están al 0% a propósito — son scripts manuales de un solo uso, no parte del servidor.
+testeada más allá de la lógica de horario laboral), `tools/rag_tools.py` (~50%, el camino real de
+embeddings+ChromaDB en `buscar_informacion` no está testeado, solo la lógica de caché) y
+`cms_traduccion.py` (~72%, la llamada real a OpenAI está mockeada en todos los tests — obligatorio,
+`pytest.ini` desactiva los sockets). `cargar_pdfs.py` y `ver_bd.py` están al 0%
+a propósito — son scripts manuales de un solo uso, no parte del servidor.
 No se exige cerrar estos huecos ahora; revisar si crecen mucho al tocar esos archivos.
 
 ## Arquitectura: Sistema Router Multi-Agente
@@ -103,6 +105,51 @@ correo, ciudad) están explícitamente en el historial Y el usuario ha dado fech
 solo dice "sí" o "vale", va al CUALIFICADOR. `DecisionRuta.siguiente_agente` es un `str` plano, no un
 enum — no está forzado a nivel de esquema, solo por prompt.
 
+## Panel de contenido (CMS)
+
+El personal de la empresa edita textos, preguntas frecuentes, artículos del blog e imágenes
+desde `/admin`, sin tocar código. Consecuencia arquitectónica central: **la home (ES y EN), la
+FAQ, el blog y el sitemap ya no son ficheros estáticos, se renderizan con Jinja2 desde la base
+de datos**. El resto del sitio (páginas de ciudad, legales, 404) sigue siendo estático.
+
+```
+templates/            plantillas Jinja2 — FUERA de static/ (si estuvieran dentro, el mount
+                      las serviría en crudo con los {{ }} a la vista)
+  index.html          home ES        → ruta /
+  en/index.html       home EN        → ruta /en
+  faq.html            → /faq         (acordeón y JSON-LD FAQPage del MISMO bucle)
+  blog_index.html     → /blog        (ordenado por fecha real, no a mano)
+  blog_articulo.html  → /blog/articulos/{slug}.html
+  sitemap.xml         → /sitemap.xml (páginas fijas + artículos publicados)
+
+cms_campos.py     registro de los 31 campos editables: etiqueta, tipo, límite y TEXTO
+                  ORIGINAL. Única fuente de verdad — el panel se pinta de aquí y el backend
+                  valida con los mismos límites, así que no pueden divergir.
+cms.py            resuelve qué texto se pinta (lo guardado gana; si no, el original) y el
+                  filtro `destacar` (**negritas** → <strong>)
+cms_faq.py        preguntas de /faq + semilla original
+cms_blog.py       artículos: slugs, fechas, validación
+cms_sanitize.py   lista blanca del HTML del editor (stdlib, con parser, nunca regex)
+cms_imagenes.py   subida: firma real del fichero, reescalado y WebP con Pillow
+cms_traduccion.py traducción ES→EN con GPT-4o-mini
+admin_panel/cms.js       lógica de las 4 pestañas nuevas del panel
+admin_panel/vendor/      Quill autoalojado (la CSP prohíbe CDN)
+```
+
+**Regla que hay que tener presente al editar contenido en el código**: para los campos
+gestionados, **la base de datos manda sobre la plantilla**. Cambiar un texto directamente en
+`templates/index.html` no se verá si alguien ya lo editó desde el panel; el valor del código
+es solo el que se usa mientras nadie lo haya tocado (y el que devuelve "Restaurar original").
+
+**Con la base de datos vacía la web sale exactamente igual que antes del CMS** — es la
+invariante que se verificó con un `diff` byte a byte al migrar, y conviene mantenerla.
+
+Fuera del panel a propósito: NAP y horario (viven en ~22 ficheros y tienen test de CI propio,
+ver `tests/test_horario_sincronizado.py`), las 9 páginas `placas-solares-*` (schema afinado y
+cifras fiscales verificadas contra fuente oficial) y las 3 legales.
+
+`documentos/guia-panel-empresa.md` es la guía de uso para el personal, escrita sin jerga.
+
 ## Archivos clave
 
 - `main.py` — `procesar_mensaje()`: orquesta todo el flujo. Contiene `recortar_historial()` (recorta a
@@ -111,9 +158,13 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   Agendador con una **tabla precalculada de los próximos 14 días** (nombre de día → fecha exacta) — no
   se le pide al modelo que calcule fechas relativas de cabeza porque se demostró que gpt-4o-mini falla
   calculando qué día de la semana corresponde a una fecha (ver "Detalles importantes").
-- `api.py` — FastAPI: `/session`, `/chat`, `/presupuesto`, `/api/leads` (admin-only), `/admin`, `/faq`,
-  `/aviso-legal`, `/privacidad`, `/cookies` (páginas estáticas servidas vía `FileResponse`, mismo
-  patrón que `/admin`), sirve `static/` como fallback. Rate limit en memoria (20 req/60s por IP) en
+- `api.py` — FastAPI: `/session`, `/chat`, `/presupuesto`, `/api/leads` (admin-only), `/admin`, los
+  endpoints `/api/cms/*` del panel de contenido, `/aviso-legal`, `/privacidad`, `/cookies` (estáticas
+  vía `FileResponse`) y `/`, `/en`, `/faq`, `/blog`, `/blog/articulos/{slug}.html`, `/sitemap.xml`
+  (renderizadas con Jinja2, ver "Panel de contenido"), sirve `static/` como fallback. **Dos rate
+  limits separados**: el público (20 req/60s por IP) en `/chat`, `/presupuesto` y `/api/leads/*`, y
+  `rate_limit_admin_dep` (200 req/60s, contador aparte) en todo el panel — con el límite público, un
+  editor guardando varios campos seguidos se autobloqueaba a media edición. Rate limit en memoria en
   `/chat`, `/presupuesto` y los tres endpoints `/api/leads/*`. Sesiones HMAC firmadas, security
   headers, validación de inputs, `GZipMiddleware` y `Cache-Control` para estáticos (`/images/`,
   `/videos/`, `/icon-*`, `.css`, `.js`). **El rate limit es un contador por proceso** (`defaultdict`
@@ -157,9 +208,10 @@ enum — no está forzado a nivel de esquema, solo por prompt.
 - `google_reviews.py` — integración con Google Places API (New) para las reseñas reales de la
   empresa. `refrescar_resenas_cache()` llama a `_fetch_place_details()` para "es" y "en", guarda el
   resultado en un caché en memoria (`_cache`, persistido también en disco en
-  `DATA_DIR/google_reviews_cache.json`) y, si el idioma "es" trae `rating`/`user_rating_count`,
-  reescribe en caliente el nodo `"aggregateRating"` del JSON-LD de `static/index.html` y
-  `static/en/index.html` (son estáticos sin templating server-side). Si el refresco de un idioma
+  `DATA_DIR/google_reviews_cache.json`). El nodo `"aggregateRating"` del JSON-LD de las homes se
+  alimenta de ese caché **como variable de plantilla** (`_contexto_publico` en `api.py`): antes se
+  reescribía el fragmento dentro de `static/index.html` con un regex, que era la única escritura del
+  servidor sobre `static/` — y en Render se perdía en cada deploy. Si el refresco de un idioma
   falla, se conserva el valor cacheado anterior de ese idioma en vez de vaciarlo. Se ejecuta
   automáticamente cada día a las 4:05 vía APScheduler (`api.py`, `_iniciar_scheduler_purga`) y puede
   forzarse manualmente desde el panel admin (`POST /api/admin/refrescar-resenas`). El frontend lee el
@@ -170,12 +222,19 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   explícitas para no bloquear preguntas legítimas de negocio aunque suenen genéricas). `verificar_output`:
   revisa/corrige la respuesta antes de guardarla, con un fast-path regex (`_es_claramente_segura`) que
   evita la llamada al LLM para respuestas obviamente limpias.
-- `database.py` — SQLite en modo WAL. Tabla `conversaciones` (estado, historial JSON, datos de
+- `database.py` — SQLite en modo WAL. Además de las tablas del chat, las del panel de contenido:
+  `contenido`/`contenido_versiones` (solo lo modificado; el historial se poda a 20 versiones),
+  `faq`, `articulos`/`articulos_redirecciones` (slugs viejos → 301), e `imagenes`. `hoy_madrid()`
+  existe porque `date('now')` de SQLite devuelve UTC: entre medianoche y las 01:00/02:00 hora
+  española un artículo se fecharía con el día anterior, y esa fecha va al JSON-LD y al sitemap.
+  Tabla `conversaciones` (estado, historial JSON, datos de
   contacto, coste acumulado, flag `gestionado`). Tabla `stats` con `coste_historico` (se alimenta del
   coste de conversaciones eliminadas, para no perder la cuenta al borrar leads desde el admin).
   `reset_conversacion()` limpia historial y datos de contacto pero **no** el coste acumulado ni
   `gestionado` — persisten a través de un reset.
-- `admin_panel/admin.html` + `admin_panel/admin.js` — panel de administración (login propio + Basic
+- `admin_panel/admin.html` + `admin_panel/admin.js` + `admin_panel/cms.js` — panel de administración
+  con cinco pestañas (Leads, Contenido de la web, Preguntas frecuentes, Blog, Imágenes). `cms.js` se
+  sirve igual que `admin.js`, con `Depends(verificar_admin)` y fuera de `static/`. (login propio + Basic
   Auth a nivel de servidor en `/admin`, doble capa). Viven fuera de `static/` a propósito: si
   estuvieran ahí, `StaticFiles` los serviría directamente sin pasar por `verificar_admin` (ya pasó,
   ver auditoría de seguridad). Se sirven vía `GET /admin` y `GET /admin.js`, ambas rutas protegidas
@@ -200,13 +259,16 @@ enum — no está forzado a nivel de esquema, solo por prompt.
 - `documentos/solsureste_base_conocimiento.txt` — fuente de verdad del RAG. Tras editarlo, ejecutar
   `python cargar_pdfs.py` y **reiniciar el proceso del servidor** (ver gotcha de ChromaDB abajo).
 - `test_conversacion.sh` — regresión end-to-end vía curl+jq contra un servidor ya corriendo.
-- `static/faq.html` — página `/faq` con las 9 preguntas frecuentes reales (acordeón `<details>`),
-  schema `FAQPage` + `BreadcrumbList`. Autocontenida (su propio `<style>`, sin depender de
-  `styles.css`). Si se edita el contenido, mantener el texto sincronizado con la sección "FAQ" de
-  `documentos/solsureste_base_conocimiento.txt`. El JSON-LD `FAQPage` vive únicamente aquí (no en
-  `static/index.html` ni `static/en/index.html`, que solo enlazan a esta página vía una tarjeta
-  teaser): duplicarlo ahí violaba las directrices de datos estructurados de Google, que exigen que el
-  contenido marcado esté visible en la misma página (auditoría SEO).
+- `templates/faq.html` — página `/faq`. Las 9 preguntas ya **no** están escritas en el HTML: viven en
+  la tabla `faq` y el acordeón `<details>` y el JSON-LD `FAQPage` se generan del **mismo bucle**, así
+  que no pueden desincronizarse (antes el texto estaba duplicado literalmente y editar uno solo
+  publicaba rich results que no coincidían con la página; `tests/test_cms_faq.py` lo comprueba en CI).
+  El texto de partida está en `cms_faq.PREGUNTAS_ORIGINALES`. Sigue siendo autocontenida (su propio
+  `<style>`). Al editar el contenido, mantenerlo sincronizado a mano con la sección "FAQ" de
+  `documentos/solsureste_base_conocimiento.txt` (el RAG del chatbot no se actualiza solo — el panel
+  muestra ese aviso). El JSON-LD `FAQPage` vive únicamente aquí (no en las homes, que solo enlazan a
+  esta página vía una tarjeta teaser): duplicarlo violaba las directrices de datos estructurados de
+  Google, que exigen que el contenido marcado esté visible en la misma página (auditoría SEO).
 - `static/aviso-legal.html`, `static/privacidad.html`, `static/cookies.html` — páginas legales
   (rutas `/aviso-legal`, `/privacidad`, `/cookies`), mismo patrón autocontenido que `faq.html`. El
   contenido de `privacidad.html` describe los tratamientos reales (RAG en `agencia.db`, Google
@@ -227,11 +289,12 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   placeholders (`{{TITLE}}`, `{{DESCRIPTION}}`, `{{URL}}`, `{{JSON_LD}}`, `{{LABEL}}`, `{{H1}}`,
   `{{CONTENIDO_ESPECÍFICO_NO_DUPLICADO}}`) — al usarla para una página nueva, seguir el mismo patrón de
   registro que las páginas `placas-solares-*`: ruta nueva en `api.py` (`@app.get("/<slug>")` +
-  `FileResponse`), añadir la URL a `static/sitemap.xml`, y enlazarla desde la página pilar/relacionada
+  `FileResponse`), añadir la URL a `_SITEMAP_PAGINAS_FIJAS` en `api.py`, y enlazarla desde la pilar
   correspondiente vía `.cluster-links`.
-- `static/sitemap.xml` — cada `<url>` lleva `loc`/`lastmod`/`changefreq`/`priority`. **Actualizar
-  `lastmod` a mano** (formato `YYYY-MM-DD`) cada vez que se edite contenido visible de una página que
-  ya esté en el sitemap — no hay ningún mecanismo automático que lo haga por ti.
+- `templates/sitemap.xml` + `_SITEMAP_PAGINAS_FIJAS` (en `api.py`) — el sitemap se **genera** en
+  `/sitemap.xml`, ya no es un fichero. Los artículos del blog y sus `lastmod` salen de la base de
+  datos; las páginas estáticas están en esa tupla de `api.py`, con su `lastmod` a mano. **Al añadir
+  una página estática nueva hay que darla de alta ahí** (los artículos de blog ya no hay que tocarlos).
 - `static/placas-solares-{murcia,alicante}.html` — páginas **pilar** de SEO local (rutas
   `/placas-solares-murcia` y `/placas-solares-alicante`), cobertura a nivel provincia/región. Enlazan
   a sus páginas de ciudad correspondientes vía `.cluster-links`. Schema `Service` (no `LocalBusiness`
@@ -240,34 +303,35 @@ enum — no está forzado a nivel de esquema, solo por prompt.
   pilar-de-la-horadada}.html` — páginas **clúster** de ciudad/comarca (modelo pilar→clúster, ver
   "Detalles importantes"). Cada una enlaza de vuelta a su pilar vía breadcrumb + enlace inline.
   Lorca/Cartagena/Orihuela expanden los casos reales que también aparecen (de forma resumida, con
-  teaser "Leer caso completo →") en la sección "Resultados reales" de `static/index.html`. Schema
+  teaser "Leer caso completo →") en la sección "Resultados reales" de la home, hoy editable desde el
+  panel (campos `caso_*` de `cms_campos.py`). Schema
   `Service` con `areaServed` de tipo `City`, con dos excepciones deliberadas: **Molina de Segura**
   (la sede real) tiene el `provider` enriquecido a `HomeAndConstructionBusiness` con `PostalAddress`
   y `geo` reales en vez del `Organization` genérico del resto; **Orihuela Costa** usa
   `areaServed: {"@type":"Place","containedInPlace":{"@type":"City","name":"Orihuela"}}` en vez de
   `City` directamente, porque no es un municipio independiente sino una franja costera dentro de
   Orihuela.
-- `static/blog/` — blog SEO, mismo enfoque estático sin build step que el resto de `static/`.
-  `static/blog/index.html` (ruta `/blog`, registrada en `api.py` + link en nav/footer de
-  `index.html`/`en/index.html`) lista manualmente cada artículo como un bloque
-  `<article class="blog-card">` — **no hay generación automática ni orden por fecha real**, el propio
-  comentario dentro del archivo recuerda pegar las tarjetas nuevas arriba del todo. Los artículos
-  viven en `static/blog/articulos/<slug>.html` y se sirven directamente vía el `mount` de
-  `StaticFiles` (no necesitan ruta nueva en `api.py`). `articulo-de-ejemplo.html` es la plantilla a
-  duplicar para un artículo nuevo (trae su propio comentario-guía de 4 pasos): lleva
-  `<meta name="robots" content="noindex,follow">` y está deliberadamente fuera de
-  `static/sitemap.xml` porque es contenido de relleno, no un artículo real — quitar ese `noindex` y
-  añadir la URL al sitemap es parte de "publicar" un artículo, no un paso opcional. `/blog/index.html`
-  tiene su propio redirect 301 a `/blog` en `api.py` (mismo patrón que `/en/index.html`), fuera del
-  dict `_REDIRECTS_HTML_LIMPIAS` porque ese catch-all solo matchea un segmento de ruta sin barras.
-- `static/en/index.html` — traducción manual completa de la home al inglés, servida en la ruta
+- Blog (`templates/blog_index.html`, `templates/blog_articulo.html`, `cms_blog.py`) — se escribe
+  desde el panel, ya no duplicando ficheros. **Las URLs conservan el `.html`**
+  (`/blog/articulos/<slug>.html`) porque están indexadas en Google: la ruta lleva la extensión aunque
+  el contenido venga de la base de datos, y la versión sin extensión redirige con 301. El índice se
+  ordena por fecha real de publicación (antes era manual y había dos artículos con la misma fecha), el
+  sitemap se actualiza solo y el aviso de contenido generado con IA lo pone la plantilla — no es
+  editable, así que nadie puede quitarlo por descuido. Los borradores dan 404 en público y se ven en
+  `/admin/preview/blog/{id}`. Al renombrar un artículo publicado se registra un 301 desde el slug
+  antiguo (tabla `articulos_redirecciones`, sin encadenar saltos). `static/blog/reveal.js` sigue
+  siendo estático. La antigua `articulo-de-ejemplo.html` se eliminó: el panel la deja sin sentido.
+- `templates/en/index.html` — traducción manual completa de la home al inglés, servida en la ruta
   `/en` (registrada explícitamente en `api.py`, fuera del patrón de las demás páginas). `hreflang`
-  recíproco con `static/index.html` (`es`↔`en`, `x-default` apunta siempre a `/`). No usa el
+  recíproco con `templates/index.html` (`es`↔`en`, `x-default` apunta siempre a `/`). No usa el
   mecanismo `data-i18n`/`setLang()` de `script.js` (ese es solo un toggle de texto post-carga, no
   apto para contenido inicial indexable) — es un HTML separado y autónomo. **Coste de
-  mantenimiento**: al editar texto visible en `static/index.html`, revisar si aplica el mismo
-  cambio en `static/en/index.html` (estructura, clases e IDs deben mantenerse idénticos entre
-  ambos; solo cambia el texto). El saludo inicial del chat (`greetingText()` en `script.js`) sí es
+  mantenimiento**: al editar texto visible en `templates/index.html`, revisar si aplica el mismo
+  cambio en `templates/en/index.html` (los 31 campos del CMS ya se traducen solos al guardar;
+  esto aplica al resto del texto, que sigue estando escrito en las plantillas) (estructura, clases e IDs deben mantenerse idénticos entre
+  ambos; solo cambia el texto). El diccionario `en` de `setLang()` en `script.js` ya no está hardcodeado: las claves que gestiona
+  el CMS llegan del servidor en el bloque JSON `#sss-i18n`, para que el toggle no se quede con un
+  texto viejo cuando alguien edita la home. El saludo inicial del chat (`greetingText()`) sí es
   compartido y ya es sensible al idioma vía `document.documentElement.lang` — no duplicar esa
   lógica al traducir. La sincronización estructural está cubierta por
   `tests/test_html_estructura_sincronizada.py`: compara el conjunto de `id="..."` de ambos ficheros y
@@ -276,12 +340,25 @@ enum — no está forzado a nivel de esquema, solo por prompt.
 
 ## DATA_DIR — persistencia en producción (Render)
 
-`agencia.db`, `chroma_db/`, `logs/` y `credenciales_google.json` resuelven su ruta a partir de la
+`agencia.db`, `chroma_db/`, `logs/`, `uploads/` (imágenes subidas desde el panel) y
+`credenciales_google.json` resuelven su ruta a partir de la
 variable de entorno `DATA_DIR` (por defecto `.`, idéntico al comportamiento previo en local). En
 Render, `DATA_DIR` apunta al disco persistente montado (p. ej. `/data`), para que esos datos
 sobrevivan a redeploys. El `credenciales_google.json` de producción se sube manualmente vía el Shell
 de Render (no se puede commitear); `cargar_pdfs.py` debe ejecutarse ahí también tras cada cambio a la
 base de conocimiento.
+
+**Por qué esto condiciona el diseño del CMS**: `static/` se despliega desde git y es **efímero** — se
+regenera entera en cada deploy. Por eso el contenido editable vive en la base de datos y se renderiza
+con plantillas, en vez de reescribir los `.html` en disco, y por eso las imágenes subidas van a
+`DATA_DIR/uploads/` y no a `static/images/`.
+
+**El despliegue del CMS no necesita ningún paso manual.** El contenido original (los 3 artículos del
+blog y las 9 preguntas frecuentes) viaja en el repo y se siembra solo en el primer arranque contra una
+base de datos vacía — `cms_blog.sembrar_si_vacia()` y `cms_faq.sembrar_si_vacia()`, llamadas desde el
+startup de `api.py`. Ambas son idempotentes y solo actúan con la tabla vacía. Se hizo así justamente
+porque un comando manual post-deploy dejaría las URLs de los artículos, que están indexadas en Google,
+devolviendo 404 durante el rato que se tardara en ejecutarlo.
 
 ## Detalles importantes
 
@@ -291,6 +368,19 @@ base de conocimiento.
   servidor **no ve los datos nuevos** hasta que se reinicia — falla con `Error creating hnsw segment
   reader: Nothing found on disk` o simplemente no encuentra resultados. Regla: tras `cargar_pdfs.py`,
   reiniciar siempre el proceso del servidor (local o en Render).
+- **Para los campos gestionados por el panel, la base de datos manda sobre la plantilla**: editar un
+  texto a mano en `templates/index.html` no se verá si alguien ya lo cambió desde `/admin`. El valor
+  escrito en `cms_campos.CAMPOS` es el que se usa mientras nadie lo haya tocado, y el que devuelve
+  "Restaurar original". La invariante que conviene mantener: **con la base de datos vacía la web sale
+  exactamente igual que antes del CMS** (se verificó con un `diff` byte a byte al migrar).
+- **El HTML del editor del blog es lo único que se inserta sin escapar** (`{{ a.cuerpo_html | safe }}`).
+  Pasa siempre por `cms_sanitize.sanear()` antes de guardarse, con una lista blanca cerrada de
+  etiquetas, atributos y **valores de `class`**. Si se añade un bloque de maqueta nuevo a los
+  artículos, hay que darlo de alta en esa lista *y* en el CSS de `templates/blog_articulo.html`, o el
+  saneador lo borrará en silencio y el artículo saldrá desmaquetado.
+- **Las fechas del blog se calculan en hora española, no con `date('now')` de SQLite**, que devuelve
+  UTC: entre medianoche y las 01:00 (02:00 en verano) un artículo publicado se fecharía con el día
+  anterior, y esa fecha va al JSON-LD y al sitemap que lee Google. Usar `database.hoy_madrid()`.
 - **Falsos positivos del guardrail de entrada son comunes y no siempre deterministas**: gpt-4o-mini a
   veces bloquea preguntas de negocio legítimas (zonas no cubiertas, preguntas técnicas sin la palabra
   "placas", propuestas de hora de llamada, despedidas). Al tocar `guardrails.py`, probar cada regla
@@ -351,12 +441,14 @@ base de conocimiento.
   dirección incorrecta a clientes reales. Ya está corregido en el RAG (y reindexado). Si se vuelve a
   editar el NAP, actualizar a la vez: `documentos/solsureste_base_conocimiento.txt` (tras editar,
   `cargar_pdfs.py` + reiniciar servidor), el JSON-LD `HomeAndConstructionBusiness` en
-  `static/index.html`, y las 3 páginas legales.
+  `templates/index.html`, y las 3 páginas legales. El NAP y el horario están **fuera del panel** a
+  propósito: cambian casi nunca, viven en ~22 ficheros y el horario tiene un test de CI que lo compara
+  con `tools/calendar_tools.py::HORARIO_LABORAL` (una edición descuidada descuadraría las citas).
 - **Modelo pilar→clúster para SEO local**: las 9 páginas `static/placas-solares-*.html` siguen un
   esquema de 2 niveles — `/placas-solares-murcia` y `/placas-solares-alicante` son páginas **pilar**
   (cobertura a nivel región/provincia) que enlazan a sus páginas de ciudad; cada página de ciudad
   enlaza de vuelta a su pilar (breadcrumb + enlace inline). Al añadir una ciudad nueva: crear la
-  página, enlazarla desde su pilar (`.cluster-links`), añadirla a `static/sitemap.xml` y registrarla
+  página, enlazarla desde su pilar (`.cluster-links`), añadirla a `_SITEMAP_PAGINAS_FIJAS` y registrarla
   en `api.py` con el mismo patrón `@app.get("/placas-solares-<slug>")` (y a `_REDIRECTS_HTML_LIMPIAS`,
   ver más arriba). Las páginas de ciudad geográficamente cercanas también se enlazan **entre sí**, no
   solo verticalmente con su pilar: Lorca↔Cartagena↔Molina de Segura (mismo pilar, Región de Murcia) y

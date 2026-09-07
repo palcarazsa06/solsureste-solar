@@ -1067,13 +1067,14 @@ void main(){
     },
 
     // ---------- i18n ----------
-    setLang(lang) {
-      const en = {
+    // Traducciones de las secciones que NO gestiona el panel de contenido (navegación y
+    // titulares de sección). Las que sí gestiona llegan desde el servidor en el bloque
+    // JSON #sss-i18n y se superponen a éstas: así el toggle EN nunca se queda con un texto
+    // viejo cuando alguien edita la home desde /admin.
+    i18nEn() {
+      const base = {
         'nav.services': 'Services', 'nav.projects': 'Projects', 'nav.resources': 'Process', 'nav.faq': 'FAQ',
         'nav.blog': 'Blog', 'nav.contact': 'Contact', 'nav.cta': 'Book a call',
-        'hero.h1': 'We install solar panels across Murcia and Alicante, ',
-        'hero.p': 'Solar panels for homes and businesses, plus solar-farm development. With our own machinery and crews we execute every project without relying on third parties.',
-        'form.title': 'Request your free study',
         'value.h2': 'Stop overpaying your electricity bill',
         'tech.label': 'Our technical proposal', 'tech.h2': 'The most rigorous solar design in the southeast',
         'cases.h2': 'Real examples of completed installations',
@@ -1084,12 +1085,32 @@ void main(){
         'faq.h2': 'Got questions about solar installation?',
         'footer.copy': '© 2026 Solsureste Solar · Paco Alcaraz. All rights reserved.',
       };
+      const bloque = document.getElementById('sss-i18n');
+      if (!bloque) return base;
+      try {
+        return Object.assign(base, JSON.parse(bloque.textContent));
+      } catch (_) {
+        return base;
+      }
+    },
+
+    setLang(lang) {
+      const en = this.i18nEn();
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const k = el.getAttribute('data-i18n');
         if (!el.dataset.es) el.dataset.es = el.innerHTML;
         if (lang === 'en' && en[k]) {
-          if (k === 'hero.h1') el.innerHTML = en[k] + '<span class="sss-shimmer">start to finish</span>';
-          else el.textContent = en[k];
+          if (k === 'hero.h1') {
+            // El titular lleva las últimas palabras dentro de un <span> con el efecto
+            // dorado; se recompone con la pieza que manda el servidor.
+            const destacado = document.createElement('span');
+            destacado.className = 'sss-shimmer';
+            destacado.textContent = en['hero.h1.destacado'] || '';
+            el.textContent = en[k] + ' ';
+            el.appendChild(destacado);
+          } else {
+            el.textContent = en[k];
+          }
         } else {
           el.innerHTML = el.dataset.es;
         }

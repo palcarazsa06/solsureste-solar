@@ -17,3 +17,7 @@ requests==2.34.2
 httpx==0.28.1
 starlette==1.2.1
 PyPDF2==3.0.1
+# Panel de contenido (CMS): plantillas server-side, subida de imágenes y su reprocesado.
+jinja2==3.1.6
+python-multipart==0.0.32
+pillow==12.3.0

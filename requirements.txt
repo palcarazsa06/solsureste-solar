@@ -123,6 +123,8 @@ idna==3.18
     #   yarl
 importlib-resources==7.1.0
     # via chromadb
+jinja2==3.1.6
+    # via -r requirements.in
 jiter==0.15.0
     # via openai
 jsonschema==4.26.0
@@ -133,6 +135,8 @@ kubernetes==36.0.2
     # via chromadb
 markdown-it-py==4.2.0
     # via rich
+markupsafe==3.0.3
+    # via jinja2
 mdurl==0.1.2
     # via markdown-it-py
 mmh3==5.2.1
@@ -180,6 +184,8 @@ packaging==26.2
     #   build
     #   huggingface-hub
     #   onnxruntime
+pillow==12.3.0
+    # via -r requirements.in
 propcache==0.5.2
     # via
     #   aiohttp
@@ -229,6 +235,8 @@ python-dotenv==1.2.2
     #   -r requirements.in
     #   pydantic-settings
     #   uvicorn
+python-multipart==0.0.32
+    # via -r requirements.in
 pyyaml==6.0.3
     # via
     #   chromadb
