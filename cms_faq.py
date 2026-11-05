@@ -45,7 +45,7 @@ PREGUNTAS_ORIGINALES = [
     },
     {
         "pregunta": "¿Hay deducciones fiscales por instalar placas solares?",
-        "respuesta": "Existe la posibilidad de deducir hasta un 40% de la inversión en el IRPF, dependiendo de las circunstancias de cada cliente (conviene consultarlo con tu asesor fiscal). Además, algunos ayuntamientos aplican deducciones en el IBI.",
+        "respuesta": "Sí. A nivel estatal hay una deducción en el IRPF de hasta el 40% del coste por mejora de la eficiencia energética de la vivienda (base máxima de 7.500 € y sujeta a requisitos y plazos). Además, algunas comunidades añaden su propia deducción autonómica: en la Región de Murcia puede llegar al 50% de la inversión según tu renta (tope de 7.000 €) y la Comunitat Valenciana también tiene la suya. A esto se suman las bonificaciones en el IBI de algunos ayuntamientos. Los porcentajes y requisitos dependen de tu caso y del año fiscal, así que conviene confirmarlo con tu asesor fiscal; nosotros te entregamos toda la documentación de la instalación para que puedas aplicarlas.",
     },
     {
         "pregunta": "¿Qué garantía ofrecéis?",

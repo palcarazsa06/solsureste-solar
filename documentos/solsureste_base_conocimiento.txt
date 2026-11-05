@@ -99,7 +99,7 @@ El sistema vierte los excedentes a la red pública. Esto queda registrado en el 
 Las baterías son interesantes si quieres respaldo ante cortes de luz. Si no es el caso, como los excedentes ya se compensan en la factura, es más rentable no ponerlas y ahorrar ese coste. Siempre recomendamos instalar un inversor híbrido que permita añadir baterías en el futuro sin coste adicional.
 
 **¿Hay deducciones fiscales por instalar placas solares?**
-Existe la posibilidad de deducir hasta un 40% de la inversión en el IRPF, dependiendo de las circunstancias personales de cada cliente (conviene consultarlo con el asesor fiscal). Además, algunos ayuntamientos aplican reducciones al IBI.
+Existe una deducción estatal en el IRPF de hasta el 40% del coste de la instalación por mejora de la eficiencia energética de la vivienda (con una base máxima de 7.500 € y sujeta a requisitos y plazos). Además, algunas comunidades autónomas añaden su propia deducción autonómica: en la Región de Murcia puede llegar al 50% de la inversión según la renta del contribuyente (con un tope de 7.000 €) y la Comunitat Valenciana cuenta con su propia deducción. A esto se suman las bonificaciones en el IBI que aplican algunos ayuntamientos. Los porcentajes y requisitos dependen de las circunstancias personales y del ejercicio fiscal, por lo que conviene consultarlo con el asesor fiscal.
 
 **¿Tramitáis la bonificación del IBI?**
 Sí. Nuestro departamento administrativo prepara toda la documentación necesaria para que el cliente la presente y solicite la bonificación del IBI en su Ayuntamiento.

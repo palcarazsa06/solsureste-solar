@@ -13,6 +13,29 @@
   sobre precios, plazos, mantenimiento y ayudas.
 - [Blog](https://solsurestesolar.com/blog): artículos sobre energía solar, ahorro y normativa.
 
+## Servicios
+
+- Placas solares para viviendas (autoconsumo residencial), con o sin baterías.
+- Autoconsumo para empresas, naves industriales y naves con cámaras de refrigeración.
+- Instalaciones agrícolas: bombeo solar de riego y huertos solares.
+- Mantenimiento y revisión de instalaciones fotovoltaicas.
+- Tramitación completa: licencias, legalización y alta de compensación de excedentes.
+
+## Datos citables
+
+- Experiencia: más de 25 años; empresa con sede propia en Molina de Segura (Murcia) desde 1999.
+- Equipo técnico y maquinaria propios, sin subcontratar la instalación.
+- Garantía de 25 años (rendimiento de los módulos y mano de obra).
+- Plazo típico en vivienda: inicio en unas dos semanas y ejecución en unos dos días.
+- Irradiación de la zona: +3.000 horas de sol al año y ~1.850 kWh/m²·año.
+- Amortización habitual de la inversión: entre 5 y 7 años.
+- Financiación del 100% de la inversión, IVA incluido.
+- Deducciones fiscales (dependen de cada caso y del ejercicio fiscal; conviene confirmarlas con un asesor fiscal):
+  - Estatal en el IRPF: hasta el 40% por mejora de la eficiencia energética de la vivienda (base máxima 7.500 €).
+  - Autonómica de la Región de Murcia: hasta el 50% de la inversión según la renta (tope de 7.000 €).
+  - Autonómica de la Comunitat Valenciana: 40% en vivienda habitual y 20% en segunda residencia (base 8.000 €).
+  - Bonificaciones del IBI en algunos ayuntamientos (por ejemplo, 50% en Torrevieja y Orihuela Costa).
+
 ## Cobertura geográfica (páginas pilar → clúster de ciudad)
 
 - [Placas solares en Murcia](https://solsurestesolar.com/placas-solares-murcia) (región): enlaza a
@@ -26,6 +49,12 @@
   [Orihuela Costa](https://solsurestesolar.com/placas-solares-orihuela-costa),
   [Torrevieja](https://solsurestesolar.com/placas-solares-torrevieja),
   [Pilar de la Horadada](https://solsurestesolar.com/placas-solares-pilar-de-la-horadada).
+
+## Artículos del blog
+
+- [Autoconsumo industrial en Murcia y Alicante: la factura que pasó de 860 € a 22 €](https://solsurestesolar.com/blog/articulos/autoconsumo-industrial-murcia-alicante-guia-empresas-2026.html)
+- [¿Cuánto cuesta placas solares en Murcia? Desglose de precios y factores 2026](https://solsurestesolar.com/blog/articulos/cuanto-cuesta-placas-solares-en-murcia-desglose-de-precios-y-factores-2026.html)
+- [Cuánto cuesta instalar placas solares en Molina de Segura: presupuesto desglosado 2026](https://solsurestesolar.com/blog/articulos/cuanto-cuesta-instalar-placas-solares-en-molina-de-segura-presupuesto-desglosado-2026.html)
 
 ## Legal
 
