@@ -1,4 +1,64 @@
+# Reglas generales para todos los buscadores
 User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /session
+Disallow: /presupuesto
+
+# Rastreadores de motores de IA generativa.
+# Se permiten explícitamente para que puedan citar la empresa en sus respuestas
+# (ChatGPT, Claude, Perplexity, Gemini, etc.), manteniendo las mismas zonas privadas bloqueadas.
+User-agent: GPTBot
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /session
+Disallow: /presupuesto
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /session
+Disallow: /presupuesto
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /session
+Disallow: /presupuesto
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /session
+Disallow: /presupuesto
+
+User-agent: Claude-Web
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /session
+Disallow: /presupuesto
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /session
+Disallow: /presupuesto
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /session
+Disallow: /presupuesto
+
+User-agent: CCBot
 Allow: /
 Disallow: /admin
 Disallow: /api/

@@ -525,7 +525,7 @@
      de script.js. Es un bloque de datos, no código: el navegador no lo ejecuta, así que la
      CSP (script-src 'self') lo permite igual que cualquier otro contenido de la página. -->
 <script type="application/json" id="sss-i18n">{{ i18n_en | tojson }}</script>
-<script src="./script.js"></script>
+<script src="./script.js" defer></script>
 <script src="/consent.js" defer></script>
 </body>
 </html>
