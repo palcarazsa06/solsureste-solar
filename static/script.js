@@ -114,6 +114,28 @@
       if (chatForm) chatForm.addEventListener('submit', (e) => this.handleChatSubmit(e));
       const chatReset = document.getElementById('sss-chat-reset');
       if (chatReset) chatReset.addEventListener('click', () => this.resetChat());
+      this.setupMobileMenu();
+    },
+
+    // Menú móvil: por debajo de 860px la navegación de escritorio se oculta y este panel la
+    // sustituye. Se cierra al elegir un enlace, con Escape (devolviendo el foco al botón) o
+    // si la ventana vuelve a tamaño escritorio.
+    setupMobileMenu() {
+      const btn = document.getElementById('sss-menu-btn');
+      const panel = document.getElementById('sss-mobile-nav');
+      if (!btn || !panel) return;
+      const en = document.documentElement.lang === 'en';
+      const set = (abierto) => {
+        panel.hidden = !abierto;
+        btn.setAttribute('aria-expanded', String(abierto));
+        btn.setAttribute('aria-label', abierto ? (en ? 'Close menu' : 'Cerrar menú') : (en ? 'Open menu' : 'Abrir menú'));
+      };
+      btn.addEventListener('click', () => set(panel.hidden));
+      panel.addEventListener('click', (e) => { if (e.target.closest('a')) set(false); });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !panel.hidden) { set(false); btn.focus(); }
+      });
+      window.matchMedia('(min-width: 861px)').addEventListener('change', (m) => { if (m.matches) set(false); });
     },
 
     setupStepLine() {
@@ -962,7 +984,10 @@ void main(){
       try { localStorage.removeItem('sss_chat_v2'); } catch (_) {}
       let saved = null;
       try { saved = JSON.parse(localStorage.getItem('sss_chat_v3') || 'null'); } catch (_) { saved = null; }
-      if (Array.isArray(saved) && saved.length) {
+      // Solo se restaura una conversación si el usuario llegó a escribir algo. Si lo único
+      // guardado es el saludo, se vuelve a generar: así quien pasa de /en a / (o al revés)
+      // no se encuentra el saludo en el otro idioma.
+      if (Array.isArray(saved) && saved.some((m) => m && m.who === 'user')) {
         saved.forEach(({ who, text }) => {
           this.history.push({ who, text });
           this._renderBubble(who === 'bot' ? this.formatBotText(text) : this.escapeHtml(text), who);

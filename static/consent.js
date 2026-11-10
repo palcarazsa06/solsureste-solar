@@ -54,6 +54,7 @@
     banner = document.createElement('div');
     banner.setAttribute('role', 'dialog');
     banner.setAttribute('aria-label', 'Preferencias de cookies');
+    banner.className = 'sss-cookie-bar';
     banner.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#0e0e11;border-top:1px solid rgba(255,180,61,.25);padding:16px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;font-family:"Space Grotesk",system-ui,sans-serif;color:#f4f3f0';
     banner.innerHTML = '<p style="margin:0;font-size:13.5px;max-width:640px;color:rgba(244,243,240,.8)">Usamos cookies analíticas (Google Analytics y Microsoft Clarity) para entender cómo se usa la web. Puedes aceptarlas o rechazarlas, y cambiar de opinión cuando quieras desde «Configurar cookies» al pie de cada página. Más info en <a href="/cookies" style="color:#FFB43D">Política de cookies</a>.</p><div style="display:flex;gap:10px;flex-shrink:0"><button id="sss-cookie-reject" class="sss-cookie-btn">Rechazar</button><button id="sss-cookie-accept" class="sss-cookie-btn">Aceptar</button></div>';
     document.body.appendChild(banner);
