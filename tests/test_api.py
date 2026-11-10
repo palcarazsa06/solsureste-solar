@@ -264,18 +264,19 @@ def test_css_sin_huella_mantiene_cache_corta():
 
 
 def test_huella_cambia_si_cambia_el_contenido(tmp_path, monkeypatch):
+    """Sin reiniciar el proceso: en local el servidor no se reinicia al editar un .css."""
+    import os
     import templates_engine
-    (tmp_path / "x.css").write_text("a{}")
+    fichero = tmp_path / "x.css"
+    fichero.write_text("a{}")
     monkeypatch.setattr(templates_engine, "STATIC_DIR", str(tmp_path))
-    templates_engine.asset.cache_clear()
     v1 = templates_engine.asset("x.css")
-    (tmp_path / "x.css").write_text("b{}")
-    templates_engine.asset.cache_clear()
+    fichero.write_text("b{}")
+    st = os.stat(fichero)
+    os.utime(fichero, ns=(st.st_atime_ns, st.st_mtime_ns + 1_000_000))
     v2 = templates_engine.asset("x.css")
-    templates_engine.asset.cache_clear()
     assert v1 != v2 and v1.startswith("/x.css?v=")
     assert templates_engine.asset("no-existe.css") == "/no-existe.css"
-    templates_engine.asset.cache_clear()
 
 
 def _bloques_jsonld(html):

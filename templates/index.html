@@ -100,7 +100,7 @@
         <span style="display:flex;height:38px;width:38px;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#E07A0C);color:#1a1205;box-shadow:0 6px 20px rgba(255,180,61,.5),0 0 34px rgba(255,180,61,.35);animation:sssFloat 4.5s ease-in-out infinite">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
         </span>
-        <span style="font-size:19px;font-weight:700;letter-spacing:-.02em">Solsureste <span style="color:#FFB43D">Solar</span></span>
+        <span style="font-size:19px;font-weight:700;letter-spacing:-.02em">Solsureste <span class="sss-gold">Solar</span></span>
       </a>
       <a href="tel:+34968869532" class="sss-header-tel" aria-label="Llamar al 968 869 532">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.6 19.79 19.79 0 0 1 1.61 5a2 2 0 0 1 1.99-2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.59z"/></svg>
@@ -108,12 +108,12 @@
       </a>
     </div>
     <nav class="sss-hidemob" style="display:flex;align-items:center;gap:30px" aria-label="Navegación principal">
-      <a data-i18n="nav.services" href="#servicios" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">Servicios</a>
-      <a data-i18n="nav.projects" href="#proyectos" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">Proyectos</a>
-      <a data-i18n="nav.resources" href="#proceso" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">Proceso</a>
-      <a data-i18n="nav.faq" href="#faq" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">FAQ</a>
-      <a data-i18n="nav.blog" href="/blog" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">Blog</a>
-      <a data-i18n="nav.contact" href="#contacto" class="sss-navlink" style="font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s">Contacto</a>
+      <a data-i18n="nav.services" href="#servicios" class="sss-navlink sss-navlink-txt">Servicios</a>
+      <a data-i18n="nav.projects" href="#proyectos" class="sss-navlink sss-navlink-txt">Proyectos</a>
+      <a data-i18n="nav.resources" href="#proceso" class="sss-navlink sss-navlink-txt">Proceso</a>
+      <a data-i18n="nav.faq" href="#faq" class="sss-navlink sss-navlink-txt">FAQ</a>
+      <a data-i18n="nav.blog" href="/blog" class="sss-navlink sss-navlink-txt">Blog</a>
+      <a data-i18n="nav.contact" href="#contacto" class="sss-navlink sss-navlink-txt">Contacto</a>
     </nav>
     <div class="sss-hidemob" style="display:flex;align-items:center;gap:12px">
       <div style="display:flex;align-items:center;gap:2px;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:2px;background:rgba(255,255,255,.03)">
@@ -171,15 +171,15 @@
       <form id="sss-hero-form" class="sss-halo" style="position:relative;display:flex;flex-direction:column;border-radius:20px;border:1px solid rgba(255,190,80,.32);background:rgba(20,20,23,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:26px;box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 90px rgba(255,180,61,.14),inset 0 1px 0 rgba(255,255,255,.09);animation:sssCardFloat 7s ease-in-out infinite">
         <h2 data-i18n="form.title" style="margin:0 0 18px;font-size:17px;font-weight:600">{{ c.hero_form_titulo }}</h2>
         <div class="sss-formgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Nombre *<input id="sss-hf-nombre" name="nombre" autocomplete="given-name" required placeholder="Juan" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Apellidos *<input id="sss-hf-apellidos" name="apellidos" autocomplete="family-name" required placeholder="García López" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Teléfono *<input id="sss-hf-telefono" name="telefono" autocomplete="tel" required type="tel" placeholder="666 123 456" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Correo *<input id="sss-hf-correo" name="correo" autocomplete="email" required type="email" placeholder="juan@ejemplo.com" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Ciudad *<input id="sss-hf-ciudad" name="ciudad" autocomplete="address-level2" required placeholder="Murcia" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Tipo instalación *<select id="sss-hf-tipo" name="tipo_instalacion" required class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"><option style="background:#161618" value="">Selecciona…</option><option style="background:#161618">Residencial</option><option style="background:#161618">Industrial o nave</option><option style="background:#161618">Huerto solar</option><option style="background:#161618">Mantenimiento</option><option style="background:#161618">Asesoramiento</option></select></label>
+          <label class="sss-flabel">Nombre *<input id="sss-hf-nombre" name="nombre" autocomplete="given-name" required placeholder="Juan" class="sss-field sss-field-box"></label>
+          <label class="sss-flabel">Apellidos *<input id="sss-hf-apellidos" name="apellidos" autocomplete="family-name" required placeholder="García López" class="sss-field sss-field-box"></label>
+          <label class="sss-flabel">Teléfono *<input id="sss-hf-telefono" name="telefono" autocomplete="tel" required type="tel" placeholder="666 123 456" class="sss-field sss-field-box"></label>
+          <label class="sss-flabel">Correo *<input id="sss-hf-correo" name="correo" autocomplete="email" required type="email" placeholder="juan@ejemplo.com" class="sss-field sss-field-box"></label>
+          <label class="sss-flabel">Ciudad *<input id="sss-hf-ciudad" name="ciudad" autocomplete="address-level2" required placeholder="Murcia" class="sss-field sss-field-box"></label>
+          <label class="sss-flabel">Tipo instalación *<select id="sss-hf-tipo" name="tipo_instalacion" required class="sss-field sss-field-box"><option class="sss-opt" value="">Selecciona…</option><option class="sss-opt">Residencial</option><option class="sss-opt">Industrial o nave</option><option class="sss-opt">Huerto solar</option><option class="sss-opt">Mantenimiento</option><option class="sss-opt">Asesoramiento</option></select></label>
         </div>
         <div class="sss-hp" aria-hidden="true"><label>Deja este campo vacío<input id="sss-hf-web" name="web" type="text" tabindex="-1" autocomplete="off"></label></div>
-        <p style="margin:14px 0 0;font-size:11.5px;line-height:1.5;color:rgba(244,243,240,.5)">Al enviar aceptas el tratamiento de tus datos para gestionar tu solicitud, como se explica en la <a href="/privacidad" style="color:#FFB43D">política de privacidad</a> — <a href="#" class="sss-email-obf" data-u="info" data-d="solsurestesolar.com" style="color:#FFB43D"><span class="sss-email-text">info [at] solsurestesolar.com</span></a>.</p>
+        <p style="margin:14px 0 0;font-size:11.5px;line-height:1.5;color:rgba(244,243,240,.5)">Al enviar aceptas el tratamiento de tus datos para gestionar tu solicitud, como se explica en la <a href="/privacidad" class="sss-gold">política de privacidad</a> — <a href="#" class="sss-email-obf sss-gold" data-u="info" data-d="solsurestesolar.com"><span class="sss-email-text">info [at] solsurestesolar.com</span></a>.</p>
         <button id="sss-hero-submit" data-magnetic type="submit" class="sss-submit" style="margin-top:16px;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:11px;border:none;cursor:pointer;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:14.5px;font-weight:700;height:46px;font-family:inherit;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 50px rgba(255,180,61,.22),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg>
           <span id="sss-hero-submit-label">{{ c.hero_form_boton }}</span>
@@ -219,13 +219,13 @@
 
 <!-- STATS BAR -->
 <section id="sss-stats" style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(13,13,16,.58)">
-  <canvas id="sss-grid-fx" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none"></canvas>
+  <canvas id="sss-grid-fx" aria-hidden="true" class="sss-canvas-fill"></canvas>
   <div style="position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 120% at 50% 50%,transparent 40%,#0e0e11 92%)"></div>
   <div class="sss-statgrid" style="position:relative;z-index:2;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:46px 24px">
-    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="{{ c.stat_1_valor }}" data-prefix="+" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">+0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.stat_1_texto }}</p></div>
-    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="{{ c.stat_2_valor }}" data-prefix="+" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">+0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.stat_2_texto }}</p></div>
-    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="{{ c.stat_3_valor }}" data-prefix="+" data-suffix=" MW" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">+0</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.stat_3_texto }}</p></div>
-    <div data-reveal data-reveal="scale" style="text-align:center"><p data-counter class="sss-plasma" data-target="{{ c.stat_4_valor }}" data-suffix="%" style="margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)">0%</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.stat_4_texto }}</p></div>
+    <div data-reveal data-reveal="scale" class="sss-center"><p data-counter class="sss-plasma sss-stat-glow" data-target="{{ c.stat_1_valor }}" data-prefix="+">+0</p><p class="sss-txt-sub">{{ c.stat_1_texto }}</p></div>
+    <div data-reveal data-reveal="scale" class="sss-center"><p data-counter class="sss-plasma sss-stat-glow" data-target="{{ c.stat_2_valor }}" data-prefix="+">+0</p><p class="sss-txt-sub">{{ c.stat_2_texto }}</p></div>
+    <div data-reveal data-reveal="scale" class="sss-center"><p data-counter class="sss-plasma sss-stat-glow" data-target="{{ c.stat_3_valor }}" data-prefix="+" data-suffix=" MW">+0</p><p class="sss-txt-sub">{{ c.stat_3_texto }}</p></div>
+    <div data-reveal data-reveal="scale" class="sss-center"><p data-counter class="sss-plasma sss-stat-glow" data-target="{{ c.stat_4_valor }}" data-suffix="%">0%</p><p class="sss-txt-sub">{{ c.stat_4_texto }}</p></div>
   </div>
 </section>
 
@@ -234,98 +234,98 @@
   <div class="sss-2col" style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center">
     <div>
       <h2 data-i18n="value.h2" data-reveal data-reveal="left" class="sss-h2" style="margin:0">No pagues más por la factura de la luz</h2>
-      <p data-reveal style="margin:20px 0 0;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Instalar placas solares no es un gasto: es recuperar el control de lo que pagas cada mes. Con Solsureste Solar, cada euro invertido empieza a trabajar para ti desde el primer día de producción, ahorrando <strong style="color:#f4f3f0">miles de euros al año</strong> para lo que de verdad importa.</p>
+      <p data-reveal style="margin:20px 0 0;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Instalar placas solares no es un gasto: es recuperar el control de lo que pagas cada mes. Con Solsureste Solar, cada euro invertido empieza a trabajar para ti desde el primer día de producción, ahorrando <strong class="sss-strong">miles de euros al año</strong> para lo que de verdad importa.</p>
       <p data-reveal style="margin:16px 0 0;font-size:16px;line-height:1.6;color:rgba(244,243,240,.7)">Solicita tu estudio gratuito y accede a:</p>
       <ul style="list-style:none;padding:0;margin:24px 0 0;display:flex;flex-direction:column;gap:16px">
-        <li data-reveal style="display:flex;align-items:flex-start;gap:13px"><span style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:rgba(255,180,61,.16);color:#FFB43D;font-size:14px;font-weight:700">✓</span><p style="margin:0;font-size:16px;line-height:1.55;color:rgba(244,243,240,.7)"><strong style="color:#f4f3f0">Estimaciones de producción reales</strong>, basadas en datos de más de 500 instalaciones completadas en el sureste.</p></li>
-        <li data-reveal style="display:flex;align-items:flex-start;gap:13px"><span style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:rgba(255,180,61,.16);color:#FFB43D;font-size:14px;font-weight:700">✓</span><p style="margin:0;font-size:16px;line-height:1.55;color:rgba(244,243,240,.7)"><strong style="color:#f4f3f0">Maqueta visual de la instalación</strong> con la disposición real de módulos sobre tu cubierta o terreno.</p></li>
+        <li data-reveal class="sss-li-row"><span class="sss-check-dot">✓</span><p class="sss-txt-lead-s"><strong class="sss-strong">Estimaciones de producción reales</strong>, basadas en datos de más de 500 instalaciones completadas en el sureste.</p></li>
+        <li data-reveal class="sss-li-row"><span class="sss-check-dot">✓</span><p class="sss-txt-lead-s"><strong class="sss-strong">Maqueta visual de la instalación</strong> con la disposición real de módulos sobre tu cubierta o terreno.</p></li>
       </ul>
       <a data-magnetic data-reveal href="#inicio" class="sss-btn" style="margin-top:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:15px;font-weight:600;height:46px;padding:0 24px;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 44px rgba(255,180,61,.20),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">Solicitar estudio gratuito</a>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">{{ c.tarjeta_1_valor }}</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.tarjeta_1_texto }}</p></div>
-      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">{{ c.tarjeta_2_valor }}</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.tarjeta_2_texto }}</p></div>
-      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">{{ c.tarjeta_3_valor }}</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.tarjeta_3_texto }}</p></div>
-      <div data-reveal style="border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center"><p style="margin:0;font-size:42px;font-weight:700;color:#FFB43D">{{ c.tarjeta_4_valor }}</p><p style="margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)">{{ c.tarjeta_4_texto }}</p></div>
+      <div data-reveal class="sss-statcard"><p class="sss-stat-num">{{ c.tarjeta_1_valor }}</p><p class="sss-txt-sub">{{ c.tarjeta_1_texto }}</p></div>
+      <div data-reveal class="sss-statcard"><p class="sss-stat-num">{{ c.tarjeta_2_valor }}</p><p class="sss-txt-sub">{{ c.tarjeta_2_texto }}</p></div>
+      <div data-reveal class="sss-statcard"><p class="sss-stat-num">{{ c.tarjeta_3_valor }}</p><p class="sss-txt-sub">{{ c.tarjeta_3_texto }}</p></div>
+      <div data-reveal class="sss-statcard"><p class="sss-stat-num">{{ c.tarjeta_4_valor }}</p><p class="sss-txt-sub">{{ c.tarjeta_4_texto }}</p></div>
     </div>
   </div>
 </section>
 
 <!-- TECH -->
 <section class="sss-section sss-section-b sss-section-border">
-  <div style="max-width:1180px;margin:0 auto">
+  <div class="sss-wrap">
     <div style="max-width:840px">
       <div>
-        <span data-i18n="tech.label" data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Nuestra propuesta técnica</span>
+        <span data-i18n="tech.label" data-reveal class="sss-eyebrow">Nuestra propuesta técnica</span>
         <h2 data-i18n="tech.h2" data-reveal data-reveal="left" class="sss-h2">El diseño solar más riguroso del sureste</h2>
-        <p data-reveal style="margin:18px 0 0;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Solsureste Solar te da cifras fiables sobre tu potencial solar. Combinamos los mejores software de diseño con una visita técnica a tu propiedad, análisis real de tu consumo y datos de más de 500 proyectos completados en la región.</p>
+        <p data-reveal class="sss-txt-lead">Solsureste Solar te da cifras fiables sobre tu potencial solar. Combinamos los mejores software de diseño con una visita técnica a tu propiedad, análisis real de tu consumo y datos de más de 500 proyectos completados en la región.</p>
         <div data-reveal style="margin-top:26px;display:flex;gap:26px;flex-wrap:wrap">
-          <div><p style="margin:0;font-size:26px;font-weight:700;color:#FFB43D">1.850</p><p style="margin:2px 0 0;font-size:12.5px;color:rgba(244,243,240,.55)">kWh/m²·año irradiación</p></div>
-          <div><p style="margin:0;font-size:26px;font-weight:700;color:#FFB43D">+3.000</p><p style="margin:2px 0 0;font-size:12.5px;color:rgba(244,243,240,.55)">horas de sol al año</p></div>
+          <div><p class="sss-stat-num-s">1.850</p><p class="sss-txt-note">kWh/m²·año irradiación</p></div>
+          <div><p class="sss-stat-num-s">+3.000</p><p class="sss-txt-note">horas de sol al año</p></div>
         </div>
       </div>
     </div>
-    <div class="sss-3col sss-techgrid" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+    <div class="sss-3col sss-techgrid sss-grid3">
       <div data-reveal data-spotlight class="sss-card sss-card-hover">
-        <span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span>
-        <h3 style="margin:18px 0 0;font-size:17px;font-weight:600">Análisis de consumo real</h3>
-        <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">Estudiamos tus facturas de los últimos 12 meses para dimensionar exactamente el sistema que necesitas, sin sobredimensionar ni quedarte corto.</p>
+        <span class="sss-icon46"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span>
+        <h3 class="sss-h3-17">Análisis de consumo real</h3>
+        <p class="sss-txt-body">Estudiamos tus facturas de los últimos 12 meses para dimensionar exactamente el sistema que necesitas, sin sobredimensionar ni quedarte corto.</p>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover">
-        <span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></span>
-        <h3 style="margin:18px 0 0;font-size:17px;font-weight:600">Modelado 3D de tu cubierta</h3>
-        <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">Diseño de la distribución óptima de paneles con simulación de sombras en tiempo real, orientación e inclinación específica de tu tejado.</p>
+        <span class="sss-icon46"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></span>
+        <h3 class="sss-h3-17">Modelado 3D de tu cubierta</h3>
+        <p class="sss-txt-body">Diseño de la distribución óptima de paneles con simulación de sombras en tiempo real, orientación e inclinación específica de tu tejado.</p>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover">
-        <span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
-        <h3 style="margin:18px 0 0;font-size:17px;font-weight:600">Previsión de generación mes a mes</h3>
-        <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">Estimación de producción con datos de irradiación específicos de tu municipio y calibrados con nuestras instalaciones reales en la zona.</p>
+        <span class="sss-icon46"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+        <h3 class="sss-h3-17">Previsión de generación mes a mes</h3>
+        <p class="sss-txt-body">Estimación de producción con datos de irradiación específicos de tu municipio y calibrados con nuestras instalaciones reales en la zona.</p>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover">
-        <span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-        <h3 style="margin:18px 0 0;font-size:17px;font-weight:600">ROI, amortización y VAN</h3>
-        <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">Cuánto ahorras, cuándo recuperas la inversión y qué rentabilidad anual obtienes durante toda la vida útil de la instalación.</p>
+        <span class="sss-icon46"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+        <h3 class="sss-h3-17">ROI, amortización y VAN</h3>
+        <p class="sss-txt-body">Cuánto ahorras, cuándo recuperas la inversión y qué rentabilidad anual obtienes durante toda la vida útil de la instalación.</p>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover">
-        <span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
-        <h3 style="margin:18px 0 0;font-size:17px;font-weight:600">Tramitación incluida</h3>
-        <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">Nos ocupamos de toda la burocracia: licencias municipales, legalización ante la distribuidora y acceso a bonificaciones autonómicas.</p>
+        <span class="sss-icon46"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+        <h3 class="sss-h3-17">Tramitación incluida</h3>
+        <p class="sss-txt-body">Nos ocupamos de toda la burocracia: licencias municipales, legalización ante la distribuidora y acceso a bonificaciones autonómicas.</p>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover">
-        <span style="display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
-        <h3 style="margin:18px 0 0;font-size:17px;font-weight:600">Garantía de 25 años</h3>
-        <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)">Garantía de mano de obra y rendimiento mínimo garantizado en módulos. Si no produce lo que prometemos, lo resolvemos nosotros.</p>
+        <span class="sss-icon46"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+        <h3 class="sss-h3-17">Garantía de 25 años</h3>
+        <p class="sss-txt-body">Garantía de mano de obra y rendimiento mínimo garantizado en módulos. Si no produce lo que prometemos, lo resolvemos nosotros.</p>
       </div>
     </div>
-    <a data-magnetic data-reveal href="#chatbot-slot" class="sss-btn" style="margin-top:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:15px;font-weight:600;height:46px;padding:0 24px;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 44px rgba(255,180,61,.20),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">Ver mi propuesta solar →</a>
+    <a data-magnetic data-reveal href="#chatbot-slot" class="sss-btn sss-btn-cta">Ver mi propuesta solar →</a>
     <p data-reveal class="sss-inline-cta">¿Prefieres hablar? <a href="tel:+34968869532">Llama al 968 869 532</a> o <a href="https://wa.me/34629345572?text=Hola%2C%20quiero%20presupuesto%20de%20placas%20solares" target="_blank" rel="noopener">escríbenos por WhatsApp</a>.</p>
   </div>
 </section>
 
 <!-- CASES -->
 <section id="proyectos" class="sss-section sss-section-a sss-section-border">
-  <div style="max-width:1180px;margin:0 auto">
-    <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Resultados reales</span>
+  <div class="sss-wrap">
+    <span data-reveal class="sss-eyebrow">Resultados reales</span>
     <h2 data-i18n="cases.h2" data-reveal data-reveal="left" class="sss-h2">Ejemplos reales de instalaciones realizadas</h2>
-    <p data-reveal style="margin:18px 0 0;max-width:760px;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Solsureste Solar ofrece una garantía de trabajo de 25 años porque nos respaldamos en lo que hacemos. Estos son resultados reales de clientes del sureste con los datos de ahorro conseguidos.</p>
+    <p data-reveal class="sss-txt-lead-w">Solsureste Solar ofrece una garantía de trabajo de 25 años porque nos respaldamos en lo que hacemos. Estos son resultados reales de clientes del sureste con los datos de ahorro conseguidos.</p>
     <div class="sss-3col" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px">
-      <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
-        <img src="/images/foto1-card.webp" srcset="/images/foto1-card-480w.webp 480w, /images/foto1-card-720w.webp 720w, /images/foto1-card.webp 900w" sizes="(max-width: 860px) calc(100vw - 48px), 360px" alt="Instalación residencial de placas solares en Lorca, Murcia" width="900" height="490" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
-        <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">{{ c.caso_1_titulo }}</h3>
-        <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">{{ c.caso_1_texto | destacar }}</p>
-        <a href="/placas-solares-lorca" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Leer caso completo en Lorca →</a>
+      <div data-reveal data-spotlight class="sss-card sss-card-hover sss-pad18">
+        <img src="/images/foto1-card.webp" srcset="/images/foto1-card-480w.webp 480w, /images/foto1-card-720w.webp 720w, /images/foto1-card.webp 900w" sizes="(max-width: 860px) calc(100vw - 48px), 360px" alt="Instalación residencial de placas solares en Lorca, Murcia" width="900" height="490" loading="lazy" class="sss-card-img">
+        <h3 class="sss-h3-18">{{ c.caso_1_titulo }}</h3>
+        <p class="sss-txt-body-l">{{ c.caso_1_texto | destacar }}</p>
+        <a href="/placas-solares-lorca" class="sss-more-link">Leer caso completo en Lorca →</a>
       </div>
-      <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
-        <img src="/images/foto2.webp" srcset="/images/foto2-480w.webp 480w, /images/foto2-720w.webp 720w, /images/foto2.webp 900w" sizes="(max-width: 860px) calc(100vw - 48px), 360px" alt="Instalación solar en nave industrial en Cartagena, Murcia" width="900" height="490" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
-        <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">{{ c.caso_2_titulo }}</h3>
-        <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">{{ c.caso_2_texto | destacar }}</p>
-        <a href="/placas-solares-cartagena" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Leer caso completo en Cartagena →</a>
+      <div data-reveal data-spotlight class="sss-card sss-card-hover sss-pad18">
+        <img src="/images/foto2.webp" srcset="/images/foto2-480w.webp 480w, /images/foto2-720w.webp 720w, /images/foto2.webp 900w" sizes="(max-width: 860px) calc(100vw - 48px), 360px" alt="Instalación solar en nave industrial en Cartagena, Murcia" width="900" height="490" loading="lazy" class="sss-card-img">
+        <h3 class="sss-h3-18">{{ c.caso_2_titulo }}</h3>
+        <p class="sss-txt-body-l">{{ c.caso_2_texto | destacar }}</p>
+        <a href="/placas-solares-cartagena" class="sss-more-link">Leer caso completo en Cartagena →</a>
       </div>
-      <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
-        <img src="/images/foto3.webp" srcset="/images/foto3-480w.webp 480w, /images/foto3-720w.webp 720w, /images/foto3.webp 900w" sizes="(max-width: 860px) calc(100vw - 48px), 360px" alt="Huerto solar agrícola en Orihuela, Alicante" width="900" height="490" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
-        <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">{{ c.caso_3_titulo }}</h3>
-        <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">{{ c.caso_3_texto | destacar }}</p>
-        <a href="/placas-solares-orihuela" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Leer caso completo en Orihuela →</a>
+      <div data-reveal data-spotlight class="sss-card sss-card-hover sss-pad18">
+        <img src="/images/foto3.webp" srcset="/images/foto3-480w.webp 480w, /images/foto3-720w.webp 720w, /images/foto3.webp 900w" sizes="(max-width: 860px) calc(100vw - 48px), 360px" alt="Huerto solar agrícola en Orihuela, Alicante" width="900" height="490" loading="lazy" class="sss-card-img">
+        <h3 class="sss-h3-18">{{ c.caso_3_titulo }}</h3>
+        <p class="sss-txt-body-l">{{ c.caso_3_texto | destacar }}</p>
+        <a href="/placas-solares-orihuela" class="sss-more-link">Leer caso completo en Orihuela →</a>
       </div>
     </div>
   </div>
@@ -333,49 +333,49 @@
 
 <!-- WHY -->
 <section style="background:rgba(9,9,12,.36);padding:0 24px 96px">
-  <div style="max-width:1180px;margin:0 auto">
+  <div class="sss-wrap">
     <h2 data-i18n="why.h2" data-reveal data-reveal="left" class="sss-h2" style="margin:0;max-width:680px">Por qué elegir Solsureste Solar para tu instalación solar</h2>
-    <div class="sss-3col sss-whygrid" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+    <div class="sss-3col sss-whygrid sss-grid3">
       <div data-reveal data-spotlight class="sss-card sss-card-hover sss-card-row">
-        <span style="flex-shrink:0;display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
-        <div><h3 style="margin:0;font-size:16px;font-weight:600">Instalador de referencia en el sureste</h3>
-        <p style="margin:8px 0 0;font-size:15px;line-height:1.55;color:rgba(244,243,240,.64)">Más de 25 años en el sector diseñando, instalando y manteniendo instalaciones solares en Murcia y Alicante.</p></div>
+        <span class="sss-icon46-fixed"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+        <div><h3 class="sss-h3-16">Instalador de referencia en el sureste</h3>
+        <p class="sss-txt-body-s">Más de 25 años en el sector diseñando, instalando y manteniendo instalaciones solares en Murcia y Alicante.</p></div>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover sss-card-row">
-        <span style="flex-shrink:0;display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
-        <div><h3 style="margin:0;font-size:16px;font-weight:600">Sin intermediarios ni comerciales</h3>
-        <p style="margin:8px 0 0;font-size:15px;line-height:1.55;color:rgba(244,243,240,.64)">Nuestros ingenieros personalizan tu oferta sin intermediarios que encarezcan la instalación.</p></div>
+        <span class="sss-icon46-fixed"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+        <div><h3 class="sss-h3-16">Sin intermediarios ni comerciales</h3>
+        <p class="sss-txt-body-s">Nuestros ingenieros personalizan tu oferta sin intermediarios que encarezcan la instalación.</p></div>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover sss-card-row">
-        <span style="flex-shrink:0;display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12V6h16v6"/><path d="m4 12 4 2h8l4-2"/><path d="M2 19h20"/></svg></span>
-        <div><h3 style="margin:0;font-size:16px;font-weight:600">Equipo y maquinaria propios</h3>
-        <p style="margin:8px 0 0;font-size:15px;line-height:1.55;color:rgba(244,243,240,.64)">No subcontratamos nada. Eso nos da control total sobre los plazos, la calidad de ejecución y el coste final.</p></div>
+        <span class="sss-icon46-fixed"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12V6h16v6"/><path d="m4 12 4 2h8l4-2"/><path d="M2 19h20"/></svg></span>
+        <div><h3 class="sss-h3-16">Equipo y maquinaria propios</h3>
+        <p class="sss-txt-body-s">No subcontratamos nada. Eso nos da control total sobre los plazos, la calidad de ejecución y el coste final.</p></div>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover sss-card-row">
-        <span style="flex-shrink:0;display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
-        <div><h3 style="margin:0;font-size:16px;font-weight:600">Tramitación burocrática incluida</h3>
-        <p style="margin:8px 0 0;font-size:15px;line-height:1.55;color:rgba(244,243,240,.64)">Tramitamos la licencia de obra y el registro en la Dirección General de Industria de tu Comunidad.</p></div>
+        <span class="sss-icon46-fixed"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+        <div><h3 class="sss-h3-16">Tramitación burocrática incluida</h3>
+        <p class="sss-txt-body-s">Tramitamos la licencia de obra y el registro en la Dirección General de Industria de tu Comunidad.</p></div>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover sss-card-row">
-        <span style="flex-shrink:0;display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.1-3.1c.3-.3.9-.2 1 .2a6 6 0 0 1-8.3 7.1l-7.9 7.9a1 1 0 0 1-3-3l7.9-7.9a6 6 0 0 1 7.1-8.3c.4.1.5.7.2 1z"/></svg></span>
-        <div><h3 style="margin:0;font-size:16px;font-weight:600">Soporte post venta real</h3>
-        <p style="margin:8px 0 0;font-size:15px;line-height:1.55;color:rgba(244,243,240,.64)">Control de la monitorización, revisiones periódicas según normativa, reparaciones, limpieza...</p></div>
+        <span class="sss-icon46-fixed"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.1-3.1c.3-.3.9-.2 1 .2a6 6 0 0 1-8.3 7.1l-7.9 7.9a1 1 0 0 1-3-3l7.9-7.9a6 6 0 0 1 7.1-8.3c.4.1.5.7.2 1z"/></svg></span>
+        <div><h3 class="sss-h3-16">Soporte post venta real</h3>
+        <p class="sss-txt-body-s">Control de la monitorización, revisiones periódicas según normativa, reparaciones, limpieza...</p></div>
       </div>
     </div>
     <div data-reveal style="margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:16px;border-radius:20px;border:1px solid rgba(255,255,255,.07);background:#141417;padding:24px 26px;text-align:center">
       <div style="display:flex;gap:14px;align-items:center">
-        <span style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 16px;border-radius:10px;background:rgba(255,180,61,.12);color:#FFC766;font-weight:700;font-size:14px;border:1px solid rgba(255,180,61,.25)">ISO 9001</span>
-        <span style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 16px;border-radius:10px;background:rgba(255,180,61,.12);color:#FFC766;font-weight:700;font-size:14px;border:1px solid rgba(255,180,61,.25)">ISO 14001</span>
+        <span class="sss-chip">ISO 9001</span>
+        <span class="sss-chip">ISO 14001</span>
       </div>
-      <p style="margin:0;max-width:560px;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">Instalaciones avaladas por los estándares internacionales de <strong style="color:#f4f3f0">Calidad ISO 9001</strong> y <strong style="color:#f4f3f0">Gestión Ambiental ISO 14001</strong>.</p>
+      <p style="margin:0;max-width:560px;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">Instalaciones avaladas por los estándares internacionales de <strong class="sss-strong">Calidad ISO 9001</strong> y <strong class="sss-strong">Gestión Ambiental ISO 14001</strong>.</p>
     </div>
   </div>
 </section>
 
 <!-- TESTIMONIALS (reseñas reales de Google Business Profile, ver /api/reviews) -->
 <section class="sss-section sss-section-b sss-section-border">
-  <div style="max-width:1180px;margin:0 auto">
-    <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Testimonios</span>
+  <div class="sss-wrap">
+    <span data-reveal class="sss-eyebrow">Testimonios</span>
     <h2 data-i18n="test.h2" data-reveal data-reveal="left" class="sss-h2">Qué dicen nuestros clientes</h2>
     <div id="sss-reviews-meta" style="margin-top:14px;display:none;align-items:center;gap:10px;flex-wrap:wrap;font-size:14.5px;color:rgba(244,243,240,.75)"></div>
     <div id="sss-reviews-grid" class="sss-3col" style="margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
@@ -390,68 +390,68 @@
 
 <!-- FINANCING -->
 <section id="financiacion" class="sss-section sss-section-a sss-section-border" style="position:relative;overflow:hidden">
-  <canvas id="sss-fin-fx" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none"></canvas>
+  <canvas id="sss-fin-fx" aria-hidden="true" class="sss-canvas-fill"></canvas>
   <div style="position:relative;z-index:1;max-width:1180px;margin:0 auto">
-    <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Financiación</span>
+    <span data-reveal class="sss-eyebrow">Financiación</span>
     <h2 data-i18n="fin.h2" data-reveal data-reveal="left" class="sss-h2">Financiamos el 100% de tu instalación, incluso el IVA</h2>
-    <p data-reveal style="margin:18px 0 0;max-width:760px;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Te pasamos algunos ejemplos de cómo puedes ahorrar todos los meses sin poner ni un céntimo de tu bolsillo. Ahorra desde el primer día.</p>
+    <p data-reveal class="sss-txt-lead-w">Te pasamos algunos ejemplos de cómo puedes ahorrar todos los meses sin poner ni un céntimo de tu bolsillo. Ahorra desde el primer día.</p>
     <p class="sss-scroll-hint" aria-hidden="true">Desliza para ver toda la tabla →</p>
     <div data-reveal style="margin-top:36px;overflow-x:auto;border-radius:18px;border:1px solid rgba(255,255,255,.08)">
       <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:720px">
         <thead><tr style="background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205">
           <th style="padding:15px 18px;text-align:left;font-weight:700">Potencia</th>
           <th style="padding:15px 18px;text-align:center;font-weight:700">N.º placas</th>
-          <th style="padding:15px 18px;text-align:right;font-weight:700">Inversión<br><span style="font-weight:400;opacity:.8;font-size:11px">IVA incl.</span></th>
-          <th style="padding:15px 18px;text-align:right;font-weight:700">Ahorro/mes</th>
-          <th style="padding:15px 18px;text-align:right;font-weight:700">Cuota</th>
-          <th style="padding:15px 18px;text-align:right;font-weight:700">Ahorro 10a</th>
-          <th style="padding:15px 18px;text-align:right;font-weight:700">Ahorro 25a</th>
+          <th class="sss-th-num">Inversión<br><span style="font-weight:400;opacity:.8;font-size:11px">IVA incl.</span></th>
+          <th class="sss-th-num">Ahorro/mes</th>
+          <th class="sss-th-num">Cuota</th>
+          <th class="sss-th-num">Ahorro 10a</th>
+          <th class="sss-th-num">Ahorro 25a</th>
         </tr></thead>
         <tbody>
-{% for fila in c.financiacion_tabla %}          <tr style="border-top:1px solid rgba(255,255,255,.06);background:{{ '#141417' if loop.index0 % 2 == 0 else '#0e0e11' }}"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">{{ fila[0] }}</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">{{ fila[1] }}</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">{{ fila[2] }}</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">{{ fila[3] }}</td><td style="padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)">{{ fila[4] }}</td><td style="padding:14px 18px;text-align:right">{{ fila[5] }}</td><td style="padding:14px 18px;text-align:right;font-weight:700">{{ fila[6] }}</td></tr>
+{% for fila in c.financiacion_tabla %}          <tr style="border-top:1px solid rgba(255,255,255,.06);background:{{ '#141417' if loop.index0 % 2 == 0 else '#0e0e11' }}"><td style="padding:14px 18px;font-weight:700;color:#FFB43D">{{ fila[0] }}</td><td style="padding:14px 18px;text-align:center;color:rgba(244,243,240,.65)">{{ fila[1] }}</td><td class="sss-td-num">{{ fila[2] }}</td><td style="padding:14px 18px;text-align:right;font-weight:600;color:#FFB43D">{{ fila[3] }}</td><td class="sss-td-num">{{ fila[4] }}</td><td style="padding:14px 18px;text-align:right">{{ fila[5] }}</td><td style="padding:14px 18px;text-align:right;font-weight:700">{{ fila[6] }}</td></tr>
 {% endfor %}        </tbody>
       </table>
     </div>
     <div style="margin-top:14px;display:flex;flex-direction:column;gap:4px">
-      <p style="margin:0;font-size:12px;color:rgba(244,243,240,.62)">{{ c.financiacion_nota_1 }}</p>
-      <p style="margin:0;font-size:12px;color:rgba(244,243,240,.62)">{{ c.financiacion_nota_2 }}</p>
+      <p class="sss-fin-note">{{ c.financiacion_nota_1 }}</p>
+      <p class="sss-fin-note">{{ c.financiacion_nota_2 }}</p>
     </div>
   </div>
 </section>
 
 <!-- PROCESS -->
 <section id="proceso" class="sss-section sss-section-b sss-section-border">
-  <div style="max-width:1180px;margin:0 auto">
+  <div class="sss-wrap">
     <div style="max-width:660px">
-      <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">El proceso</span>
+      <span data-reveal class="sss-eyebrow">El proceso</span>
       <h2 data-i18n="proc.h2" data-reveal data-reveal="left" class="sss-h2">Qué puedes esperar cuando pides un estudio a Solsureste Solar</h2>
-      <p data-reveal style="margin:18px 0 0;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Para diseñar tu sistema solar adaptado, seguimos los siguientes pasos:</p>
+      <p data-reveal class="sss-txt-lead">Para diseñar tu sistema solar adaptado, seguimos los siguientes pasos:</p>
     </div>
     <div class="sss-steps" style="position:relative;margin-top:44px;display:flex;flex-direction:column;gap:18px">
       <div style="position:absolute;left:23px;top:26px;bottom:26px;width:2px;background:rgba(255,180,61,.14);border-radius:2px;z-index:0"></div>
       <div id="sss-stepfill" style="position:absolute;left:23px;top:26px;width:2px;height:0;background:linear-gradient(180deg,#FFD89A,#F5921E);border-radius:2px;z-index:0;box-shadow:0 0 14px rgba(255,180,61,.75)"></div>
-      <div data-reveal style="position:relative;z-index:1;display:flex;align-items:flex-start;gap:18px">
-        <div data-stepcircle style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.26),rgba(224,122,12,.2));color:#FFD89A;font-weight:700;font-size:18px;border:1px solid rgba(255,180,61,.3);transition:background .4s,box-shadow .4s,color .4s,border-color .4s">1</div>
-        <p style="margin:0;padding-top:11px;font-size:16.5px;line-height:1.55;color:rgba(244,243,240,.82)">Agenda una visita con nuestro asistente o rellena nuestro formulario y contactamos contigo.</p>
+      <div data-reveal class="sss-row-start">
+        <div data-stepcircle class="sss-stepcircle">1</div>
+        <p class="sss-step-txt">Agenda una visita con nuestro asistente o rellena nuestro formulario y contactamos contigo.</p>
       </div>
-      <div data-reveal style="position:relative;z-index:1;display:flex;align-items:flex-start;gap:18px">
-        <div data-stepcircle style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.26),rgba(224,122,12,.2));color:#FFD89A;font-weight:700;font-size:18px;border:1px solid rgba(255,180,61,.3);transition:background .4s,box-shadow .4s,color .4s,border-color .4s">2</div>
-        <p style="margin:0;padding-top:11px;font-size:16.5px;line-height:1.55;color:rgba(244,243,240,.82)">Hacemos una visita a tu domicilio para determinar las particularidades de tu instalación y ver la idoneidad de tus cubiertas.</p>
+      <div data-reveal class="sss-row-start">
+        <div data-stepcircle class="sss-stepcircle">2</div>
+        <p class="sss-step-txt">Hacemos una visita a tu domicilio para determinar las particularidades de tu instalación y ver la idoneidad de tus cubiertas.</p>
       </div>
-      <div data-reveal style="position:relative;z-index:1;display:flex;align-items:flex-start;gap:18px">
-        <div data-stepcircle style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.26),rgba(224,122,12,.2));color:#FFD89A;font-weight:700;font-size:18px;border:1px solid rgba(255,180,61,.3);transition:background .4s,box-shadow .4s,color .4s,border-color .4s">3</div>
-        <p style="margin:0;padding-top:11px;font-size:16.5px;line-height:1.55;color:rgba(244,243,240,.82)">En base a tus consumos de energía y a las características de tu vivienda, elaboramos una propuesta específica personalizada.</p>
+      <div data-reveal class="sss-row-start">
+        <div data-stepcircle class="sss-stepcircle">3</div>
+        <p class="sss-step-txt">En base a tus consumos de energía y a las características de tu vivienda, elaboramos una propuesta específica personalizada.</p>
       </div>
-      <div data-reveal style="position:relative;z-index:1;display:flex;align-items:flex-start;gap:18px">
-        <div data-stepcircle style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.26),rgba(224,122,12,.2));color:#FFD89A;font-weight:700;font-size:18px;border:1px solid rgba(255,180,61,.3);transition:background .4s,box-shadow .4s,color .4s,border-color .4s">4</div>
-        <p style="margin:0;padding-top:11px;font-size:16.5px;line-height:1.55;color:rgba(244,243,240,.82)">Te presentamos la oferta y te ofrecemos nuestras formas de pago flexibles.</p>
+      <div data-reveal class="sss-row-start">
+        <div data-stepcircle class="sss-stepcircle">4</div>
+        <p class="sss-step-txt">Te presentamos la oferta y te ofrecemos nuestras formas de pago flexibles.</p>
       </div>
-      <div data-reveal style="position:relative;z-index:1;display:flex;align-items:flex-start;gap:18px">
-        <div data-stepcircle style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.26),rgba(224,122,12,.2));color:#FFD89A;font-weight:700;font-size:18px;border:1px solid rgba(255,180,61,.3);transition:background .4s,box-shadow .4s,color .4s,border-color .4s">5</div>
-        <p style="margin:0;padding-top:11px;font-size:16.5px;line-height:1.55;color:rgba(244,243,240,.82)">Si te parece aceptable nuestra propuesta, <strong style="color:#f4f3f0">en dos semanas podrías tener tu instalación.</strong></p>
+      <div data-reveal class="sss-row-start">
+        <div data-stepcircle class="sss-stepcircle">5</div>
+        <p class="sss-step-txt">Si te parece aceptable nuestra propuesta, <strong class="sss-strong">en dos semanas podrías tener tu instalación.</strong></p>
       </div>
     </div>
-    <a data-magnetic data-reveal href="#inicio" class="sss-btn" style="margin-top:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:15px;font-weight:600;height:46px;padding:0 24px;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 44px rgba(255,180,61,.20),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">Solicitar estudio gratuito →</a>
+    <a data-magnetic data-reveal href="#inicio" class="sss-btn sss-btn-cta">Solicitar estudio gratuito →</a>
   </div>
 </section>
 
@@ -460,7 +460,7 @@
   <div data-reveal style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:22px;border-radius:24px;border:1px solid rgba(255,180,61,.18);background:radial-gradient(120% 140% at 0% 0%,rgba(255,180,61,.08),transparent 55%),#0e0e11;padding:44px">
     <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px">
       <div style="max-width:560px">
-        <span style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Preguntas frecuentes</span>
+        <span class="sss-eyebrow">Preguntas frecuentes</span>
         <h2 data-i18n="faq.h2" style="margin:12px 0 0;font-size:28px;font-weight:700;letter-spacing:-.02em">¿Tienes dudas sobre la instalación solar?</h2>
         <p style="margin:12px 0 0;font-size:16px;line-height:1.6;color:rgba(244,243,240,.66)">Hemos recopilado las preguntas más habituales de nuestros clientes: zonas, plazos, baterías, garantías y financiación.</p>
       </div>
@@ -478,37 +478,37 @@
       <div itemscope itemtype="https://schema.org/LocalBusiness">
         <div style="display:flex;align-items:center;gap:10px">
           <span style="display:flex;height:36px;width:36px;align-items:center;justify-content:center;border-radius:10px;background:linear-gradient(135deg,#FFB43D,#E07A0C);color:#1a1205"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span>
-          <span itemprop="name" style="font-size:18px;font-weight:700;letter-spacing:-.02em">Solsureste <span style="color:#FFB43D">Solar</span></span>
+          <span itemprop="name" style="font-size:18px;font-weight:700;letter-spacing:-.02em">Solsureste <span class="sss-gold">Solar</span></span>
         </div>
         <div style="margin-top:20px;display:flex;flex-direction:column;gap:12px;font-size:14px;color:rgba(244,243,240,.6)">
           <a href="https://maps.google.com/?q=Calle+Aldebaran+51+Molina+de+Segura+Murcia" target="_blank" rel="noopener" class="sss-footlink" style="display:flex;align-items:flex-start;gap:9px;color:inherit;transition:color .2s"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFB43D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span itemprop="address">Calle Aldebarán, 51, P.I. La Estrella — Molina de Segura (30509) Murcia</span></a>
-          <a href="tel:+34968869532" class="sss-footlink" style="display:flex;align-items:center;gap:9px;color:inherit;transition:color .2s"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFB43D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.6 19.79 19.79 0 0 1 1.61 5a2 2 0 0 1 1.99-2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.59z"/></svg><span itemprop="telephone">968 869 532</span></a>
-          <a href="#" class="sss-footlink sss-email-obf" data-u="info" data-d="solsurestesolar.com" style="display:flex;align-items:center;gap:9px;color:inherit;transition:color .2s"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFB43D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><span class="sss-email-text">info [at] solsurestesolar.com</span></a>
-          <a href="https://www.facebook.com/profile.php?id=61591879814700" target="_blank" rel="noopener" class="sss-footlink" style="display:flex;align-items:center;gap:9px;color:inherit;transition:color .2s"><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB43D" style="flex-shrink:0"><path d="M13.5 21v-7.5h2.5l.5-3h-3V8.5c0-.87.24-1.46 1.49-1.46H16.5V4.35A20 20 0 0 0 14.14 4.2c-2.3 0-3.87 1.4-3.87 3.98V10.5H7.75v3H10.27V21Z"/></svg>Facebook</a>
-          <a href="https://www.instagram.com/solsurestesolar/" target="_blank" rel="noopener" class="sss-footlink" style="display:flex;align-items:center;gap:9px;color:inherit;transition:color .2s"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFB43D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/></svg>Instagram</a>
+          <a href="tel:+34968869532" class="sss-footlink sss-contact-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFB43D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sss-noshrink"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.6 19.79 19.79 0 0 1 1.61 5a2 2 0 0 1 1.99-2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.59z"/></svg><span itemprop="telephone">968 869 532</span></a>
+          <a href="#" class="sss-footlink sss-email-obf sss-contact-link" data-u="info" data-d="solsurestesolar.com"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFB43D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sss-noshrink"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><span class="sss-email-text">info [at] solsurestesolar.com</span></a>
+          <a href="https://www.facebook.com/profile.php?id=61591879814700" target="_blank" rel="noopener" class="sss-footlink sss-contact-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB43D" class="sss-noshrink"><path d="M13.5 21v-7.5h2.5l.5-3h-3V8.5c0-.87.24-1.46 1.49-1.46H16.5V4.35A20 20 0 0 0 14.14 4.2c-2.3 0-3.87 1.4-3.87 3.98V10.5H7.75v3H10.27V21Z"/></svg>Facebook</a>
+          <a href="https://www.instagram.com/solsurestesolar/" target="_blank" rel="noopener" class="sss-footlink sss-contact-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFB43D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sss-noshrink"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/></svg>Instagram</a>
         </div>
       </div>
       <div>
         <p style="margin:0 0 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:rgba(244,243,240,.85)">Enlaces rápidos</p>
         <nav style="display:flex;flex-direction:column;gap:11px;font-size:14px">
-          <a href="#inicio" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Inicio</a>
-          <a href="#proyectos" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Proyectos</a>
-          <a href="#faq" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">FAQ</a>
-          <a href="#proceso" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Proceso</a>
-          <a href="#financiacion" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Financiación</a>
-          <a href="#chatbot-slot" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Asistente IA</a>
-          <a href="/placas-solares-murcia" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Placas solares en Murcia</a>
-          <a href="/placas-solares-alicante" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Placas solares en Alicante</a>
-          <a href="/placas-solares-molina-de-segura" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Placas solares en Molina de Segura</a>
-          <a href="/placas-solares-torrevieja" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Placas solares en Torrevieja</a>
-          <a href="/placas-solares-orihuela-costa" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Placas solares en Orihuela Costa</a>
-          <a href="/placas-solares-pilar-de-la-horadada" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Placas solares en Pilar de la Horadada</a>
-          <a href="/blog" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Blog</a>
-          <a href="/faq" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Preguntas frecuentes</a>
-          <a href="/aviso-legal" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Aviso legal</a>
-          <a href="/privacidad" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Privacidad</a>
-          <a href="/cookies" class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Cookies</a>
-          <a href="/cookies" data-cookie-settings class="sss-footlink" style="color:rgba(244,243,240,.6);transition:color .2s">Configurar cookies</a>
+          <a href="#inicio" class="sss-footlink sss-foot-link">Inicio</a>
+          <a href="#proyectos" class="sss-footlink sss-foot-link">Proyectos</a>
+          <a href="#faq" class="sss-footlink sss-foot-link">FAQ</a>
+          <a href="#proceso" class="sss-footlink sss-foot-link">Proceso</a>
+          <a href="#financiacion" class="sss-footlink sss-foot-link">Financiación</a>
+          <a href="#chatbot-slot" class="sss-footlink sss-foot-link">Asistente IA</a>
+          <a href="/placas-solares-murcia" class="sss-footlink sss-foot-link">Placas solares en Murcia</a>
+          <a href="/placas-solares-alicante" class="sss-footlink sss-foot-link">Placas solares en Alicante</a>
+          <a href="/placas-solares-molina-de-segura" class="sss-footlink sss-foot-link">Placas solares en Molina de Segura</a>
+          <a href="/placas-solares-torrevieja" class="sss-footlink sss-foot-link">Placas solares en Torrevieja</a>
+          <a href="/placas-solares-orihuela-costa" class="sss-footlink sss-foot-link">Placas solares en Orihuela Costa</a>
+          <a href="/placas-solares-pilar-de-la-horadada" class="sss-footlink sss-foot-link">Placas solares en Pilar de la Horadada</a>
+          <a href="/blog" class="sss-footlink sss-foot-link">Blog</a>
+          <a href="/faq" class="sss-footlink sss-foot-link">Preguntas frecuentes</a>
+          <a href="/aviso-legal" class="sss-footlink sss-foot-link">Aviso legal</a>
+          <a href="/privacidad" class="sss-footlink sss-foot-link">Privacidad</a>
+          <a href="/cookies" class="sss-footlink sss-foot-link">Cookies</a>
+          <a href="/cookies" data-cookie-settings class="sss-footlink sss-foot-link">Configurar cookies</a>
         </nav>
       </div>
     </div>
