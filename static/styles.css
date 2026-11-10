@@ -10,6 +10,9 @@ body{background:#0a0a0c;font-family:'Space Grotesk',system-ui,sans-serif}
 ::selection{background:rgba(255,180,61,.28);color:#fff}
 a{text-decoration:none}
 input::placeholder,textarea::placeholder{color:rgba(244,243,240,.34)}
+/* Honeypot antispam del formulario: fuera de pantalla (no display:none, que algunos bots
+   detectan y saltan), sin foco por teclado y oculto a lectores de pantalla. */
+.sss-hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
 
 @keyframes sssFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-7px) rotate(6deg)}}
 @keyframes sssSpin{to{transform:rotate(360deg)}}

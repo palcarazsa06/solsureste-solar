@@ -37,7 +37,10 @@ from logging_config import get_logger
 
 logger = get_logger(__name__)
 
-app = FastAPI(title="Agencia IA - Motor de Ventas")
+# Sin /docs, /redoc ni /openapi.json: en producción daban a cualquiera el mapa completo de la
+# API, endpoints del panel de administración incluidos (auditoría 2026-11). Nada del proyecto
+# consume el esquema.
+app = FastAPI(title="Agencia IA - Motor de Ventas", docs_url=None, redoc_url=None, openapi_url=None)
 
 # --- SESIONES HMAC ---
 # Si SECRET_KEY no está definida (dev), se acepta cualquier user_id.
@@ -183,18 +186,43 @@ def rate_limit_admin_dep(request: Request):
 # --- AUTENTICACIÓN DEL PANEL DE ADMIN ---
 security = HTTPBasic()
 
+# Bloqueo por intentos fallidos: con solo el rate limit de 200/60s cabían decenas de miles de
+# contraseñas al día por IP. Tras ADMIN_MAX_FALLOS fallos dentro de la ventana, esa IP queda
+# bloqueada ADMIN_BLOQUEO_SEGUNDOS aunque luego acierte. Contador en memoria por proceso (mismas
+# limitaciones que el rate limit: se reinicia con el proceso y exige 1 solo worker). Ojo: depende
+# de que _client_ip vea la IP real (TRUST_PROXY); si no, todo el tráfico comparte una IP y un
+# atacante bloquearía también al personal.
+ADMIN_MAX_FALLOS = 5
+ADMIN_BLOQUEO_SEGUNDOS = 15 * 60
+_fallos_admin_por_ip = defaultdict(deque)
+
+def _admin_bloqueada(ip: str) -> bool:
+    fallos = _fallos_admin_por_ip[ip]
+    ahora = time.time()
+    while fallos and ahora - fallos[0] > ADMIN_BLOQUEO_SEGUNDOS:
+        fallos.popleft()
+    return len(fallos) >= ADMIN_MAX_FALLOS
+
 def verificar_admin(request: Request, credentials: HTTPBasicCredentials = Depends(security)):
     """Protege los endpoints de admin con usuario/contraseña definidos en .env."""
+    ip = _client_ip(request)
+    if _admin_bloqueada(ip):
+        logger.warning(f"Acceso admin rechazado: IP {ip} bloqueada por intentos fallidos")
+        raise HTTPException(
+            status_code=429,
+            detail="Demasiados intentos fallidos. Espera 15 minutos.",
+        )
     usuario_correcto = secrets.compare_digest(credentials.username, os.getenv("ADMIN_USER", ""))
     password_correcta = secrets.compare_digest(credentials.password, os.getenv("ADMIN_PASSWORD", ""))
     if not (usuario_correcto and password_correcta):
-        ip = _client_ip(request)
+        _fallos_admin_por_ip[ip].append(time.time())
         logger.warning(f"Intento de acceso admin fallido desde {ip} — usuario: '{credentials.username}'")
         raise HTTPException(
             status_code=401,
             detail="Credenciales incorrectas",
             headers={"WWW-Authenticate": "Basic"},
         )
+    _fallos_admin_por_ip.pop(ip, None)
 
 # --- CORS ---
 # Si ALLOWED_ORIGINS no está definida, NO se cae a "*" (auditoría de seguridad): el fallback es
@@ -259,6 +287,8 @@ class FormularioPresupuesto(BaseModel):
     ciudad: str = Field(max_length=100)
     tipo_instalacion: str = Field(max_length=200)
     mensaje: str = Field(default="", max_length=2000)
+    # Honeypot antispam: campo invisible en el formulario. Solo lo rellenan bots.
+    web: str = Field(default="", max_length=500)
 
     @field_validator("telefono")
     @classmethod
@@ -268,7 +298,12 @@ class FormularioPresupuesto(BaseModel):
         return v
 
 @app.post("/presupuesto")
-async def presupuesto_endpoint(req: FormularioPresupuesto, _rl=Depends(rate_limit_dep)):
+async def presupuesto_endpoint(req: FormularioPresupuesto, request: Request, _rl=Depends(rate_limit_dep)):
+    if req.web.strip():
+        # Se responde igual que un envío válido para no darle pistas al bot, pero no se
+        # guarda ni se envía al CRM/email: cada envío real crea una fila en la hoja de clientes.
+        logger.warning(f"Formulario descartado por honeypot desde IP {_client_ip(request)}")
+        return {"status": "success"}
     try:
         user_id = guardar_lead_directo(
             nombre=req.nombre,
