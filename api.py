@@ -83,7 +83,10 @@ async def security_headers(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    # `preload` solo declara que el dominio acepta entrar en la lista de precarga de los
+    # navegadores; no tiene efecto hasta que alguien lo envía a hstspreload.org (paso manual
+    # y difícil de deshacer, fuera de este repo).
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
     response.headers["Permissions-Policy"] = "geolocation=(), camera=(), microphone=()"
     response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
     response.headers["Content-Security-Policy"] = _CSP
@@ -101,12 +104,22 @@ _CACHE_RULES = (
     ("/styles.css", "public, max-age=3600"),
     ("/script.js", "public, max-age=3600"),
     ("/consent.js", "public, max-age=3600"),
+    ("/fonts.css", "public, max-age=86400"),
     ("/api/reviews", "public, max-age=3600"),
 )
+
+# CSS/JS pedidos con huella (`?v=...`, la pone templates_engine.asset): su URL cambia cuando
+# cambia el contenido, así que se pueden cachear un año. Sin huella (páginas estáticas que
+# los enlazan a pelo) siguen con la regla corta de arriba.
+_CACHE_VERSIONADO = "public, max-age=31536000, immutable"
 
 @app.middleware("http")
 async def cache_headers(request: Request, call_next):
     response = await call_next(request)
+    path = request.url.path
+    if "v" in request.query_params and path.endswith((".css", ".js")) and response.status_code == 200:
+        response.headers["Cache-Control"] = _CACHE_VERSIONADO
+        return response
     for prefix, value in _CACHE_RULES:
         if request.url.path.startswith(prefix):
             response.headers["Cache-Control"] = value
@@ -829,6 +842,14 @@ def sitemap(request: Request):
         })
     return templates.TemplateResponse(request, "sitemap.xml", contexto,
                                       media_type="application/xml")
+
+@app.get("/llms.txt")
+def llms_txt(request: Request):
+    """Resumen para buscadores de IA. Era un fichero estático y se quedó con 3 artículos
+    cuando ya había 5; ahora la lista del blog sale de la base de datos, como el sitemap."""
+    contexto = {"articulos": cms_blog.publicados(), "base": _URL_BASE}
+    return templates.TemplateResponse(request, "llms.txt", contexto,
+                                      media_type="text/plain; charset=utf-8")
 
 @app.on_event("startup")
 def _iniciar_scheduler_purga():

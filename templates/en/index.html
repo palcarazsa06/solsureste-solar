@@ -35,8 +35,8 @@
 <meta name="theme-color" content="#0a0a0c">
 
 <link rel="preload" href="/fonts/space-grotesk-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/fonts.css">
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="{{ asset('fonts.css') }}">
+<link rel="stylesheet" href="{{ asset('styles.css') }}">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -75,7 +75,7 @@
       "@type": "Organization",
       "name": "Solsureste Solar",
       "url": "https://solsurestesolar.com/",
-      "logo": "https://solsurestesolar.com/images/og-cover.jpg",
+      "logo": "https://solsurestesolar.com/icon-512.png",
       "contactPoint": { "@type": "ContactPoint", "telephone": "+34968869532", "contactType": "customer service", "email": "info@solsurestesolar.com", "areaServed": "ES" }
     }
   ]
@@ -96,7 +96,7 @@
 <header id="sss-header" style="position:sticky;top:0;z-index:200;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(10,10,12,.62);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:background .3s,box-shadow .3s">
   <div style="max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 24px">
     <div style="display:flex;align-items:center;gap:24px;min-width:0">
-      <a href="#inicio" style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <a href="#inicio" class="sss-logo" style="display:flex;align-items:center;gap:10px;flex-shrink:0">
         <span style="display:flex;height:38px;width:38px;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#E07A0C);color:#1a1205;box-shadow:0 6px 20px rgba(255,180,61,.5),0 0 34px rgba(255,180,61,.35);animation:sssFloat 4.5s ease-in-out infinite">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
         </span>
@@ -104,7 +104,7 @@
       </a>
       <a href="tel:+34968869532" class="sss-header-tel" aria-label="Call 968 869 532">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.6 19.79 19.79 0 0 1 1.61 5a2 2 0 0 1 1.99-2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.59z"/></svg>
-        968 869 532
+        <span class="sss-header-tel-num">968 869 532</span>
       </a>
     </div>
     <nav class="sss-hidemob" style="display:flex;align-items:center;gap:30px" aria-label="Main navigation">
@@ -122,9 +122,21 @@
       </div>
       <a data-magnetic href="#inicio" class="sss-nav-cta" style="display:inline-flex;align-items:center;justify-content:center;border-radius:10px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:14px;font-weight:600;height:38px;padding:0 18px;box-shadow:0 6px 20px rgba(255,180,61,.45),0 0 34px rgba(255,180,61,.22),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s">Book a call</a>
     </div>
+    <button id="sss-menu-btn" type="button" class="sss-menu-btn" aria-expanded="false" aria-controls="sss-mobile-nav" aria-label="Open menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg></button>
   </div>
+  <nav id="sss-mobile-nav" class="sss-mobile-nav" aria-label="Menu" hidden>
+    <a href="#servicios">Services</a>
+    <a href="#proyectos">Projects</a>
+    <a href="#proceso">Process</a>
+    <a href="#faq">FAQ</a>
+    <a href="/blog">Blog</a>
+    <a href="#contacto">Contact</a>
+    <a href="/" hreflang="es" lang="es" class="sss-mobile-nav-lang">Español</a>
+    <a href="#inicio" class="sss-mobile-nav-cta">Book a call</a>
+  </nav>
 </header>
 
+<main id="contenido">
 <!-- HERO -->
 <section id="inicio" data-hero-variant="cinematic" style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.06)">
   <div class="sss-hero-bg-cinematic" style="position:absolute;inset:0;z-index:0">
@@ -159,12 +171,12 @@
       <form id="sss-hero-form" class="sss-halo" style="position:relative;display:flex;flex-direction:column;border-radius:20px;border:1px solid rgba(255,190,80,.32);background:rgba(20,20,23,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:26px;box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 90px rgba(255,180,61,.14),inset 0 1px 0 rgba(255,255,255,.09);animation:sssCardFloat 7s ease-in-out infinite">
         <h2 style="margin:0 0 18px;font-size:17px;font-weight:600">{{ c.hero_form_titulo }}</h2>
         <div class="sss-formgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">First name *<input id="sss-hf-nombre" required placeholder="John" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Last name *<input id="sss-hf-apellidos" required placeholder="Smith" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Phone *<input id="sss-hf-telefono" required type="tel" placeholder="666 123 456" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Email *<input id="sss-hf-correo" required type="email" placeholder="john@example.com" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">City *<input id="sss-hf-ciudad" required placeholder="Murcia" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Installation type *<select id="sss-hf-tipo" required class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"><option style="background:#161618" value="">Select…</option><option style="background:#161618">Residential</option><option style="background:#161618">Industrial / warehouse</option><option style="background:#161618">Solar farm</option><option style="background:#161618">Maintenance</option><option style="background:#161618">Consultation</option></select></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">First name *<input id="sss-hf-nombre" name="nombre" autocomplete="given-name" required placeholder="John" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Last name *<input id="sss-hf-apellidos" name="apellidos" autocomplete="family-name" required placeholder="Smith" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Phone *<input id="sss-hf-telefono" name="telefono" autocomplete="tel" required type="tel" placeholder="666 123 456" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Email *<input id="sss-hf-correo" name="correo" autocomplete="email" required type="email" placeholder="john@example.com" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">City *<input id="sss-hf-ciudad" name="ciudad" autocomplete="address-level2" required placeholder="Murcia" class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)">Installation type *<select id="sss-hf-tipo" name="tipo_instalacion" required class="sss-field" style="border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none"><option style="background:#161618" value="">Select…</option><option style="background:#161618">Residential</option><option style="background:#161618">Industrial / warehouse</option><option style="background:#161618">Solar farm</option><option style="background:#161618">Maintenance</option><option style="background:#161618">Consultation</option></select></label>
         </div>
         <div class="sss-hp" aria-hidden="true"><label>Leave this field empty<input id="sss-hf-web" name="web" type="text" tabindex="-1" autocomplete="off"></label></div>
         <p style="margin:14px 0 0;font-size:11.5px;line-height:1.5;color:rgba(244,243,240,.5)">By submitting you accept the processing of your data to handle your request, as explained in our <a href="/privacidad" hreflang="es" style="color:#FFB43D">privacy policy</a> (in Spanish) — <a href="#" class="sss-email-obf" data-u="info" data-d="solsurestesolar.com" style="color:#FFB43D"><span class="sss-email-text">info [at] solsurestesolar.com</span></a>.</p>
@@ -187,7 +199,7 @@
               <p style="margin:0;font-size:11.5px;color:rgba(244,243,240,.55)">Online · Assisting now</p>
             </div>
           </div>
-          <button id="sss-chat-reset" type="button" title="Reset conversation" aria-label="Reset conversation" class="sss-iconbtn" style="background:none;border:none;cursor:pointer;color:rgba(244,243,240,.45);display:flex;transition:color .2s">
+          <button id="sss-chat-reset" type="button" title="Reset conversation" aria-label="Reset conversation" class="sss-iconbtn" style="background:none;border:none;cursor:pointer;color:rgba(244,243,240,.62);display:flex;transition:color .2s">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
           </button>
         </div>
@@ -298,19 +310,19 @@
     <p data-reveal style="margin:18px 0 0;max-width:760px;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Solsureste Solar offers a 25-year workmanship warranty because we stand behind what we do. These are real results from clients across the southeast, with the actual savings achieved.</p>
     <div class="sss-3col" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px">
       <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
-        <img src="/images/foto1-card.webp" alt="Residential solar panel installation in Lorca, Murcia" width="900" height="506" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
+        <img src="/images/foto1-card.webp" srcset="/images/foto1-card-480w.webp 480w, /images/foto1-card-720w.webp 720w, /images/foto1-card.webp 900w" sizes="(max-width: 860px) calc(100vw - 48px), 360px" alt="Residential solar panel installation in Lorca, Murcia" width="900" height="490" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
         <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">{{ c.caso_1_titulo }}</h3>
         <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">{{ c.caso_1_texto | destacar }}</p>
         <a href="/placas-solares-lorca" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Read the full case in Lorca →</a>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
-        <img src="/images/foto2.webp" alt="Solar installation on an industrial warehouse in Cartagena, Murcia" width="900" height="506" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
+        <img src="/images/foto2.webp" srcset="/images/foto2-480w.webp 480w, /images/foto2-720w.webp 720w, /images/foto2.webp 900w" sizes="(max-width: 860px) calc(100vw - 48px), 360px" alt="Solar installation on an industrial warehouse in Cartagena, Murcia" width="900" height="490" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
         <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">{{ c.caso_2_titulo }}</h3>
         <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">{{ c.caso_2_texto | destacar }}</p>
         <a href="/placas-solares-cartagena" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Read the full case in Cartagena →</a>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
-        <img src="/images/foto3.webp" alt="Agricultural solar farm in Orihuela, Alicante" width="900" height="506" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
+        <img src="/images/foto3.webp" srcset="/images/foto3-480w.webp 480w, /images/foto3-720w.webp 720w, /images/foto3.webp 900w" sizes="(max-width: 860px) calc(100vw - 48px), 360px" alt="Agricultural solar farm in Orihuela, Alicante" width="900" height="490" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
         <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">{{ c.caso_3_titulo }}</h3>
         <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">{{ c.caso_3_texto | destacar }}</p>
         <a href="/placas-solares-orihuela" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Read the full case in Orihuela →</a>
@@ -383,6 +395,7 @@
     <span data-reveal style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D">Financing</span>
     <h2 data-reveal data-reveal="left" class="sss-h2">We finance 100% of your installation, VAT included</h2>
     <p data-reveal style="margin:18px 0 0;max-width:760px;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Here are some examples of how you can save every month without spending a cent out of pocket. Start saving from day one.</p>
+    <p class="sss-scroll-hint" aria-hidden="true">Swipe to see the full table →</p>
     <div data-reveal style="margin-top:36px;overflow-x:auto;border-radius:18px;border:1px solid rgba(255,255,255,.08)">
       <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:720px">
         <thead><tr style="background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205">
@@ -400,8 +413,8 @@
       </table>
     </div>
     <div style="margin-top:14px;display:flex;flex-direction:column;gap:4px">
-      <p style="margin:0;font-size:12px;color:rgba(244,243,240,.45)">{{ c.financiacion_nota_1 }}</p>
-      <p style="margin:0;font-size:12px;color:rgba(244,243,240,.45)">{{ c.financiacion_nota_2 }}</p>
+      <p style="margin:0;font-size:12px;color:rgba(244,243,240,.62)">{{ c.financiacion_nota_1 }}</p>
+      <p style="margin:0;font-size:12px;color:rgba(244,243,240,.62)">{{ c.financiacion_nota_2 }}</p>
     </div>
   </div>
 </section>
@@ -457,6 +470,8 @@
 </section>
 
 <!-- FOOTER -->
+</main>
+
 <footer id="contacto" style="border-top:1px solid rgba(255,255,255,.06);background:rgba(13,13,16,.62)">
   <div style="max-width:1180px;margin:0 auto;padding:54px 24px">
     <div class="sss-2col" style="display:grid;grid-template-columns:2fr 1fr;gap:40px">
@@ -499,7 +514,7 @@
     </div>
   </div>
   <div style="border-top:1px solid rgba(255,255,255,.06)">
-    <div style="max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:18px 24px;font-size:12px;color:rgba(244,243,240,.45)">
+    <div style="max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:18px 24px;font-size:12px;color:rgba(244,243,240,.62)">
       <span>© 2026 Solsureste Solar · Paco Alcaraz. All rights reserved.</span>
       <span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:#FFB43D;box-shadow:0 0 8px #FFB43D"></span>Made in the southeast of Spain</span>
     </div>
@@ -527,7 +542,7 @@
      inglés), pero se emite igualmente para que ambas mantengan los mismos id y el test
      de estructura sincronizada siga teniendo sentido. -->
 <script type="application/json" id="sss-i18n">{{ i18n_en | tojson }}</script>
-<script src="/script.js" defer></script>
-<script src="/consent.js" defer></script>
+<script src="{{ asset('script.js') }}" defer></script>
+<script src="{{ asset('consent.js') }}" defer></script>
 </body>
 </html>

@@ -15,6 +15,8 @@ Las plantillas viven en `templates/`, FUERA de `static/`, por el mismo motivo qu
 crudo, con los `{{ }}` a la vista.
 """
 
+import functools
+import hashlib
 import os
 
 import jinja2
@@ -48,5 +50,28 @@ _env.policies["json.dumps_kwargs"] = {"ensure_ascii": False, "sort_keys": True}
 from cms import destacar  # noqa: E402
 
 _env.filters["destacar"] = destacar
+
+STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
+
+
+@functools.lru_cache(maxsize=None)
+def asset(ruta: str) -> str:
+    """URL de un CSS/JS de static/ con la huella de su contenido: `/styles.css?v=1a2b3c4d`.
+
+    Así el servidor puede pedir caché de un año para estos ficheros (ver `_CACHE_RULES` en
+    api.py): cuando cambia el contenido cambia la URL, y nadie se queda con una versión vieja.
+    La huella se calcula una vez por proceso, que se reinicia en cada deploy (y en local con
+    reload=True al tocar cualquier fichero). Si el fichero no existe se devuelve la ruta sin
+    versión en vez de romper la página.
+    """
+    try:
+        with open(os.path.join(STATIC_DIR, ruta), "rb") as f:
+            huella = hashlib.sha256(f.read()).hexdigest()[:10]
+    except OSError:
+        return f"/{ruta}"
+    return f"/{ruta}?v={huella}"
+
+
+_env.globals["asset"] = asset
 
 templates = Jinja2Templates(env=_env)

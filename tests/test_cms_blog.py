@@ -406,3 +406,25 @@ def test_el_editor_quill_se_sirve_desde_el_propio_dominio_y_con_auth():
     assert client.get("/admin/vendor/quill.js").status_code == 401
     assert client.get("/admin/vendor/quill.js", auth=_AUTH).status_code == 200
     assert client.get("/admin/vendor/quill.snow.css", auth=_AUTH).status_code == 200
+
+
+# --- llms.txt (auditoría 2026-11) ---
+# Era un fichero estático que se quedó con 3 artículos cuando ya había 5 publicados.
+
+def test_llms_txt_lista_los_publicados_y_no_los_borradores():
+    _crear(slug="publicado-ia", titulo="Artículo visible para IA")
+    _crear(slug="borrador-ia", titulo="Borrador oculto", publicado=False)
+
+    r = client.get("/llms.txt")
+
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("text/plain")
+    assert "[Artículo visible para IA](https://solsurestesolar.com/blog/articulos/publicado-ia.html)" in r.text
+    assert "Borrador oculto" not in r.text
+
+
+def test_llms_txt_conserva_el_texto_fijo_y_no_deja_marcas_de_plantilla():
+    texto = client.get("/llms.txt").text
+    assert texto.startswith("# Solsureste Solar")
+    assert "## Datos citables" in texto and "## Contacto" in texto
+    assert "{%" not in texto and "{{" not in texto and "{#" not in texto

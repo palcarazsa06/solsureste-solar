@@ -71,6 +71,22 @@ input::placeholder,textarea::placeholder{color:rgba(244,243,240,.34)}
 .sss-header-tel{display:flex;align-items:center;gap:7px;color:#FFB43D;font-size:14px;font-weight:600;white-space:nowrap;flex-shrink:0;transition:color .2s}
 .sss-header-tel:hover{color:#FFC766}
 
+/* ---------- logo: sin esto heredaba el azul de enlace por defecto (contraste 2,1:1) ---------- */
+.sss-logo{color:#f4f3f0}
+
+/* ---------- menú móvil (solo ≤860px; por encima se ve la navegación normal) ---------- */
+.sss-menu-btn{display:none;align-items:center;justify-content:center;width:44px;height:44px;margin-right:-8px;border:none;border-radius:10px;background:none;color:#f4f3f0;cursor:pointer;flex-shrink:0}
+.sss-menu-btn:hover{color:#FFB43D}
+.sss-mobile-nav{display:none}
+.sss-mobile-nav a{display:flex;align-items:center;min-height:48px;padding:0 24px;color:rgba(244,243,240,.85);font-size:16px;font-weight:500;border-top:1px solid rgba(255,255,255,.06)}
+.sss-mobile-nav a:hover{color:#FFB43D}
+.sss-mobile-nav .sss-mobile-nav-lang{color:rgba(244,243,240,.6);font-size:14px}
+.sss-mobile-nav .sss-mobile-nav-cta{justify-content:center;margin:12px 24px 18px;border:none;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-weight:700}
+
+/* ---------- foco visible para quien navega con teclado ---------- */
+:focus-visible{outline:2px solid #FFB43D;outline-offset:3px;border-radius:4px}
+.sss-field:focus-visible,.sss-chatfield:focus-visible{outline:none}
+
 /* ---------- CTA de texto inline (llamar / WhatsApp) tras bloques de valor ---------- */
 .sss-inline-cta{margin-top:16px;font-size:14px;color:rgba(244,243,240,.55)}
 .sss-inline-cta a{color:#FFB43D;font-weight:600}
@@ -102,6 +118,7 @@ input::placeholder,textarea::placeholder{color:rgba(244,243,240,.34)}
 
 /* ---------- banner de cookies: mismo peso visual en Aceptar y Rechazar ---------- */
 .sss-cookie-btn{height:38px;padding:0 18px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:#f4f3f0;font-weight:600;font-family:inherit;font-size:14px;cursor:pointer;transition:background .2s,border-color .2s}
+.sss-scroll-hint{display:none;margin:28px 0 -24px;font-size:12.5px;color:rgba(244,243,240,.62);text-align:right}
 .sss-cookie-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3)}
 
 /* ---------- image placeholders (no real photos supplied yet) ---------- */
@@ -117,8 +134,26 @@ input::placeholder,textarea::placeholder{color:rgba(244,243,240,.34)}
   .js-ready [data-reveal]{opacity:1!important;transform:none!important;transition:none!important}
   *{animation-duration:.001s!important;animation-iteration-count:1!important}
 }
+/* Entre el móvil y ~1120px la fila de la cabecera no cabe entera: el teléfono se montaba
+   sobre "Servicios". Se queda solo el icono del teléfono y se aprieta el hueco del menú. */
+@media (min-width:861px) and (max-width:1120px){
+  .sss-header-tel-num{display:none}
+  #sss-header nav.sss-hidemob{gap:18px!important}
+}
+@media (min-width:861px) and (max-width:980px){
+  #sss-header nav.sss-hidemob{gap:12px!important}
+  #sss-header .sss-navlink{font-size:13px!important}
+}
 @media (max-width:860px){
   .sss-hidemob{display:none!important}
+  .sss-menu-btn{display:flex}
+  .sss-mobile-nav:not([hidden]){display:flex;flex-direction:column;max-height:calc(100vh - 70px);overflow-y:auto}
+  .sss-header-tel{min-height:44px}
+  /* 16px evita que iOS haga zoom automático al tocar un campo */
+  .sss-field{font-size:16px!important}
+  /* el aviso de cookies se apoya encima de la barra fija Llamar/WhatsApp, no sobre ella */
+  .sss-cookie-bar{bottom:52px!important}
+  .sss-scroll-hint{display:block}
   .sss-herogrid{grid-template-columns:1fr!important}
   .sss-2col{grid-template-columns:1fr!important}
   .sss-3col{grid-template-columns:1fr!important}
@@ -134,4 +169,10 @@ input::placeholder,textarea::placeholder{color:rgba(244,243,240,.34)}
    pruebas reales de viewport) — pasa a 1 columna solo en pantallas muy estrechas */
 @media (max-width:400px){
   .sss-statgrid{grid-template-columns:1fr!important}
+}
+/* En móviles estrechos logo + número + botón de menú no caben: queda el icono del
+   teléfono (44px, con su aria-label) y la barra fija inferior ya dice "Llamar". */
+@media (max-width:480px){
+  .sss-header-tel-num{display:none}
+  .sss-header-tel{min-width:44px;justify-content:center}
 }

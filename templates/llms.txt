@@ -1,3 +1,6 @@
+{#- Generado en /llms.txt desde api.py: la lista de artículos sale de la base de datos,
+    igual que el sitemap, para no quedarse vieja al publicar desde el panel. El resto
+    del texto es fijo y se edita aquí. -#}
 # Solsureste Solar
 
 > Instalación de placas solares y huertos solares para hogares, empresas y agricultura en la
@@ -52,10 +55,8 @@
 
 ## Artículos del blog
 
-- [Autoconsumo industrial en Murcia y Alicante: la factura que pasó de 860 € a 22 €](https://solsurestesolar.com/blog/articulos/autoconsumo-industrial-murcia-alicante-guia-empresas-2026.html)
-- [¿Cuánto cuesta placas solares en Murcia? Desglose de precios y factores 2026](https://solsurestesolar.com/blog/articulos/cuanto-cuesta-placas-solares-en-murcia-desglose-de-precios-y-factores-2026.html)
-- [Cuánto cuesta instalar placas solares en Molina de Segura: presupuesto desglosado 2026](https://solsurestesolar.com/blog/articulos/cuanto-cuesta-instalar-placas-solares-en-molina-de-segura-presupuesto-desglosado-2026.html)
-
+{% for a in articulos %}- [{{ a.titulo }}]({{ base }}{{ a.url }})
+{% endfor %}
 ## Legal
 
 - [Aviso legal](https://solsurestesolar.com/aviso-legal)
