@@ -899,6 +899,9 @@ void main(){
         ciudad: document.getElementById('sss-hf-ciudad').value.trim(),
         tipo_instalacion: document.getElementById('sss-hf-tipo').value,
         mensaje: '',
+        // Honeypot: una persona nunca lo ve ni lo rellena; si llega con texto, el servidor
+        // responde OK pero descarta la solicitud (no va al CRM ni al email).
+        web: (document.getElementById('sss-hf-web') || {}).value || '',
       };
 
       try {

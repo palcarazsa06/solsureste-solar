@@ -178,3 +178,66 @@ def test_admin_sin_auth_devuelve_401():
 def test_admin_con_auth_correcta_devuelve_200():
     respuesta = client.get("/admin", auth=_AUTH_ADMIN)
     assert respuesta.status_code == 200
+
+
+# --- Auditoría 2026-11 ---
+
+def test_documentacion_de_la_api_no_se_sirve():
+    """/docs, /redoc y /openapi.json daban a cualquiera el mapa completo de la API,
+    endpoints del panel incluidos."""
+    for ruta in ("/docs", "/redoc", "/openapi.json"):
+        assert client.get(ruta).status_code == 404, ruta
+
+
+def test_presupuesto_con_honeypot_relleno_responde_ok_pero_no_guarda_ni_envia(monkeypatch):
+    llamadas_crm = _mockear_efectos_secundarios(monkeypatch)
+    leads_antes = len(api.get_all_conversaciones())
+
+    respuesta = client.post("/presupuesto", json={**_PRESUPUESTO_VALIDO, "web": "http://spam.example"})
+
+    assert respuesta.status_code == 200
+    assert respuesta.json() == {"status": "success"}
+    assert llamadas_crm == []
+    assert len(api.get_all_conversaciones()) == leads_antes
+
+
+def test_presupuesto_con_honeypot_vacio_se_procesa_normal(monkeypatch):
+    llamadas_crm = _mockear_efectos_secundarios(monkeypatch)
+
+    respuesta = client.post("/presupuesto", json={**_PRESUPUESTO_VALIDO, "web": ""})
+
+    assert respuesta.status_code == 200
+    assert len(llamadas_crm) == 1
+
+
+def test_admin_se_bloquea_tras_demasiados_fallos_aunque_luego_acierte():
+    for _ in range(api.ADMIN_MAX_FALLOS):
+        assert client.get("/admin", auth=("test-admin", "mal")).status_code == 401
+
+    assert client.get("/admin", auth=_AUTH_ADMIN).status_code == 429
+
+
+def test_admin_se_desbloquea_pasado_el_tiempo(monkeypatch):
+    for _ in range(api.ADMIN_MAX_FALLOS):
+        client.get("/admin", auth=("test-admin", "mal"))
+
+    ahora = api.time.time()
+    monkeypatch.setattr(api.time, "time", lambda: ahora + api.ADMIN_BLOQUEO_SEGUNDOS + 1)
+
+    assert client.get("/admin", auth=_AUTH_ADMIN).status_code == 200
+
+
+def test_acierto_admin_reinicia_el_contador_de_fallos():
+    for _ in range(api.ADMIN_MAX_FALLOS - 1):
+        client.get("/admin", auth=("test-admin", "mal"))
+    assert client.get("/admin", auth=_AUTH_ADMIN).status_code == 200
+
+    # Tras el acierto, un nuevo fallo aislado no bloquea.
+    client.get("/admin", auth=("test-admin", "mal"))
+    assert client.get("/admin", auth=_AUTH_ADMIN).status_code == 200
+
+
+def test_formulario_enlaza_la_politica_de_privacidad_en_ambos_idiomas():
+    for ruta in ("/", "/en"):
+        html = client.get(ruta).text
+        assert 'href="/privacidad"' in html.split('id="sss-hero-form"')[1].split("</form>")[0], ruta
