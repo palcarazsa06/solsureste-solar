@@ -22,7 +22,7 @@
 <meta name="theme-color" content="#0a0a0c">
 
 <link rel="preload" href="/fonts/space-grotesk-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/fonts.css">
+<link rel="stylesheet" href="{{ asset('fonts.css') }}">
 
 <script type="application/ld+json">
 {
@@ -70,7 +70,7 @@
     "url": "https://solsurestesolar.com/",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://solsurestesolar.com/images/og-cover.jpg"
+      "url": "https://solsurestesolar.com/icon-512.png"
     }
   }
 }
@@ -184,7 +184,7 @@
 </footer>
 <p class="ai-disclosure">Contenido generado con ayuda de inteligencia artificial, con supervisión editorial de Solsureste Solar.</p>
 
-<script src="/consent.js" defer></script>
-<script src="/blog/reveal.js" defer></script>
+<script src="{{ asset('consent.js') }}" defer></script>
+<script src="{{ asset('blog/reveal.js') }}" defer></script>
 </body>
 </html>

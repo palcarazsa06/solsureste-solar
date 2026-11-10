@@ -241,3 +241,67 @@ def test_formulario_enlaza_la_politica_de_privacidad_en_ambos_idiomas():
     for ruta in ("/", "/en"):
         html = client.get(ruta).text
         assert 'href="/privacidad"' in html.split('id="sss-hero-form"')[1].split("</form>")[0], ruta
+
+
+def test_hsts_declara_preload():
+    hsts = client.get("/").headers["strict-transport-security"]
+    assert "preload" in hsts and "includeSubDomains" in hsts and "max-age=31536000" in hsts
+
+
+def test_plantillas_enlazan_css_y_js_con_huella_y_se_cachean_un_ano():
+    import re
+    html = client.get("/").text
+    for recurso in ("styles.css", "script.js", "consent.js", "fonts.css"):
+        m = re.search(rf'"(/{re.escape(recurso)}\?v=[0-9a-f]{{10}})"', html)
+        assert m, recurso
+        r = client.get(m.group(1))
+        assert r.status_code == 200
+        assert r.headers["cache-control"] == "public, max-age=31536000, immutable", recurso
+
+
+def test_css_sin_huella_mantiene_cache_corta():
+    assert client.get("/styles.css").headers["cache-control"] == "public, max-age=3600"
+
+
+def test_huella_cambia_si_cambia_el_contenido(tmp_path, monkeypatch):
+    import templates_engine
+    (tmp_path / "x.css").write_text("a{}")
+    monkeypatch.setattr(templates_engine, "STATIC_DIR", str(tmp_path))
+    templates_engine.asset.cache_clear()
+    v1 = templates_engine.asset("x.css")
+    (tmp_path / "x.css").write_text("b{}")
+    templates_engine.asset.cache_clear()
+    v2 = templates_engine.asset("x.css")
+    templates_engine.asset.cache_clear()
+    assert v1 != v2 and v1.startswith("/x.css?v=")
+    assert templates_engine.asset("no-existe.css") == "/no-existe.css"
+    templates_engine.asset.cache_clear()
+
+
+def _bloques_jsonld(html):
+    import json
+    import re
+    return [json.loads(b) for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)]
+
+
+def test_el_logo_del_schema_es_el_logo_real_y_no_la_portada():
+    import glob
+    import json
+    paginas = [client.get(r).text for r in ("/", "/en", "/blog")]
+    paginas += [open(f, encoding="utf-8").read() for f in glob.glob("static/placas-solares-*.html")]
+    vistos = 0
+    for html in paginas:
+        texto = json.dumps(_bloques_jsonld(html))  # además valida que todo el JSON-LD parsea
+        assert "og-cover.jpg\"}" not in texto.replace(" ", "")
+        vistos += texto.count("icon-512.png")
+    assert vistos >= 10
+    assert client.get("/icon-512.png").status_code == 200
+
+
+def test_las_variantes_del_srcset_existen():
+    import re
+    html = client.get("/").text
+    rutas = set(re.findall(r'(/images/[\w-]+-\d+w\.webp) \d+w', html))
+    assert len(rutas) == 6
+    for ruta in rutas:
+        assert client.get(ruta).status_code == 200, ruta

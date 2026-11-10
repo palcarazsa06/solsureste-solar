@@ -167,7 +167,13 @@ cifras fiscales verificadas contra fuente oficial) y las 3 legales.
   editor guardando varios campos seguidos se autobloqueaba a media edición. Rate limit en memoria en
   `/chat`, `/presupuesto` y los tres endpoints `/api/leads/*`. Sesiones HMAC firmadas, security
   headers, validación de inputs, `GZipMiddleware` y `Cache-Control` para estáticos (`/images/`,
-  `/videos/`, `/icon-*`, `.css`, `.js`). **El rate limit es un contador por proceso** (`defaultdict`
+  `/videos/`, `/icon-*`, `.css`, `.js`). **CSS/JS en plantillas siempre con `{{ asset('styles.css') }}`**
+  (`templates_engine.asset`), nunca con la ruta a pelo: añade `?v=<huella del contenido>` y esas
+  peticiones se cachean un año; sin huella solo 1 h. Las páginas estáticas de `static/` no pasan
+  por Jinja y siguen con la caché corta. Sin `/docs`, `/redoc` ni `/openapi.json` (desactivados a
+  propósito, exponían la API del panel). `/admin` se bloquea 15 min por IP tras 5 contraseñas
+  incorrectas (`ADMIN_MAX_FALLOS`, contador en memoria; depende de `TRUST_PROXY` para ver la IP
+  real). **El rate limit es un contador por proceso** (`defaultdict`
   en memoria, `api.py:134`), correcto solo mientras Render corra 1 worker/instancia (hoy es así: el
   arranque de producción no lleva `--workers`). Si algún día se escala horizontalmente, cada proceso
   llevaría su propio contador y el límite total se multiplicaría sin control — requeriría migrar a
@@ -295,6 +301,10 @@ cifras fiscales verificadas contra fuente oficial) y las 3 legales.
   `/sitemap.xml`, ya no es un fichero. Los artículos del blog y sus `lastmod` salen de la base de
   datos; las páginas estáticas están en esa tupla de `api.py`, con su `lastmod` a mano. **Al añadir
   una página estática nueva hay que darla de alta ahí** (los artículos de blog ya no hay que tocarlos).
+- `templates/llms.txt` → ruta `/llms.txt` (resumen para buscadores de IA). Mismo patrón que el
+  sitemap: la lista de artículos sale de la base de datos; el resto del texto ("Datos citables",
+  cobertura, contacto) es fijo y se edita en la plantilla. Si cambia un dato de negocio de ahí
+  (garantía, financiación, deducciones), revisar también la home y la base de conocimiento del RAG.
 - `static/placas-solares-{murcia,alicante}.html` — páginas **pilar** de SEO local (rutas
   `/placas-solares-murcia` y `/placas-solares-alicante`), cobertura a nivel provincia/región. Enlazan
   a sus páginas de ciudad correspondientes vía `.cluster-links`. Schema `Service` (no `LocalBusiness`

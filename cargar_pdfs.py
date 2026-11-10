@@ -1,6 +1,6 @@
 import os
 import chromadb
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 from dotenv import load_dotenv
 from openai import OpenAI
 

@@ -35,8 +35,8 @@
 <meta name="theme-color" content="#0a0a0c">
 
 <link rel="preload" href="/fonts/space-grotesk-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/fonts.css">
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="{{ asset('fonts.css') }}">
+<link rel="stylesheet" href="{{ asset('styles.css') }}">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -75,7 +75,7 @@
       "@type": "Organization",
       "name": "Solsureste Solar",
       "url": "https://solsurestesolar.com/",
-      "logo": "https://solsurestesolar.com/images/og-cover.jpg",
+      "logo": "https://solsurestesolar.com/icon-512.png",
       "contactPoint": { "@type": "ContactPoint", "telephone": "+34968869532", "contactType": "customer service", "email": "info@solsurestesolar.com", "areaServed": "ES" }
     }
   ]
@@ -310,19 +310,19 @@
     <p data-reveal style="margin:18px 0 0;max-width:760px;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)">Solsureste Solar offers a 25-year workmanship warranty because we stand behind what we do. These are real results from clients across the southeast, with the actual savings achieved.</p>
     <div class="sss-3col" style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px">
       <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
-        <img src="/images/foto1-card.webp" alt="Residential solar panel installation in Lorca, Murcia" width="900" height="506" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
+        <img src="/images/foto1-card.webp" srcset="/images/foto1-card-480w.webp 480w, /images/foto1-card-720w.webp 720w, /images/foto1-card.webp 900w" sizes="(max-width: 860px) calc(100vw - 48px), 360px" alt="Residential solar panel installation in Lorca, Murcia" width="900" height="490" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
         <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">{{ c.caso_1_titulo }}</h3>
         <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">{{ c.caso_1_texto | destacar }}</p>
         <a href="/placas-solares-lorca" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Read the full case in Lorca →</a>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
-        <img src="/images/foto2.webp" alt="Solar installation on an industrial warehouse in Cartagena, Murcia" width="900" height="506" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
+        <img src="/images/foto2.webp" srcset="/images/foto2-480w.webp 480w, /images/foto2-720w.webp 720w, /images/foto2.webp 900w" sizes="(max-width: 860px) calc(100vw - 48px), 360px" alt="Solar installation on an industrial warehouse in Cartagena, Murcia" width="900" height="490" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
         <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">{{ c.caso_2_titulo }}</h3>
         <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">{{ c.caso_2_texto | destacar }}</p>
         <a href="/placas-solares-cartagena" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Read the full case in Cartagena →</a>
       </div>
       <div data-reveal data-spotlight class="sss-card sss-card-hover" style="padding:18px">
-        <img src="/images/foto3.webp" alt="Agricultural solar farm in Orihuela, Alicante" width="900" height="506" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
+        <img src="/images/foto3.webp" srcset="/images/foto3-480w.webp 480w, /images/foto3-720w.webp 720w, /images/foto3.webp 900w" sizes="(max-width: 860px) calc(100vw - 48px), 360px" alt="Agricultural solar farm in Orihuela, Alicante" width="900" height="490" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:14px">
         <h3 style="margin:18px 0 0;font-size:18px;font-weight:600">{{ c.caso_3_titulo }}</h3>
         <p style="margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)">{{ c.caso_3_texto | destacar }}</p>
         <a href="/placas-solares-orihuela" style="display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none">Read the full case in Orihuela →</a>
@@ -542,7 +542,7 @@
      inglés), pero se emite igualmente para que ambas mantengan los mismos id y el test
      de estructura sincronizada siga teniendo sentido. -->
 <script type="application/json" id="sss-i18n">{{ i18n_en | tojson }}</script>
-<script src="/script.js" defer></script>
-<script src="/consent.js" defer></script>
+<script src="{{ asset('script.js') }}" defer></script>
+<script src="{{ asset('consent.js') }}" defer></script>
 </body>
 </html>
