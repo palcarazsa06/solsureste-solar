@@ -54,22 +54,27 @@ _env.filters["destacar"] = destacar
 STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 
 
-@functools.lru_cache(maxsize=None)
+@functools.lru_cache(maxsize=64)
+def _huella(camino: str, mtime_ns: int) -> str:
+    with open(camino, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()[:10]
+
+
 def asset(ruta: str) -> str:
     """URL de un CSS/JS de static/ con la huella de su contenido: `/styles.css?v=1a2b3c4d`.
 
     Así el servidor puede pedir caché de un año para estos ficheros (ver `_CACHE_RULES` en
     api.py): cuando cambia el contenido cambia la URL, y nadie se queda con una versión vieja.
-    La huella se calcula una vez por proceso, que se reinicia en cada deploy (y en local con
-    reload=True al tocar cualquier fichero). Si el fichero no existe se devuelve la ruta sin
-    versión en vez de romper la página.
+    La huella se recalcula solo si cambia la fecha de modificación del fichero (un `stat` por
+    llamada): en local el servidor no se reinicia al editar un .css, y con una caché por
+    proceso la página pedía el CSS nuevo con la URL vieja. Si el fichero no existe se devuelve
+    la ruta sin versión en vez de romper la página.
     """
+    camino = os.path.join(STATIC_DIR, ruta)
     try:
-        with open(os.path.join(STATIC_DIR, ruta), "rb") as f:
-            huella = hashlib.sha256(f.read()).hexdigest()[:10]
+        return f"/{ruta}?v={_huella(camino, os.stat(camino).st_mtime_ns)}"
     except OSError:
         return f"/{ruta}"
-    return f"/{ruta}?v={huella}"
 
 
 _env.globals["asset"] = asset

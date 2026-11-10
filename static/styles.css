@@ -176,3 +176,52 @@ input::placeholder,textarea::placeholder{color:rgba(244,243,240,.34)}
   .sss-header-tel-num{display:none}
   .sss-header-tel{min-width:44px;justify-content:center}
 }
+
+/* ---------- estilos repetidos extraídos de las homes (antes en línea, auditoría 2026-11) ----------
+   Van AL FINAL del fichero a propósito: así ganan a cualquier regla anterior de igual
+   especificidad, igual que hacía el atributo style. Los :hover/:focus de arriba (más
+   específicos) ahora sí se aplican: antes el color en línea los anulaba. */
+.sss-btn-cta{margin-top:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:linear-gradient(135deg,#FFB43D,#F5921E);color:#1a1205;font-size:15px;font-weight:600;height:46px;padding:0 24px;box-shadow:0 10px 30px rgba(255,180,61,.45),0 0 44px rgba(255,180,61,.20),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s,box-shadow .25s}
+.sss-canvas-fill{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.sss-card-img{width:100%;height:180px;object-fit:cover;border-radius:14px}
+.sss-center{text-align:center}
+.sss-check-dot{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:rgba(255,180,61,.16);color:#FFB43D;font-size:14px;font-weight:700}
+.sss-chip{display:flex;align-items:center;justify-content:center;height:44px;padding:0 16px;border-radius:10px;background:rgba(255,180,61,.12);color:#FFC766;font-weight:700;font-size:14px;border:1px solid rgba(255,180,61,.25)}
+.sss-contact-link{display:flex;align-items:center;gap:9px;color:inherit;transition:color .2s}
+.sss-eyebrow{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#FFB43D}
+.sss-field-box{border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);padding:9px 12px;font-size:14px;color:#f4f3f0;font-family:inherit;outline:none}
+.sss-fin-note{margin:0;font-size:12px;color:rgba(244,243,240,.62)}
+.sss-flabel{display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(244,243,240,.6)}
+.sss-foot-link{color:rgba(244,243,240,.6);transition:color .2s}
+.sss-gold{color:#FFB43D}
+.sss-grid3{margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.sss-h3-16{margin:0;font-size:16px;font-weight:600}
+.sss-h3-17{margin:18px 0 0;font-size:17px;font-weight:600}
+.sss-h3-18{margin:18px 0 0;font-size:18px;font-weight:600}
+.sss-icon46{display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D}
+.sss-icon46-fixed{flex-shrink:0;display:flex;height:46px;width:46px;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,180,61,.14);color:#FFB43D}
+.sss-li-row{display:flex;align-items:flex-start;gap:13px}
+.sss-more-link{display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:#FFB43D;text-decoration:none}
+.sss-navlink-txt{font-size:14px;font-weight:500;color:rgba(244,243,240,.62);transition:color .2s}
+.sss-noshrink{flex-shrink:0}
+.sss-opt{background:#161618}
+.sss-pad18{padding:18px}
+.sss-row-start{position:relative;z-index:1;display:flex;align-items:flex-start;gap:18px}
+.sss-stat-glow{margin:0;font-size:40px;font-weight:700;color:#FFB43D;text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 30px rgba(255,180,61,.25)}
+.sss-stat-num{margin:0;font-size:42px;font-weight:700;color:#FFB43D}
+.sss-stat-num-s{margin:0;font-size:26px;font-weight:700;color:#FFB43D}
+.sss-statcard{border-radius:18px;background:#141417;border:1px solid rgba(255,255,255,.07);padding:26px;text-align:center}
+.sss-step-txt{margin:0;padding-top:11px;font-size:16.5px;line-height:1.55;color:rgba(244,243,240,.82)}
+.sss-stepcircle{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,61,.26),rgba(224,122,12,.2));color:#FFD89A;font-weight:700;font-size:18px;border:1px solid rgba(255,180,61,.3);transition:background .4s,box-shadow .4s,color .4s,border-color .4s}
+.sss-strong{color:#f4f3f0}
+.sss-td-num{padding:14px 18px;text-align:right;color:rgba(244,243,240,.65)}
+.sss-th-num{padding:15px 18px;text-align:right;font-weight:700}
+.sss-txt-body{margin:12px 0 0;font-size:15px;line-height:1.6;color:rgba(244,243,240,.64)}
+.sss-txt-body-l{margin:12px 0 0;font-size:15.5px;line-height:1.6;color:rgba(244,243,240,.66)}
+.sss-txt-body-s{margin:8px 0 0;font-size:15px;line-height:1.55;color:rgba(244,243,240,.64)}
+.sss-txt-lead{margin:18px 0 0;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)}
+.sss-txt-lead-s{margin:0;font-size:16px;line-height:1.55;color:rgba(244,243,240,.7)}
+.sss-txt-lead-w{margin:18px 0 0;max-width:760px;font-size:18px;line-height:1.6;color:rgba(244,243,240,.7)}
+.sss-txt-note{margin:2px 0 0;font-size:12.5px;color:rgba(244,243,240,.55)}
+.sss-txt-sub{margin:8px 0 0;font-size:15px;color:rgba(244,243,240,.6)}
+.sss-wrap{max-width:1180px;margin:0 auto}
